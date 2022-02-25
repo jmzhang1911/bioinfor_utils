@@ -1,0 +1,19 @@
+》
+二级标题
+差异表达基因分析
+》
+正文
+采用Seurat的wilcox秩和检验对不同类的细胞筛选差异表达基因。将某一类细胞的基因与其他所有类的基因做比较，默认筛选至少在一个比较组中超过25%的细胞中表达的基因进行差异比较分析。差异筛选标准为 Fold Change≥ $FC 且Thred < $FDR。
+》
+文件集合	BMK_3_seurat_analysis/BMK_2_Analysis/BMK_*/BMK_2_Diff_anlaysis/BMK_1_clusterFeature/*cluster_deg.stat.xls
+各样本的差异表达结果统计：
+》
+表格	BMK_3_seurat_analysis/BMK_2_Analysis/*/BMK_2_Diff_anlaysis/BMK_1_clusterFeature/*diff_featuregene.xls
+表7	cluster的差异表达结果
+注：ID：基因ID；&lt;br&gt;symbol：基因symbol；&lt;br&gt;Pvalue：显著性p值；&lt;br&gt;log2FC：差异倍数的log2值；&lt;br&gt;pct.1：基因在cluster(i)中有表达的细胞比例；&lt;br&gt;pct.2：基因在除了cluster(i)中以外所有的cluster中有表达的细胞比例；&lt;br&gt;Qvalue：校正后的p值；&lt;br&gt;Cluster：差异基因的cluster。
+》
+选取每个cluster top10 的差异基因进行表达变化热图展示。
+》
+图片	BMK_3_seurat_analysis/BMK_2_Analysis/*/BMK_2_Diff_anlaysis/BMK_1_clusterFeature/*markergene_heatmap.png
+图15	各cluster差异基因（top10）的表达变化热图
+注：红色表示高表达，蓝色表示低表达，顶部注释条表示cluster名。由于cluster之间的top10的差异基因间可能存在重复，因此实际基因数目可能偏小。热图右边特定选取每个cluster的top2的基因进行标出。

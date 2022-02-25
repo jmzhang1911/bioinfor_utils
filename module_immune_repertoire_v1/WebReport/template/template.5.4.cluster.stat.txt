@@ -1,0 +1,28 @@
+》
+二级标题
+多样本的Cluster分布统计
+》
+正文
+基于多样本的聚类结果,统计不同cluster中各样本的占比情况。如下图所示。
+》
+图片	BMK_3_seurat_analysis/BMK_3_Integrated/BMK_3_Cluster/sample_barplot.png
+图31	多样本的Cluster分布柱状图
+注：横坐标代表聚类cluster，纵坐标表示对应的细胞数目，不同样色表示不同样本。
+》
+统计表	BMK_3_seurat_analysis/BMK_3_Integrated/BMK_3_Cluster/All_ncells_clusters.stat.xls
+表12	多样本的Cluster统计表
+注：第一列表示cluster。第二列往后表示各样本在对应cluster中的细胞数目。
+》
+二级标题
+聚类结果可视化
+》
+正文
+将聚类得到的结果使用t-SNE和UMAP进行可视化展示。
+》
+图片	BMK_3_seurat_analysis/BMK_3_Integrated/BMK_3_Cluster/tsne*.png
+图32	所有样本细胞聚类的t-SNE图
+注：tsne_all.png：所有cluster的t-SNE图，不同颜色表示不同的cluster；&lt;br&gt;tsne_sample.png：所有样本的t-SNE图，不同颜色表示不同的样本；&lt;br&gt;tsne_splt.png：不同的cluster在不同样本中的情况。
+》
+图片	BMK_3_seurat_analysis/BMK_3_Integrated/BMK_3_Cluster/umap*.png
+图33	所有样本细胞聚类的UMAP图
+注：umap_all.png：所有cluster的UMAP图，不同颜色表示不同的cluster；&lt;br&gt;umap_sample.png：所有样本的UMAP图，不同颜色表示不同的样本；&lt;br&gt;umap_splt.png：不同的cluster在不同样本中的情况。

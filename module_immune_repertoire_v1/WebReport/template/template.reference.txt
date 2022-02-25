@@ -1,0 +1,20 @@
+》
+参考文献
+1	CellRanger	https://support.10xgenomics.com/single-cell-gene-expression/software/overview/welcome
+2	Ewing B, Hillier L, Wendl MC, Green P. Base-calling of automated sequencer traces using phred. I. Accuracy assessment. [Genome Research Italic] 1998. 8 (3): 175-185.	http://tour.biocloud.net/article/v1/into/articleDetail/9521921
+3	Dobin A, Davis C A, Schlesinger F, et al. STAR: ultrafast universal RNA-seq aligner[J]. Bioinformatics, 2013, 29(1): 15-21.	https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3530905/
+4	Van der Maaten, L.J.P. Accelerating t-SNE using Tree-Based Algorithms. Journal of Machine Learning Research 15, 3221-3245 (2014).	https://jmlr.org/papers/v15/vandermaaten14a.html
+5	McInnes, L, Healy, J, UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction, ArXiv e-prints 1802.03426, 2018	https://arxiv.org/abs/1802.03426
+6	Stuart, T, Butler, A. Comprehensive Integration of Single-Cell Data. Cell, 177(7), 1888-1902.e21.	https://doi.org/10.1016/j.cell.2019.05.031
+7	Deng YY, Li JQ, Wu S F, Zhu YP, et al. Integrated NR Database in Protein Annotation System and Its Localization. [Computer Engineering Italic] 2006.,32(5):71-74.	http://en.cnki.com.cn/Article_en/CJFDTOTAL-JSJC200605025.htm
+8	Apweiler R, Bairoch A, Wu CH, Barker WC, et al. UniProt: the Universal Protein knowledgebase. [Nucleic Acids Research Italic] 2004 Jan 1;32(Database issue):D115-9.	http://tour.biocloud.net/article/v1/into/articleDetail/27899622
+9	Ashburner M, Ball C A, Blake J A, Botstein D, et al. Gene ontology: tool for the unification of biology. [Nature Genetics Italic] 2000, 25(1): 25-29.	http://tour.biocloud.net/article/v1/into/articleDetail/10802651
+10	Tatusov RL, Galperin MY, Natale DA. The COG database: a tool for genome scale analysis of protein functions and evolution. [Nucleic Acids Research Italic] 2000, 28(1):33-36.	http://tour.biocloud.net/article/v1/into/articleDetail/10592175
+11	Koonin EV, Fedorova ND, Jackson JD, et al. A comprehensive evolutionary classification of proteins encoded in complete eukaryotic genomes. Genome biology. 2004, 5(2): R7.	http://tour.biocloud.net/article/v1/into/articleDetail/14759257
+12	Finn RD, Bateman A, Clements J, et al. Pfam: the protein families database. Nucleic acids research. 2013: gkt1223.	http://tour.biocloud.net/article/v1/into/articleDetail/18039703
+13	Kanehisa M, Goto S, Kawashima S, Okuno Y, et al. The KEGG resource for deciphering the genome. [Nucleic Acids Research Italic] 2004, 32(Database issue):D277-D280.	http://tour.biocloud.net/article/v1/into/articleDetail/14681412
+14	Szklarczyk, D, Gable, A. STRING v11: protein-protein association networks with increased coverage, supporting functional discovery in genome-wide experimental datasets. Nucleic Acids Research, 47(D1), D607–D613.	https://doi.org/10.1093/nar/gky1131
+15	Tan G, Lenhard B (2016). TFBSTools: an R/Bioconductor package for transcription factor binding site analysis. Bioinformatics, 32, 1555-1556.	http://bioinformatics.oxfordjournals.org/content/32/10/1555.
+16	Monocle	http://cole-trapnell-lab.github.io/monocle3/
+17	ImmunoMind Team. (2019). immunarch: An R Package for Painless Bioinformatics Analysis of T-Cell and B-Cell Immune Repertoires. Zenodo.	http://doi.org/10.5281/zenodo.3367200
+18	Borcherding, N., Bormann, N. L., Kraus, G. (2020). scRepertoire: An R-based toolkit for single-cell immune receptor analysis. F1000Research, 9, 47.	https://doi.org/10.12688/f1000research.22139.2

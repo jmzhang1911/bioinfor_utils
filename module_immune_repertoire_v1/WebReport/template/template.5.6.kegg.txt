@@ -1,0 +1,32 @@
+》
+三级标题
+差异基因KEGG注释
+》
+正文
+在生物体内，不同的基因产物相互协调来行使生物学功能，对差异表达基因的通路（Pathway）注释分析有助于进一步解读基因的功能。KEGG（Kyoto Encyclopedia of Genes and Genomes）是系统分析基因功能、基因组信息数据库，它有助于研究者把基因及表达信息作为一个整体网络进行研究。作为是有关Pathway的主要公共数据库(Kanehisa,2008），KEGG提供的整合代谢途径(pathway)查询，包括碳水化合物、核苷、氨基酸等的代谢及有机物的生物降解，不仅提供了所有可能的代谢途径，而且对催化各步反应的酶进行了全面的注解，包含有氨基酸序列、PDB库的链接等等，是进行生物体内代谢分析、代谢网络研究的强有力工具。
+对差异表达基因KEGG的注释结果按照KEGG中通路类型进行分类，分类图如下图所示：
+》
+图片	BMK_3_seurat_analysis/BMK_2_Analysis/BMK_1_*/BMK_2_Diff_anlaysis/BMK_3_Anno_enrichment/*/BMK_3_KEGG_enrichment/*.KEGG.png
+图20	差异表达基因KEGG分类图
+注：纵坐标为KEGG通路的名称，横坐标为注释到该通路下的基因个数及其个数占被注释上的基因总数的比例。
+》
+正文
+差异表达基因的通路注释结果见下图：
+》
+图片	BMK_3_seurat_analysis/BMK_2_Analysis/BMK_1_*/BMK_2_Diff_anlaysis/BMK_3_Anno_enrichment/*/BMK_3_KEGG_enrichment/BMK_1_kegg_map/*.png
+图21	差异表达基因的KEGG通路注释图
+注：红色框标记的酶与每个cluster差异高表达基因有关，框内的数字代表酶的编号（EC number），而整个通路由多种酶催化的复杂生化反应构成，此通路图中与差异表达基因相关的酶均用颜色标出，根据研究对象间的差异，重点研究某些代谢通路相关基因的差异表达情况，通过通路解释表型差异的根源。（此处实际共有很多张结果图片，但为了保证浏览报告的流畅性只展示了10张，查看全部图片可以到项目文件中查看，请谅解）
+》
+三级标题
+差异基因KEGG富集分析
+》
+正文
+分析差异表达基因在某一通路上是否发生显著差异（over-presentation）即为差异表达基因的通路富集分析。Pathway显著性富集分析以KEGG数据库中Pathway为单位，应用超几何检验，找出与整个基因组背景相比，在差异表达基因中显著性富集的Pathway。差异表达基因KEGG通路富集分析结果见下图。
+》
+图片	BMK_3_seurat_analysis/BMK_2_Analysis/BMK_1_*/BMK_2_Diff_anlaysis/BMK_3_Anno_enrichment/*/BMK_3_KEGG_enrichment/*dotplot.png
+图22	差异表达基因KEGG富集气泡图
+注：图中每一个圆表示一个KEGG通路，纵坐标表示通路名称，横坐标为富集因子，表示差异基因中注释到某通路的基因比例与所有基因中注释到该通路的基因比例的比值。富集因子越大，表示差异表达基因在该通路中的富集水平越显著。圆圈的颜色代表qvalue，qvalue为多重假设检验校正之后的P value,qvalue越小，表示差异表达基因在该通路中的富集显著性越可靠；圆圈的大小表示通路中富集的基因数目，圆圈越大，表示基因越多。
+》
+图片	BMK_3_seurat_analysis/BMK_2_Analysis/BMK_1_*/BMK_2_Diff_anlaysis/BMK_3_Anno_enrichment/*/BMK_3_KEGG_enrichment/*cnetplot.png
+图23	差异表达基因KEGG富集网络图
+注：差异表达基因与KEGG通路的网络图.边的颜色代表不同的通路,基因节点的颜色代表差异倍数,通路节点越大说明富集到该通路的基因数目越多。

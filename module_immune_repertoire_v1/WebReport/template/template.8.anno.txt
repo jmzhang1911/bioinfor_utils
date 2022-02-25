@@ -1,0 +1,9 @@
+》
+一级标题
+名词解释
+》
+正文
+免疫组库(immune repertoire, IR)：是指在某一时间, 某个个体的循环系统内所有功能多样性T细胞和B细胞的总和。
+CDR3(Complementarity-Determining Region 3)：互补决定区域3，是部分TCR/BCR氨基酸序列，它们能够与抗原结合。编码CDR3的核苷酸区域跨越了V(D)J连接，使得它比其他CDR更加多样化。
+Clonotype：通过精确的核苷酸匹配，收集共享一组CDR3生产序列的细胞。
+Contig：基于reads之间的overlap区，拼接获得的序列称为Contig（重叠群）。

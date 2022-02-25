@@ -1,0 +1,60 @@
+》
+二级标题
+单细胞免疫组库数据统计及定量
+》
+网页报告	BMK_2_cellranger_analysis/BMK_2_*/BMK_1_summary/*.html
+VDJ分析结果网页版报告链接：
+》
+三级标题
+测序数据产出统计
+》
+正文
+该项目各样品测序数据产出统计见下表：
+》
+统计表	BMK_2_cellranger_analysis/BMK_2_T/BMK_1_summary/t_total_seqence_info_stat.xls
+表1	CellRanger T细胞分析序列统计
+注：sampleID：样本ID；&lt;br&gt;Number of Reads：reads总数；&lt;br&gt;Valid Barcodes：有效的10X Barcode比例 ；&lt;br&gt;Q30 Bases in Barcode：Barcode序列中质量值大于或等于30的碱基所占的百分比；&lt;br&gt;Q30 Bases in RNA Read 1：reads1中质量值大于或等于30的碱基所占的百分比；&lt;br&gt;Q30 Bases in UMI：UMI序列中质量值大于或等于30的碱基所占的百分比。
+》
+统计表	BMK_2_cellranger_analysis/BMK_2_B/BMK_1_summary/b_total_seqence_info_stat.xls
+表2	CellRanger B细胞分析序列统计
+注：sampleID：样本ID；&lt;br&gt;Number of Reads：reads总数；&lt;br&gt;Valid Barcodes：有效的10X Barcode比例 ；&lt;br&gt;Q30 Bases in Barcode：Barcode序列中质量值大于或等于30的碱基所占的百分比；&lt;br&gt;Q30 Bases in RNA Read 1：reads1中质量值大于或等于30的碱基所占的百分比；&lt;br&gt;Q30 Bases in UMI：UMI序列中质量值大于或等于30的碱基所占的百分比。
+》
+三级标题
+V(D)J基因的Reads富集和组装
+》
+正文
+CellRanger 在对Reads 富集前，使用 cutadapt去除Read-pairs上的接头和引物序列。随后将 Read-pairs比对到 V(D)J 基因片段上，将比对上的 read 用于后续的组装。组装的过程中，每个 barcode 是独立进行分析的。对过滤后的 read 按照 barcode 分组，其中每个barcode至多有100k的reads用于组装，且仅使用多于 10 个 reads 的 UMI 的 read 用于组装，最后获得 contigs 序列。
+》
+统计表	BMK_2_cellranger_analysis/BMK_2_T/BMK_1_summary/t_total_vdj_info_stat.xls
+表3		CellRanger T细胞分析统计
+注：sampleID：样本ID；&lt;br&gt;Reads Mapped to Any V(D)J Gene：比对到V(D)J基因片段的Reads在总Reads中占的百分比；&lt;br&gt;Reads Mapped to TRA/TRB：比对到 TRA/TRB 基因片段的Reads在总Reads中占的百分比；&lt;br&gt;Median TRA/TRB UMIs per Cell：每个细胞 TRA/TRB UMIs中位数；&lt;br&gt;Cells With Productive V-J Spanning Pair：拥有成对的有效 V 基因至 J 基因区的细胞占比；&lt;br&gt;Cells With Productive V-J Spanning (TRA, TRB) Pair：TRA 和 TRB 均有有效 V 基因至 J 基因区的细胞占比；&lt;br&gt;Cells With TRA/TRBContig：含有 TRA/TRB contig的细胞比例；&lt;br&gt;Cells With CDR3-annotated TRA/TRB Contig：含有CDR3序列的 TRA/TRB contig的细胞比例；&lt;br&gt;Cells With V-J Spanning TRA/TRB Contig：含有跨越V基因的5’端和J基因的3’端 TRA/TRB contig的细胞比例。
+》
+统计表	BMK_2_cellranger_analysis/BMK_2_B/BMK_1_summary/b_total_vdj_info_stat.xls
+表4		CellRanger B细胞分析统计
+注：sampleID：样本ID；&lt;br&gt;Reads Mapped to Any V(D)J Gene：比对到V(D)J基因片段的Reads在总Reads中占的百分比；&lt;br&gt;Reads Mapped to IGH/IGK/IGL：比对到IGH/IGK/IGL基因片段的Reads在总Reads中占的百分比；&lt;br&gt;Median IGH/IGK/IGL UMIs per Cell：每个细胞 IGH/IGK/IGL UMIs中位数；&lt;br&gt;Cells With Productive V-J Spanning Pair：拥有成对的有效 V 基因至 J 基因区的细胞占比；&lt;br&gt;Cells With IGH/IGK/IGL Contig：含有 IGH/IGK/IGL contig的细胞比例；&lt;br&gt;Cells With CDR3-annotated IGH/IGK/IGL Contig：含有CDR3序列的 IGH/IGK/IGL contig的细胞比例；&lt;br&gt;Cells With V-J Spanning IGH/IGK/IGL Contig：含有跨越V基因的5’端和J基因的3’端 IGH/IGK/IGL contig的细胞比例。
+》
+统计表	BMK_2_cellranger_analysis/BMK_2_T/BMK_1_summary/t_total_cell_info_stat.xls
+表5	CellRanger T细胞信息统计
+注：sampleID：样本ID；&lt;br&gt;Estimated Number of Cells：检测到的细胞数目；&lt;br&gt; Number of Cells With Productive V-J Spanning Pair：至少有一个检测到CDR3序列并且跨越V基因的5’端和J基因的3’端 contig的细胞比例；&lt;br&gt;Mean Reads per Cell：每个细胞的平均Reads数；&lt;br&gt;Mean Used Reads per Cell：每个细胞的平均使用的Reads数；&lt;br&gt;Fraction Reads in Cells：比对到参考基因且来源于高质量细胞的Reads比例。
+》
+统计表	BMK_2_cellranger_analysis/BMK_2_B/BMK_1_summary/b_total_cell_info_stat.xls
+表6	CellRanger B细胞信息统计
+注：sampleID：样本ID；&lt;br&gt;Estimated Number of Cells：检测到的细胞数目；&lt;br&gt; Number of Cells With Productive V-J Spanning Pair：至少有一个检测到CDR3序列并且跨越V基因的5’端和J基因的3’端 contig的细胞比例；&lt;br&gt;Mean Reads per Cell：每个细胞的平均Reads数；&lt;br&gt;Mean Used Reads per Cell：每个细胞的平均使用的Reads数；&lt;br&gt;Fraction Reads in Cells：比对到参考基因且来源于高质量细胞的Reads比例。
+》
+三级标题
+Contig筛选
+》
+正文
+CellRanger软件的vdj模块会对组装出来的contig序列进行筛选，得到高质量contig。
+》
+正文
+CellRanger contig结果统计如下表：
+》
+表格	BMK_2_cellranger_analysis/BMK_2_T/BMK_2_clonotypes/*filtered_contig_annotations.xls
+表7	CellRanger T细胞 contig结果
+注：barcode：细胞Barcode序列；&lt;br&gt;is_cell：判断该barcode是否为有效细胞；&lt;br&gt;contig_id：组装出的contig编号；&lt;br&gt;high_confidence：判断是否是高质量的contig；&lt;br&gt;lengh：contig长度；&lt;br&gt;chain：contig比对到的蛋白受体链；&lt;br&gt;v/d/j/c_gene：contig比对上的v/d/j/c基因名称；&lt;br&gt;full_length：contig是否为全长，即contig是否跨越V的5’端和J的3’端；&lt;br&gt;productive：contig能否编码有效蛋白受体；&lt;br&gt;cdr3：cdr3氨基酸序列；&lt;br&gt;cdr3_nt：cdr3核苷酸序列；&lt;br&gt;reads：组装该contig的reads数；&lt;br&gt;umis：组装该contig的reads上包含的umis数；&lt;br&gt;raw_clonotype_id：clonotype编号；&lt;br&gt;raw_consensus_id：一致性序列编号。
+》
+表格	BMK_2_cellranger_analysis/BMK_2_B/BMK_2_clonotypes/*filtered_contig_annotations.xls
+表8	CellRanger B细胞 contig结果
+注：barcode：细胞Barcode序列；&lt;br&gt;is_cell：判断该barcode是否为有效细胞；&lt;br&gt;contig_id：组装出的contig编号；&lt;br&gt;high_confidence：判断是否是高质量的contig；&lt;br&gt;lengh：contig长度；&lt;br&gt;chain：contig比对到的蛋白受体链；&lt;br&gt;v/d/j/c_gene：contig比对上的v/d/j/c基因名称；&lt;br&gt;full_length：contig是否为全长，即contig是否跨越V的5’端和J的3’端；&lt;br&gt;productive：contig能否编码有效蛋白受体；&lt;br&gt;cdr3：cdr3氨基酸序列；&lt;br&gt;cdr3_nt：cdr3核苷酸序列；&lt;br&gt;reads：组装该contig的reads数；&lt;br&gt;umis：组装该contig的reads上包含的umis数；&lt;br&gt;raw_clonotype_id：clonotype编号；&lt;br&gt;raw_consensus_id：一致性序列编号。
+

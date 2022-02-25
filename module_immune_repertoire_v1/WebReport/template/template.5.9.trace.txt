@@ -1,0 +1,28 @@
+》
+二级标题
+细胞拟时序分析
+》
+正文
+拟时间序列（Pseudotime）简称拟时序，它是一种测量一个细胞在一个生物学过程如细胞分化中进展程度的方法，它是对一个生物学过程的抽象，描述了一个细胞当前状态和时间轨迹的起始状态之间的最短路径的距离。拟时分析适用于发育生物学中的发育轨迹研究，或者肿瘤微环境中免疫细胞状态的变化研究等。Monocle$REF_16是一款利用反向图形嵌入（reversed graph embedding） 的机器学习方法，根据细胞基因表达量信息，预测、重构出细胞发育分化轨迹的软件。
+》
+图片	BMK_3_seurat_analysis/BMK_2_Analysis/BMK_1_*/BMK_*_trace_analysis/*cell_trajectory_state.png
+图2	细胞状态(stat)的拟时间分布图
+注：图中每个点代表细胞，不同的分支代表不同的演变或者分化轨迹，横纵坐标表示降维后的成分，不同的颜色表示不同的细胞状态。
+》
+图片	BMK_3_seurat_analysis/BMK_2_Analysis/BMK_1_*/BMK_*_trace_analysis/*cell_trajectory_cluster.png
+图2	细胞亚群（cluster）的拟时间分布图
+注：图中每个点代表细胞，不同的分支代表不同的演变或者分化轨迹，横纵坐标表示降维后的成分，不同的颜色表示不同的cluster。
+》
+正文
+挑选与拟时序变化相关的基因（top5）进行展示。
+》
+图片	BMK_3_seurat_analysis/BMK_2_Analysis/BMK_1_*/BMK_*_trace_analysis/*cell_trajectory_top5_marker*.png
+图3	top5基因的拟时间分布图
+注：横坐标表示拟时间，纵坐标表示基因相对表达值。展示单个基因随着拟时间的变化趋势。
+》
+正文
+拟时序相关基因（top50）的热图展示。
+》
+图片	BMK_3_seurat_analysis/BMK_2_Analysis/BMK_1_*/BMK_*_trace_analysis/*cell_trajectory_heatmap.png
+图4	top50基因的热图
+注：行表示基因，列表示伪时间的点，默认是100个。

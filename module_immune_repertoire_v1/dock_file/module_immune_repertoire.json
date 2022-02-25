@@ -1,0 +1,83 @@
+{
+  "r1_fqs": {
+    "class": "File_array",
+    "value": "058624b4-19d0-4d1c-b597-08ad79d5b27f,0275e728-edc5-45f0-a91d-9445858406c2"
+  },
+  "r2_fqs": {
+    "class": "File_array",
+    "value": "3ef8251a-2043-44df-ba55-b91d3545eb7b,654cc7a1-c4d2-44f9-8b01-79bc4f9d5a0e"
+  },
+  "type": {
+    "class": "string_array",
+    "value": "SC"
+  },
+  "sampleName": {
+    "class": "string_array",
+    "value": "PBMC1,PBMC2"
+  },
+  "Diff": {
+    "class": "string_array",
+    "value": "PBMC1_vs_PBMC2"
+  },
+  "fold": {
+    "class": "string",
+    "value": "2"
+  },
+  "Thred": {
+    "class": "string",
+    "value": "0.1"
+  },
+  "Project_name": {
+    "class": "string",
+    "value": "10X_scRNA_test"
+  },
+  "Project_key": {
+    "class": "string",
+    "value": "Homo_sapiens"
+  },
+  "Species": {
+    "class": "string",
+    "value": "Homo_sapiens"
+  },
+  "Genome_version": {
+    "class": "string",
+    "value": "GRCh38_release95"
+  },
+  "refData": {
+    "class": "string",
+    "value": "DatabaseImmuneCellExpressionData"
+  },
+  "resolution": {
+    "class": "string",
+    "value": "0.2"
+  },
+  "minexp": {
+    "class": "string",
+    "value": "0.1"
+  },
+  "mincell": {
+    "class": "string",
+    "value": "10"
+  },
+  "minUMI": {
+    "class": "string",
+    "value": "100"
+  },
+  "minGene": {
+    "class": "string",
+    "value": "500"
+  },
+  "maxGene": {
+    "class": "string",
+    "value": ""
+  },
+  "maxpct": {
+    "class": "string",
+    "value": "0.2"
+  },
+  "SCT": {
+    "class": "string",
+    "value": "true"
+  }
+}
+

@@ -1,0 +1,10 @@
+》
+二级标题
+差异表达基因注释
+》
+正文
+将得到的差异基因与NR$REF_7，Swiss-Prot$REF_8，GO$REF_9，COG$REF_10，KOG$REF_11，Pfam$REF_12，KEGG$REF_13数据库进行序列比对，得到基因的注释信息。
+》
+文件集合	BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/*/BMK_1_Anno/*.annotation.xls
+差异表达基因注释文件
+注：网页版只展示前6行。&lt;br&gt;ID：基因ID；&lt;br&gt;symbol：基因symbol；&lt;br&gt;Pvalue：显著性p值；&lt;br&gt;log2FC：差异倍数的log2值；&lt;br&gt;pct.1：基因在cluster(i)中有表达的细胞比例；&lt;br&gt;pct.2：基因在除了cluster(i)中以外所有的cluster中有表达的细胞比例；&lt;br&gt;Qvalue：校正后的p值；&lt;br&gt;Cluster：差异基因的cluster；&lt;br&gt;其余列：COG，GO，KEGG，KOG，Pfam，Swiss-Prot，eggNOG，NR数据库对应的注释信息。

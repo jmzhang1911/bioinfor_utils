@@ -1,0 +1,3 @@
+》
+摘要
+完成$sample_num个样本的单细胞免疫组库测序。在转录组数据中，获得$cells 个Cells，平均每个样本原始数据量为$data G。在免疫组库数据中，获得TCR相关$t_cells 个Cells，平均每个样本原始数据量为$t_data G；获得BCR相关$b_cells 个Cells，平均每个样本原始数据量为$b_data G。

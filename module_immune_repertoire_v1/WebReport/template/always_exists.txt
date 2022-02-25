@@ -1,0 +1,41 @@
+》
+一级标题
+1 实验流程
+》
+正文
+长链非编码测序首先需要从组织样品中提取总RNA，对总RNA的浓度、纯度、完整性等进行检测，以保证实验样本的可用性。样本检测合格后进行rRNA去除、链特异性文库制备，制备好的文库还需进行文库质检，质检合格后进行上机测序。为了从源头上保证测序数据的准确性、可靠性，我们对样品检测、建库、测序每一个生产步骤都严格把控，从根本上确保了高质量数据的产出。具体实验流程流程图如下：
+》
+示意图      Template/P01_RNA-Seq_experimental_workflow.png
+图01 长链非编码测序实验流程图
+》
+二级标题
+RNA样品检测
+》
+正文
+采用分子生物学先进设备检测RNA样品的纯度、浓度和完整性，以保障使用合格的样品进行长链非编码测序。
+》
+二级标题
+RNA文库构建
+》
+正文
+样品检测合格后，进行文库构建，主要流程如下：
+(1) 利用epicentre Ribo-Zero<sup>TM</sup>试剂盒去除样品rRNA；
+(2) 加入Fragmentation Buffer将rRNA-depleted RNA随机打断；
+(3) 以rRNA-depleted RNA为模板，用六碱基随机引物（random hexamers）合成第一条cDNA链，然后加入缓冲液、dATP、dUTP、dCTP、dGTP 、RNase H和DNA polymerase I合成第二条cDNA链，利用AMPure XP beads纯化cDNA；
+(4) 纯化的双链cDNA再进行末端修复、加A并连接测序接头，然后用AMPure XP beads进行片段大小选择；
+(5) 最后降解含U链，最后通过PCR富集得到cDNA文库。
+》
+示意图      Template/experience.png
+图02 长链非编码测序建库流程图
+》
+二级标题
+文库质控
+》
+正文
+文库构建完成后，使用先进仪器对文库质量进行检测，检测结果达到要求后方可进行上机测序。
+》
+二级标题
+上机测序
+》
+正文
+库检合格后，不同文库按照目标下机数据量进行pooling，用IlluminaHiSeq平台进行测序。

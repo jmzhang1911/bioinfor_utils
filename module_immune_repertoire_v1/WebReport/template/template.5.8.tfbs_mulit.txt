@@ -1,0 +1,17 @@
+》
+二级标题
+转录因子结合位点预测
+》
+正文
+转录因子结合位点（Transcription factor binding site，TFBS）是与转录因子结合的DNA片段，长度通常在 5~20 bp范围内，一个转录因子往往同时调控若干个基因，而它在不同基因上的结合位点具有一定的保守性，又不完全相同。我们用R包TFBStools$REF_15对差异基因的启动子区域（定义基因上游１kb 左右为潜在的启动子区）上的 TFBS 进行了预测，参考的转录因子motif数据库是JASPAR数据库（http://jaspar.genereg.net/）。预测结果如下表：
+》
+表格	BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_5_TF_analysis/TFBS_Analysis/allGenes_TFBS_predictRes.xls
+表8	 转录因子结合位点预测结果
+注：Model_id：转录因子结合位点模体id；&lt;br&gt;seqname：基因名称；&lt;br&gt;start：开始位置；&lt;br&gt;end：结束位置；&lt;br&gt;score：评分，评分越高，表示该转录因子与输入序列结合的可能性越大；&lt;br&gt;strand：链方向, + 表示正链，- 表示负链；&lt;br&gt;frame：.；&lt;br&gt;Attributes：注释信息。TF：转录因子id；class：转录因子注释；sequence：TFBS序列；&lt;br&gt;Pvalue：P值。
+》
+正文
+TFBS序列特征示例图如下
+》
+图片	Template/TFBS_seqlogo.png
+图25	TFBS序列特征图
+注：横坐标为 motif 中碱基的相对位置，纵坐标为该位置碱基的序列保守性，而碱基信号的高度代表该碱基在该位置上的相对频率。

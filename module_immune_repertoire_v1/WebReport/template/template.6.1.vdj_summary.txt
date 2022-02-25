@@ -1,0 +1,76 @@
+》
+一级标题
+单细胞免疫组库分析结果
+》
+正文
+T淋巴细胞（T cell）和B淋巴细胞（B cell）主要负责适应性免疫应答，其抗原识别主要依赖于T细胞受体（T cell recptor, TCR）和B细胞受体（B cell recptor, BCR），这两类细胞表面分子的共同特点是其多样性，可以识别多种多样的抗原分子，而免疫组库就是针对B/T淋巴细胞抗原受体多样性检测，即BCR/TCR的多样性。BCR和TCR一般由可变区（V区）、多变区（D区）、连接区（J区）、恒定区（C区）构成，V(D)J区域在遗传过程中发生重排或重组，形成大量不同的组合形式，导致BCR和TCR基因序列多样性极其丰富，这些序列多样性集合称为免疫组库。
+TCR和BCR都是不同的V(D)J基因片段组成，BCR是由两条重链（IgH）和两条轻链(Igκ，Igλ)组成，重链包含了一个可变区（VH）和3个恒定区（CH1/CH2/CH3），轻链则包含了一个可变区（VL）和一个恒定区（CL）；而TCR由αβ链/γδ链组成，相应的编码基因TCRA、TCRB、TCRG、TCRD。
+TCR和BCR的可变区（V）分为 VH 和 VL 两个结构域组成，它们又各有三个互补决定区（complementarities determining region, CDR）CDR1、CDR2、CDR3 和间隔的 4 个骨架区（framework region, FR）构成。CDR1、CDR2 和 FR 区域相对保守，CDR3 变异最大，并直接决定了 TCR 的抗原结合特异性。BCR/TCR 的 CDR3 由 V、D、J 三个基因编码，淋巴细胞的成熟过程中，通过 V、D、J 基因的重排形成了各种重组序列片段，根据不同链V区、D区、J区片段的个数排列组合可以达到上万亿以上的序列组合。
+基于CellRanger鉴定到的结果，利用immunarch(R包)$REF_17对结果进行统计、可视化和多样性分析等。
+》
+二级标题
+Clonotypes 多样性分析
+》
+三级标题
+多样性指数
+》
+四级标题
+Chao1 指数
+》
+正文
+Chao1 指数在生态学中用来估计物种总数，这里我们用来它来反应 Clonotypes 的数目，由Chao(1984) 最早提出。所以 chao1 指数越高，Clonotypes 数目越多。
+》
+四级标题
+基尼系数
+》
+正文
+基尼系数（Gini coefficient）是 1943 年美国经济学家阿尔伯特•赫希曼根据洛伦兹曲线所定义的判断收入分配公平程度的指标。基尼系数是比例数值，在 0 和 1 之间，是国际上用来综合考察居民内部收入分配差异状况的一个重要分析指标。在这我们使用基尼系数来表示Clonotyoes 之间的差异性；越接近1，代表Clonotypes 之间差异性越大；越接近0，代表Clonotypes 之间差异性越小。
+》
+四级标题
+基尼辛普森多样性指数
+》
+正文
+辛普森多样性指数（Simpson index）是一种简便的测定群落中物种多样性的指数。基尼辛普森多样性指数=随机取样的两个个体属于不同种的概率=1-随机取样的两个个体属于同种的概率。基尼辛普森多样性指数的最低值是 0，最高值为 1；基尼辛普森多样性指数越大表明Clonotypes 多样性越高。
+》
+四级标题
+D50
+》
+正文
+D50 是最新提出的用于评估免疫组库多样性的指标，它计算的是 Clonotypes 所对应的累计序列数大于或等于 50%的序列总数时 Clonotypes 的最小种类数。D50 值越大说明，Clonotypes 种类越多，分布越均匀。
+》
+统计表	BMK_4_vdj_analysis/BMK_*/BMK_*_AllSamples/*All_Sample_diversity_measure.xls
+表3	TCR/BCR多样性结果统计
+注：Sample：样本名称；&lt;br&gt;Chao1：Chao1指数；&lt;br&gt;Gini：基尼系数；&lt;br&gt;Gini_Simpson：基尼辛普森多样性指数；&lt;br&gt;D50：D50系数。&lt;br&gt;BMK_4_vdj_analysis/BMK_*/BMK_*_AllSamples/*All_Sample_diversity_measure.xls
+》
+三级标题
+Rank abundance
+》
+正文
+在生态学中，稀释曲线是一种通过取样结果来评估物种丰富度的技术。对细胞进行随机抽样，以抽到的细胞与它们所能代表Clonotypes 的数目构建曲线。一般当细胞足够多时，曲线会趋于平缓。
+》
+图片	BMK_4_vdj_analysis/BMK_*/BMK_*_AllSamples/*All_Sample_Rank-abundance.png
+图16	Rank Abundance 曲线
+注：横轴为抽样的深度（抽样的细胞数），纵轴是非重复的Clonotypes个数。颜色代表不同的分组。实线和虚线分别标记稀疏曲线的插值和外推区域。
+》
+三级标题
+稀释曲线
+》
+正文
+Clonotypes 多样性与 Clonotypes 大小之间存在依赖关系。理论上，如果测序深度足够大，则曲线最终会趋于水平。通过对比不同样本的稀释曲线可以直观显示样本间 Clonotypes 丰富度的差异，也可以用来评估样本的测序量是否合理。
+》
+图片	BMK_4_vdj_analysis/BMK_*/BMK_*_AllSamples/*All_Sample_rarefaction.png
+图16	样本稀释曲线
+》
+二级标题
+结果统计
+》
+正文
+因为TCR/BCR存在多条链的信息，且每条链上携带的信息差异较大，所以我们以单链为基础，对单链上的CDR3、V/D/J基因及相关基因对的结果进行统计和分析。
+》
+统计表	BMK_4_vdj_analysis/BMK*Tcell/BMK_*_AllSamples/*All_Samples_stat.xls
+表3 TCR结果统计
+注：Sample：样本名；&lt;br&gt;Chain：链名；&lt;br&gt;CDR3：非重复CDR3的个数 ；&lt;br&gt;V/D/J_Gene_variety：V/D/J 基因个数；&lt;br&gt;V-J_pair：V-J基因对个数；&lt;br&gt;V-D-J_pair：V-D-J基因对个数。
+》
+统计表	BMK_4_vdj_analysis/BMK*Bcell/BMK_*_AllSamples/*All_Samples_stat.xls
+表3	BCR结果统计
+注：Sample：样本名；&lt;br&gt;Chain：链名；&lt;br&gt;CDR3：非重复CDR3的个数 ；&lt;br&gt;V/D/J_Gene_variety：V/D/J 基因个数；&lt;br&gt;V-J_pair：V-J基因对个数；&lt;br&gt;V-D-J_pair：V-D-J基因对个数。

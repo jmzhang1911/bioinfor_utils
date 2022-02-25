@@ -1,0 +1,639 @@
+<?xml version="1.0" encoding="utf-8"?>
+<report>
+	<report_version value="v1.0" />
+	<report_name value="VDJ_test" />
+	<report_code value="" />
+	<report_user value="cloudpub" />
+	<report_user_addr value="cloudpub@biomarker.com.cn" />
+	<report_time value="2022/01/02" />
+	<report_type value="lncrna" />
+	<report_abstract value='' />
+	<report_abstract value="&lt;p class=&quot; p-abstract&quot; &gt;完成$sample_num个样本的单细胞免疫组库测序。在转录组数据中，获得$cells 个Cells，平均每个样本原始数据量为$data G。在免疫组库数据中，获得TCR相关$t_cells 个Cells，平均每个样本原始数据量为$t_data G；获得BCR相关$b_cells 个Cells，平均每个样本原始数据量为$b_data G。&lt;/p&gt;" />
+	<h1 name="1 背景介绍" type="type1" desc="1 背景介绍" />
+	<p type="type1" desc="10× Genomic单细胞免疫组库测序是建立在GemCode技术上的微流体平台，将带有barcode和引物的凝胶珠与单个细胞包裹在油滴中；接下来在每个油滴内，凝胶珠溶解，细胞裂解释放mRNA，凝胶珠上的引物序列与细胞裂解的mRNA结合，通过逆转录产生用于测序的带barcode的cDNA。液体油层破坏后，cDNA一分为二，后续同时进行基因表达和免疫组库文库构建；其中TCR或者BCR的VDJ序列通过设计在TCR或BCR的VDJ区域的巢式PCR引物进行富集。然后使用Illumina测序平台对文库进行测序检测，即可一次性获得大量单细胞基因表达和免疫组库数据，实现在单细胞水平同时对基因表达和免疫组库进行研究。" />
+	<h1 name="2 实验流程" type="type1" desc="2 实验流程" />
+	<p type="type1" desc="单细胞免疫组测序实验流程主要包括单细胞悬液制备和质检、GEMs生成、反转录成cDNA、cDNA回收扩增、V(D)J区域富集和建库、5’转录组文库构建以及上机测序。实验流程见下图：" />
+	<pic name="图1 10X单细胞免疫组测序实验流程图" type="img-width-normal" desc=" " path="Template/experimental_workflow.png" />
+	<h2 name="2.1 单细胞悬液的制备和质检" type="type1" desc="2.1 单细胞悬液的制备和质检" />
+	<p type="type1" desc="根据组织或细胞样品的来源和特性，选取适合的方法将其在较短时间内制备成单细胞悬液并进行细胞质控，单细胞悬液中细胞活性高于85%，结团率小于10%，细胞浓度为700-1200 cells/μL，体积大于100μL；要严格把控单细胞悬液的浓度和质量，以保障使用合格的样品进行10X单细胞免疫组测序。" />
+	<h2 name="2.2 Chromium Controller 生成GEMs和逆转录" type="type1" desc="2.2 Chromium Controller 生成GEMs和逆转录" />
+	<p type="type1" desc="通过质检的单细胞悬液尽快在Chromium Controller 生成GEMs。在微流控芯片中，将单个细胞、反应所需试剂，与带有细胞标签序列（cell Barcode）的凝胶珠（Gel bead）一起包裹在油滴中，生成GEMs；在GEM油滴中，细胞裂解释放出RNA，在合适的条件下，RNA与Poly(dT)引物结合，进行互补链延伸，并在延伸链末端加上3个CCC；CCC与Gel bead上Oligonucleotides 上的rGrGrG互补配对后完成Gel bead上其他序列的延伸，完成逆转录反应。" />
+	<h2 name="2.3 cDNA回收、扩增和质检" type="type1" desc="2.3 cDNA回收、扩增和质检" />
+	<p type="type1" desc="随后打破GEMs，利用磁珠回收cDNA；通过PCR扩增全长cDNA，对全长cDNA浓度和片段长度进行质检。" />
+	<h2 name="2.4 巢式富集V(D)J片段" type="type1" desc="2.4 巢式富集V(D)J片段" />
+	<p type="type1" desc="通过人/鼠的TCR/BCR的巢式PCR引物扩增全长cDNA，富集 V(D)J 基因序列，并对富集产物进行质检（富集片段的大小和产量）。" />
+	<h2 name="2.5 V(D)J片段和5’转录组文库构建和质控" type="type1" desc="2.5 V(D)J片段和5’转录组文库构建和质控" />
+	<p type="type1" desc="选择适量的cDNA分别对V(D)J片段和5’转录组进行文库构建，文库构建基本包括片段化、末端修复和加A尾，接头连接和双端Index 扩增等基本步骤，并对构建的文库进行质检。" />
+	<p type="type1" desc="文库质检主要包括两个方面：" />
+	<p type="type1" desc="（1）Qubit 4.0 检测文库浓度；" />
+	<p type="type1" desc="（2）Qseq 400 或2100检测文库的插入片段大小；标准为：插入片段大小合格，峰型单一，无杂峰，无接头和无引物二聚体" />
+	<h2 name="2.6 上机测序" type="type1" desc="2.6 上机测序" />
+	<p type="type1" desc="文库质检合格后，使用Illumina PE150 测序策略进行测序。" />
+	<h1 name="3 信息分析流程" type="type1" desc="3 信息分析流程" />
+	<p type="type1" desc="利用10X Genomics官方软件CellRanger$REF_1进行数据比对、基因定量以及细胞鉴定。同时CellRanger还基于鉴定的细胞进行了细胞亚群分析以及差异表达基因分析。根据CellRanger鉴定出的细胞类型以及定量结果，后续采用Seurat软件对数据做了二次过滤，对过滤后的数据进行二次分析，包括：细胞亚群分析、差异表达基因分析、GO/KEGG富集分析以及PPI网络分析等等。CellRanger中的vdj模块能够识别reads上的标记对单个细胞进行组装并获得contig序列，将contig序列VDJ参考序列进行比对注释，得到V、D、J基因注释信息和CDR3序列信息，对得到的contig进行过滤，最终确定Clonotypes。为了保证报告的流畅所有文件链接以及表格都只展示前6行，完整内容请见相应的结果文件。" />
+	<pic name="图2 10X单细胞免疫组库生信分析流程图" type="img-width-normal" desc=" " path="Template/analysis_workflow.png" />
+	<h1 name="4 基本分析结果" type="type1" desc="4 基本分析结果" />
+	<h2 name="4.1 测序数据及其质量评估" type="type1" desc="4.1 测序数据及其质量评估" />
+	<p type="type1" desc="高通量测序（如 Illumina HiSeq PE125/PE150）下机得到的原始图像文件经 CASAVA 碱基识别转化为测序读段（Sequenced Reads），以 FASTQ 格式存储。FASTQ 是一种存储 生物序列及相应质量值的常用文本格式，格式如下。10X Genomics测序数据每个样本的数据包含I1，I2，R1，R2。I1,I2存储了index信息；R1即read1，包含了barcode和UMI信息。R2即read2，记录了从细胞中所获得的序列信息。使用fastqc软件对每个样本的read2数据进行质控分析。" />
+	<pic name="图3 FASTQ格式文件示意图" type="img-width-normal" desc=" " path="Template/fastq.png" />
+	<h3 name="4.1.1 测序碱基质量值" type="type1" desc="4.1.1 测序碱基质量值" />
+	<p type="type1" desc="碱基质量值（Quality Score）是碱基识别（Base Calling）出错的概率的整体映射。通常使用的碱基质量值Q公式$REF_2为：" />
+	<p type="type1" desc="$$Q_{-score} = -10*log_{10}P$$" />
+	<p type="type1" desc="其中P为碱基识别出错的概率。下表给出了碱基质量值与碱基识别出错的概率的对应关系：" />
+	<table name="表1 碱基质量值与碱基识别出错的概率的对应关系表" type="full" path="Template/error.txt" desc="注：碱基质量值越高表明碱基识别越可靠，准确度越高。比如，对于碱基质量值为Q20的碱基识别，100个碱基中有1个会识别出错，以此类推。" />
+	<p type="type1" desc="测序数据碱基质量值分布如下图:" />
+	<pic_list name="图4 碱基质量分布图" type="type1" desc="注：横坐标为Reads的碱基位置，纵坐标为碱基质量值，蓝线为质量值平均值，箱线的上下线为质量值的极值。" >
+		<pic name="G1Po-b.per_base_quality.png" desc="" path="BMK_1_rawData/G1Po-b.per_base_quality.png" />
+		<pic name="G1Po-sc.per_base_quality.png" desc="" path="BMK_1_rawData/G1Po-sc.per_base_quality.png" />
+		<pic name="G1Po-t.per_base_quality.png" desc="" path="BMK_1_rawData/G1Po-t.per_base_quality.png" />
+		<pic name="G1Pr-b.per_base_quality.png" desc="" path="BMK_1_rawData/G1Pr-b.per_base_quality.png" />
+		<pic name="G1Pr-sc.per_base_quality.png" desc="" path="BMK_1_rawData/G1Pr-sc.per_base_quality.png" />
+		<pic name="G1Pr-t.per_base_quality.png" desc="" path="BMK_1_rawData/G1Pr-t.per_base_quality.png" />
+		<pic name="G3Po-b.per_base_quality.png" desc="" path="BMK_1_rawData/G3Po-b.per_base_quality.png" />
+		<pic name="G3Po-sc.per_base_quality.png" desc="" path="BMK_1_rawData/G3Po-sc.per_base_quality.png" />
+		<pic name="G3Po-t.per_base_quality.png" desc="" path="BMK_1_rawData/G3Po-t.per_base_quality.png" />
+		<pic name="G3Pr-b.per_base_quality.png" desc="" path="BMK_1_rawData/G3Pr-b.per_base_quality.png" />
+		<pic name="G3Pr-sc.per_base_quality.png" desc="" path="BMK_1_rawData/G3Pr-sc.per_base_quality.png" />
+		<pic name="G3Pr-t.per_base_quality.png" desc="" path="BMK_1_rawData/G3Pr-t.per_base_quality.png" />
+	</pic_list>
+	<h3 name="4.1.2 测序碱基含量分布" type="type1" desc="4.1.2 测序碱基含量分布" />
+	<p type="type1" desc="碱基类型分布检查用于检测有无AT、GC分离现象。理论上，G和C、A和T的含量每个测序循环上应分别相等，且整个测序过程稳定不变，呈水平线。由于Reads 5’端的前几个碱基为随机引物序列存在一定的偏好性，因此会在碱基分布图中出现前端波动较大的现象。" />
+	<p type="type1" desc="GC含量分布图如下：" />
+	<pic_list name="图6    GC含量分布图" type="type1" desc="注：横坐标表示GC含量的比例，纵坐标表示当前GC含量的reads个数（红色代表实际分布，蓝色代表理论分布）。" >
+		<pic name="G1Po-b.per_sequence_gc_content.png" desc="" path="BMK_1_rawData/G1Po-b.per_sequence_gc_content.png" />
+		<pic name="G1Po-sc.per_sequence_gc_content.png" desc="" path="BMK_1_rawData/G1Po-sc.per_sequence_gc_content.png" />
+		<pic name="G1Po-t.per_sequence_gc_content.png" desc="" path="BMK_1_rawData/G1Po-t.per_sequence_gc_content.png" />
+		<pic name="G1Pr-b.per_sequence_gc_content.png" desc="" path="BMK_1_rawData/G1Pr-b.per_sequence_gc_content.png" />
+		<pic name="G1Pr-sc.per_sequence_gc_content.png" desc="" path="BMK_1_rawData/G1Pr-sc.per_sequence_gc_content.png" />
+		<pic name="G1Pr-t.per_sequence_gc_content.png" desc="" path="BMK_1_rawData/G1Pr-t.per_sequence_gc_content.png" />
+		<pic name="G3Po-b.per_sequence_gc_content.png" desc="" path="BMK_1_rawData/G3Po-b.per_sequence_gc_content.png" />
+		<pic name="G3Po-sc.per_sequence_gc_content.png" desc="" path="BMK_1_rawData/G3Po-sc.per_sequence_gc_content.png" />
+		<pic name="G3Po-t.per_sequence_gc_content.png" desc="" path="BMK_1_rawData/G3Po-t.per_sequence_gc_content.png" />
+		<pic name="G3Pr-b.per_sequence_gc_content.png" desc="" path="BMK_1_rawData/G3Pr-b.per_sequence_gc_content.png" />
+		<pic name="G3Pr-sc.per_sequence_gc_content.png" desc="" path="BMK_1_rawData/G3Pr-sc.per_sequence_gc_content.png" />
+		<pic name="G3Pr-t.per_sequence_gc_content.png" desc="" path="BMK_1_rawData/G3Pr-t.per_sequence_gc_content.png" />
+	</pic_list>
+	<h3 name="4.1.3 原始数据质量评估" type="type1" desc="4.1.3 原始数据质量评估" />
+	<p type="type1" desc="该项目各样品数据产出统计见下表：" />
+	<h2 name="4.2 CellRanger单细胞转录组数据统计及定量" type="type1" desc="4.2 CellRanger单细胞转录组数据统计及定量" />
+	<file_list name="CellRanger分析结果网页版报告链接：" type="xls" desc="">
+		<file name="G1Po-sc.web_summary.html" desc="" type="xls" path="HTML/G1Po-sc.web_summary.html" action="xls" />
+		<file name="G1Pr-sc.web_summary.html" desc="" type="xls" path="HTML/G1Pr-sc.web_summary.html" action="xls" />
+		<file name="G3Po-sc.web_summary.html" desc="" type="xls" path="HTML/G3Po-sc.web_summary.html" action="xls" />
+		<file name="G3Pr-sc.web_summary.html" desc="" type="xls" path="HTML/G3Pr-sc.web_summary.html" action="xls" />
+	</file_list>
+	<h3 name="4.2.1 单细胞转录组测序数据产出统计" type="type1" desc="4.2.1 单细胞转录组测序数据产出统计" />
+	<p type="type1" desc="该项目各样品测序数据产出统计见下表：" />
+	<table name="表3 CellRanger分析序列统计" type="full" path="BMK_2_cellranger_analysis/BMK_1_SC/BMK_1_summary/sc_total_seqence_info_stat.xls" desc="注：sampleID：样本ID；&lt;br&gt;Number of Reads：reads总数；&lt;br&gt;Valid Barcodes：有效的10X Barcode比例 ；&lt;br&gt;Sequencing Saturation：测序饱和度；&lt;br&gt;Q30 Bases in Barcode：Barcode序列中质量值大于或等于30的碱基所占的百分比；&lt;br&gt;Q30 Bases in RNA Read：reads中质量值大于或等于30的碱基所占的百分比；&lt;br&gt;Q30 Bases in UMI：UMI序列中质量值大于或等于30的碱基所占的百分比。" />
+	<h3 name="4.2.2 数据比对" type="type1" desc="4.2.2 数据比对" />
+	<p type="type1" desc="采用10X Genomics官方软件CellRanger对测序数据进行比对及定量。CellRanger将read2通过STAR软件比对到参考基因组上。基于 STAR$REF_3 的比对结果，结合参考数据集（gtf／gff 文件）里的信息，统计基因组上各个区域的reads覆盖信息，可以得到比对到外显子，内含子，基因间区的比例信息，做为数据质控的参考指标。将reads 既比对到已知转录本的外显子上又在同一条链上的作为比对到转录本上的依据。如果该reads比对到已知的单个基因上，将reads称为唯一比对到转录组上。只有比对到转录本上的reads才能作为 UMI 计数。STAR是一款RNA-Seq数据分析常用的分段比对工具，可以用来发现外显子的连接以及融合现象，其基本工作原理主要分成两步：种子序列的寻找，以及聚类／连接／打分。下图为其原理示意图：" />
+	<pic name="图7 STAR 比对原理" type="img-width-normal" desc="注：最大可比对标签（Maximum Mappable Prefix, MMP）的寻找用于发现（a）外显子连接处，（b）错配，（c）多聚 A 尾， 或者接头，或者低质量尾。" path="Template/STAR.png" />
+	<p type="type1" desc="CellRanger分析比对结果统计如下表：" />
+	<table name="表4 	CellRanger分析比对结果统计" type="full" path="BMK_2_cellranger_analysis/BMK_1_SC/BMK_1_summary/sc_total_mapped_info_stat.xls" desc="注：sampleID：样本ID；&lt;br&gt;Reads Mapped to Genome：比对到参考基因组上的Reads在总Reads中占的百分比；&lt;br&gt;Reads Mapped Confidently to Genome：比对到参考基因组并得到转录本GTF信息支持的Reads在总Reads中占的百分比；&lt;br&gt;Reads Mapped Confidently to Intergenic Regions：比对到基因间区域的Reads在总Reads中占的百分比；&lt;br&gt;Reads Mapped Confidently to Intronic Regions：比对到内含子区域的Reads在总Reads中占的百分比；&lt;br&gt;Reads Mapped Confidently to Exonic Regions：比对到外显子区域的Reads在总Reads中占的百分比；&lt;br&gt;Reads Mapped Antisense to Gene：比对到基因反义链的Reads在总Reads中占的百分比；&lt;br&gt;Reads Mapped Confidently to Transcriptome：比对到已知参考转录本的Reads在总Reads中占的百分比；&lt;br&gt;Fraction Reads in Cells：比对到参考基因且来源于高质量细胞的Reads在总Reads中占的百分比。" />
+	<h3 name="4.2.3 细胞鉴定及基因表达定量" type="type1" desc="4.2.3 细胞鉴定及基因表达定量" />
+	<p type="type1" desc="10X 单细胞转录组的基因表达定量，主要基于UMI计数来实现的。通过UMI可以区分一条read是否属于生物学重复还是技术重复，能够有效地去除PCR效应。CellRanger对每个Barcode下的基因去除重复的UMI，统计unique UMI数目即表示细胞基因的表达量。CellRanger分析细胞统计如下表：" />
+	<table name="表5 CellRanger分析细胞信息统计" type="full" path="BMK_2_cellranger_analysis/BMK_1_SC/BMK_1_summary/sc_total_cell_info_stat.xls" desc="注：sampleID：样本ID；&lt;br&gt;Estimated Number of Cells：检测到的细胞数目；&lt;br&gt;Mean Reads per Cell：每个细胞平均Reads数目 ；&lt;br&gt;Median UMI Counts per Cell：每个细胞的UMI中位数；&lt;br&gt;Median Genes per Cell：每个细胞中基因数目的中位数；&lt;br&gt;Total Genes Detected：所有细胞的基因总数。" />
+	<table name="表6 细胞基因表达量统计" type="full" path="Web_Report//Template/G1Po-sc.All_cell_counts.xls.tmp" desc="注：EnsembleId: gene ID；&lt;br&gt;gene: gene symbol； &lt;br&gt;第三列-最后列：barcode标记的细胞名。" />
+	<h2 name="4.3 单样本细胞亚群分析" type="type1" desc="4.3 单样本细胞亚群分析" />
+	<p type="type1" desc="CellRanger在得到细胞中基因表达量矩阵的同时也完成了细胞亚群分析以及差异marker gene筛选。首先对基因表达的UMI做均一化处理,使用PCA(Principal Component Analysis)、t-SNE(t-Distributed Stochastic Neighbor Embedding)$REF_4、UMAP$REF_5对数据进行降维处理。选取PCA结果中方差最大的前10个主成分,基于Graph-based和K-Means两种方法进行细胞聚类。" />
+	<p type="type1" desc="1) Graph-based：基于图的聚类算法，是通过构建稀疏邻近的图，然后再图中寻找高度连接的Louvain算法。k值是细胞数量值取对数得到；在聚类的过程中，若cluster中没有差异基因，则会进行进一步的层次聚类，直到没有可以合并的 cluster。 " />
+	<p type="type1" desc="2) K-Means：将数据构建k个子集，然后计算每个类的中心点，向中心点聚集，直到聚类结果不在变化时停止。" />
+	<pic name="图8 CellRanger t-SNE示例图" type="img-width-normal" desc="注：该图为示意图，具体cellranger聚类tsne图请见CellRanger分析结果网页版报告链接。" path="Template/cellranger-tsne.png" />
+	<file_list name="CellRanger聚类结果：" type="xls" desc="">
+		<file name="G1Po-sc.graphclust.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G1Po-sc.graphclust.clusters.xls.html" action="xls" />
+		<file name="G1Po-sc.kmeans10.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G1Po-sc.kmeans10.clusters.xls.html" action="xls" />
+		<file name="G1Po-sc.kmeans2.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G1Po-sc.kmeans2.clusters.xls.html" action="xls" />
+		<file name="G1Po-sc.kmeans3.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G1Po-sc.kmeans3.clusters.xls.html" action="xls" />
+		<file name="G1Po-sc.kmeans4.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G1Po-sc.kmeans4.clusters.xls.html" action="xls" />
+		<file name="G1Po-sc.kmeans5.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G1Po-sc.kmeans5.clusters.xls.html" action="xls" />
+		<file name="G1Po-sc.kmeans6.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G1Po-sc.kmeans6.clusters.xls.html" action="xls" />
+		<file name="G1Po-sc.kmeans7.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G1Po-sc.kmeans7.clusters.xls.html" action="xls" />
+		<file name="G1Po-sc.kmeans8.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G1Po-sc.kmeans8.clusters.xls.html" action="xls" />
+		<file name="G1Po-sc.kmeans9.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G1Po-sc.kmeans9.clusters.xls.html" action="xls" />
+		<file name="G1Pr-sc.graphclust.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G1Pr-sc.graphclust.clusters.xls.html" action="xls" />
+		<file name="G1Pr-sc.kmeans10.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G1Pr-sc.kmeans10.clusters.xls.html" action="xls" />
+		<file name="G1Pr-sc.kmeans2.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G1Pr-sc.kmeans2.clusters.xls.html" action="xls" />
+		<file name="G1Pr-sc.kmeans3.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G1Pr-sc.kmeans3.clusters.xls.html" action="xls" />
+		<file name="G1Pr-sc.kmeans4.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G1Pr-sc.kmeans4.clusters.xls.html" action="xls" />
+		<file name="G1Pr-sc.kmeans5.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G1Pr-sc.kmeans5.clusters.xls.html" action="xls" />
+		<file name="G1Pr-sc.kmeans6.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G1Pr-sc.kmeans6.clusters.xls.html" action="xls" />
+		<file name="G1Pr-sc.kmeans7.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G1Pr-sc.kmeans7.clusters.xls.html" action="xls" />
+		<file name="G1Pr-sc.kmeans8.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G1Pr-sc.kmeans8.clusters.xls.html" action="xls" />
+		<file name="G1Pr-sc.kmeans9.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G1Pr-sc.kmeans9.clusters.xls.html" action="xls" />
+		<file name="G3Po-sc.graphclust.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G3Po-sc.graphclust.clusters.xls.html" action="xls" />
+		<file name="G3Po-sc.kmeans10.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G3Po-sc.kmeans10.clusters.xls.html" action="xls" />
+		<file name="G3Po-sc.kmeans2.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G3Po-sc.kmeans2.clusters.xls.html" action="xls" />
+		<file name="G3Po-sc.kmeans3.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G3Po-sc.kmeans3.clusters.xls.html" action="xls" />
+		<file name="G3Po-sc.kmeans4.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G3Po-sc.kmeans4.clusters.xls.html" action="xls" />
+		<file name="G3Po-sc.kmeans5.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G3Po-sc.kmeans5.clusters.xls.html" action="xls" />
+		<file name="G3Po-sc.kmeans6.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G3Po-sc.kmeans6.clusters.xls.html" action="xls" />
+		<file name="G3Po-sc.kmeans7.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G3Po-sc.kmeans7.clusters.xls.html" action="xls" />
+		<file name="G3Po-sc.kmeans8.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G3Po-sc.kmeans8.clusters.xls.html" action="xls" />
+		<file name="G3Po-sc.kmeans9.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G3Po-sc.kmeans9.clusters.xls.html" action="xls" />
+		<file name="G3Pr-sc.graphclust.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G3Pr-sc.graphclust.clusters.xls.html" action="xls" />
+		<file name="G3Pr-sc.kmeans10.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G3Pr-sc.kmeans10.clusters.xls.html" action="xls" />
+		<file name="G3Pr-sc.kmeans2.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G3Pr-sc.kmeans2.clusters.xls.html" action="xls" />
+		<file name="G3Pr-sc.kmeans3.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G3Pr-sc.kmeans3.clusters.xls.html" action="xls" />
+		<file name="G3Pr-sc.kmeans4.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G3Pr-sc.kmeans4.clusters.xls.html" action="xls" />
+		<file name="G3Pr-sc.kmeans5.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G3Pr-sc.kmeans5.clusters.xls.html" action="xls" />
+		<file name="G3Pr-sc.kmeans6.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G3Pr-sc.kmeans6.clusters.xls.html" action="xls" />
+		<file name="G3Pr-sc.kmeans7.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G3Pr-sc.kmeans7.clusters.xls.html" action="xls" />
+		<file name="G3Pr-sc.kmeans8.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G3Pr-sc.kmeans8.clusters.xls.html" action="xls" />
+		<file name="G3Pr-sc.kmeans9.clusters.xls" desc="" type="xls" path="Web_Report//HTML/G3Pr-sc.kmeans9.clusters.xls.html" action="xls" />
+	</file_list>
+	<h2 name="4.4 差异表达基因分析" type="type1" desc="4.4 差异表达基因分析" />
+	<p type="type1" desc="首先计算基因在某 cluster 内所有细胞的平均表达水平，然后与该基因在其他所有 cluster 中表达水平进行比较。为了找到 cell groups 之间的差异基因，CellRanger 使用简单快速的 sseq 方法(sseq 采用的负二项检验)。当 counts 数量逐渐增大的时候，CellRanger 将会自动切换到 edgeR 中使用 beta 进行检验。差异基因计算是基于一个 cluster，得到的是该 cell cluster 与样品中其他 cells 的差异基因列表。" />
+	<table name="表7 CellRanger差异结果" type="full" path="Web_Report//Template/G1Po-sc.graphclust.differential_expression.xls.tmp" desc="注：Feature_ID：基因ID；&lt;br&gt;Feature_Name：基因symbol；&lt;br&gt;Cluster_n_Mean_Counts：基因在cluster n 的平均表达值；&lt;br&gt;Cluster_n_log2FC：基因在cluster n中的log2FC值；&lt;br&gt;Cluster_n_Adjusted_p_value：基因在cluster n 中的校正后的p值。" />
+	<h1 name="5 单细胞转录组分析结果" type="type1" desc="5 单细胞转录组分析结果" />
+	<p type="type1" desc="10x Genomics Chromium 系统利用8通道的微流体 “双十字” 交叉系统，将含有barcode 的凝胶珠（Gel Beads）、细胞和酶的混合物、油三者混合，形成 GEMs（油包水的微体系）。理想情况下凝胶珠中的细胞只有1个，但实验过程中也存在空细胞或者是2个甚至多个细胞的情况。并且当细胞发生死亡或者裂解时，细胞中将含有大量的线粒体基因。CellRanger分析时并未对有效细胞进行筛选，因此后续使用Seurat$REF_6软件做进一步分析。主要包括细胞过滤、数据标准化处理、PCA分析、t-SNE分析、UMAP分析、细胞聚类、差异Marker Gene分析等。" />
+	<h2 name="5.1 细胞过滤" type="type1" desc="5.1 细胞过滤" />
+	<p type="type1" desc="目前主要根据细胞表达的基因数目、细胞的UMI总数、线粒体基因占比三个指标来对细胞进行过滤。细胞的最低基因数目一般在200-500之间，本项目过滤基因表达数目小于500的细胞。过滤掉线粒体基因含量在20%以上的细胞。" />
+	<p type="type1" desc="统计过滤前后各个样本细胞的nGene（number of Gene），nUMI（number of UMI）和percent.mt（线粒体基因）占比，结果如下图所示：" />
+	<pic_list name="图9 过滤前各样本细胞的小提琴图" type="type1" desc="注：每个点表示一个细胞。nGene图：过滤前各个样本单个细胞中检测到的基因数量分布情况；nUMI图：过滤前各个样本单个细胞中检测到的nUMI分布情况；percent.mt图：过滤前各个样本单个细胞中线粒体基因表达量的百分比分布情况。" >
+		<pic name="G1Po-sc.sc.Result_nofilter.vln.png" desc="" path="BMK_3_seurat_analysis/BMK_1_DataFilter/G1Po-sc.sc.Result_nofilter.vln.png" />
+		<pic name="G1Pr-sc.sc.Result_nofilter.vln.png" desc="" path="BMK_3_seurat_analysis/BMK_1_DataFilter/G1Pr-sc.sc.Result_nofilter.vln.png" />
+		<pic name="G3Po-sc.sc.Result_nofilter.vln.png" desc="" path="BMK_3_seurat_analysis/BMK_1_DataFilter/G3Po-sc.sc.Result_nofilter.vln.png" />
+		<pic name="G3Pr-sc.sc.Result_nofilter.vln.png" desc="" path="BMK_3_seurat_analysis/BMK_1_DataFilter/G3Pr-sc.sc.Result_nofilter.vln.png" />
+	</pic_list>
+	<pic_list name="图10 过滤后各样本细胞的小提琴图" type="type1" desc="注：每个点表示一个细胞。nGene图：过滤后各个样本单个细胞中检测到的基因数量分布情况；nUMI图：过滤后各个样本单个细胞中检测到的nUMI分布情况；percent.mt图：过滤后各个样本单个细胞中线粒体基因表达量的百分比分布情况。" >
+		<pic name="G1Po-sc.sc.Result_filter.vln.png" desc="" path="BMK_3_seurat_analysis/BMK_1_DataFilter/G1Po-sc.sc.Result_filter.vln.png" />
+		<pic name="G1Pr-sc.sc.Result_filter.vln.png" desc="" path="BMK_3_seurat_analysis/BMK_1_DataFilter/G1Pr-sc.sc.Result_filter.vln.png" />
+		<pic name="G3Po-sc.sc.Result_filter.vln.png" desc="" path="BMK_3_seurat_analysis/BMK_1_DataFilter/G3Po-sc.sc.Result_filter.vln.png" />
+		<pic name="G3Pr-sc.sc.Result_filter.vln.png" desc="" path="BMK_3_seurat_analysis/BMK_1_DataFilter/G3Pr-sc.sc.Result_filter.vln.png" />
+	</pic_list>
+	<p type="type1" desc="细胞中基因表达数目与UMI数目呈现正相关，细胞中检测到的UMI数目越多，表达的基因数目越多。线粒体基因与UMI数目没有明显的相关性。过滤前后相关性分析散点图如下所示：" />
+	<pic_list name="图11 过滤前各样本细胞的散点图" type="type1" desc="注：每个点表示一个细胞，图上方为相关性系数。左图表示细胞中检测到的UMI数目和线粒体基因含量的关系；右图表示表示细胞中检测到的UMI数目和表达基因数目的关系。" >
+		<pic name="G1Po-sc.sc.Result_nofilter.scatter.png" desc="" path="BMK_3_seurat_analysis/BMK_1_DataFilter/G1Po-sc.sc.Result_nofilter.scatter.png" />
+		<pic name="G1Pr-sc.sc.Result_nofilter.scatter.png" desc="" path="BMK_3_seurat_analysis/BMK_1_DataFilter/G1Pr-sc.sc.Result_nofilter.scatter.png" />
+		<pic name="G3Po-sc.sc.Result_nofilter.scatter.png" desc="" path="BMK_3_seurat_analysis/BMK_1_DataFilter/G3Po-sc.sc.Result_nofilter.scatter.png" />
+		<pic name="G3Pr-sc.sc.Result_nofilter.scatter.png" desc="" path="BMK_3_seurat_analysis/BMK_1_DataFilter/G3Pr-sc.sc.Result_nofilter.scatter.png" />
+	</pic_list>
+	<pic_list name="图12 过滤后各样本细胞的散点图" type="type1" desc="注：每个点表示一个细胞，图上方为相关性系数。左图表示细胞中检测到的UMI数目和线粒体基因含量的关系；右图表示表示细胞中检测到的UMI数目和表达基因数目的关系。" >
+		<pic name="G1Po-sc.sc.Result_filter.scatter.png" desc="" path="BMK_3_seurat_analysis/BMK_1_DataFilter/G1Po-sc.sc.Result_filter.scatter.png" />
+		<pic name="G1Pr-sc.sc.Result_filter.scatter.png" desc="" path="BMK_3_seurat_analysis/BMK_1_DataFilter/G1Pr-sc.sc.Result_filter.scatter.png" />
+		<pic name="G3Po-sc.sc.Result_filter.scatter.png" desc="" path="BMK_3_seurat_analysis/BMK_1_DataFilter/G3Po-sc.sc.Result_filter.scatter.png" />
+		<pic name="G3Pr-sc.sc.Result_filter.scatter.png" desc="" path="BMK_3_seurat_analysis/BMK_1_DataFilter/G3Pr-sc.sc.Result_filter.scatter.png" />
+	</pic_list>
+	<h2 name="5.2 多样本合并分析" type="type1" desc="5.2 多样本合并分析" />
+	<p type="type1" desc="10X单细胞测序对每个样本均得到对应的细胞和基因的表达矩阵，当项目存在多个样本时，需要对多个样本的数据进行合并以及数据的均一化。对合并后的数据在进行后续的分析。使用seurat软件对每个样本数据进行合并。" />
+	<pic name="图13 所有样本细胞的小提琴图" type="type1" desc="注：所有样本的数据展示，小提琴图不同颜色表示不同样本。每个点表示一个细胞。nGene图：过滤后各个样本单个细胞中检测到的基因数量分布情况；nUMI图：过滤后各个样本单个细胞中检测到的nUMI分布情况；percent.mt图：过滤后各个样本单个细胞中线粒体基因表达量的百分比分布情况。" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_1_AllData/All_vln.png" />
+	<pic name="图14 所有样本细胞的散点图" type="type1" desc="注：所有样本的细胞散点图，不同颜色表示不同样本。每个点表示一个细胞，图上方为相关性系数。左图表示细胞中检测到的UMI数目和线粒体基因含量的关系；右图表示表示细胞中检测到的UMI数目和表达基因数目的关系。" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_1_AllData/All_scatter.png" />
+	<h2 name="5.3 细胞聚类分析" type="type1" desc="5.3 细胞聚类分析" />
+	<p type="type1" desc="筛选得到有效细胞后，进一步对数据做标准化处理。10X Genomics通过CellRanger软件定量出的表达数据是一个 M*N 的矩阵（行是基因，列是细胞）。细胞数目通常可达几百上千个。对这样的矩阵聚类计算量极大。因此在对细胞进行聚类之前，需要先对数据进行降维。目前常用的降维算法包括：PCA(Principal Component Analysis)、t-SNE(t-Distributed Stochastic Neighbor Embedding)、UMAP(Uniform Manifold Approximation and Projection)。PCA降维是一种线性降维方法。运用方差分解，将高维的数据映射到低维的空间中表示。t-SNE与UMAP是一种用于探索高维数据的非线性降维算法。最终基于SNN聚类算法对细胞进行聚类。" />
+	<pic name="图15 细胞聚类的t-SNE图" type="type1" desc="注：每个点表示细胞，不同的颜色表示不同的聚类" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_3_Cluster/tsne_all.png" />
+	<pic name="图16 细胞聚类的UMAP图" type="type1" desc="注：每个点表示细胞，不同的颜色表示不同的聚类" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_3_Cluster/umap_all.png" />
+	<h2 name="5.4 marker基因筛选" type="type1" desc="5.4 marker基因筛选" />
+	<p type="type1" desc="基于上述聚类得到的结果，使用非参数检验方法（wilcox秩和检验）寻找在每个cluster中特异的基因即marker基因。将Fold Change≥ $FC 且Qvalue &lt; $FDR 作为筛选标准，筛选得到每个cluster最显著的差异基因，并对得到的差异基因进行GO和KEGG富集分析和注释。" />
+	<table name="表8 差异基因数目统计" type="full" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_1_Statistics/cluster_deg.stat.xls" desc=" " />
+	<table name="表9 cluster的Marker基因" type="full" path="Web_Report//Template/cluster0.diff_featuregene.xls.tmp" desc="注：ID：基因ID；&lt;br&gt;symbol：基因symbol；&lt;br&gt;Pvalue：显著性p值；&lt;br&gt;log2FC：差异倍数的log2值；&lt;br&gt;pct.1：基因在cluster(i) 中有表达的细胞比例；&lt;br&gt;pct.2：基因在除了cluster(i)中以外所有的cluster中有表达的细胞比例；&lt;br&gt;Qvalue：校正后的p值；&lt;br&gt;Cluster：差异基因的cluster。" />
+	<p type="type1" desc="每个cluster差异基因（top10）的表达变化热图展示。" />
+	<pic name="图17      各cluster差异基因（top10）的表达变化热图" type="type1" desc="注：红色表示高表达，蓝色表示低表达，顶部注释条表示cluster名。由于cluster之间的top10的差异基因间可能存在重复，因此实际基因数目可能偏小。热图右边特定选取每个cluster的top2的基因进行标出。" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_1_Statistics/top10_markergene_heatmap.png" />
+	<p type="type1" desc="每个cluster差异基因（top2）的气泡图展示。" />
+	<pic name="图18      各cluster差异基因（top2）的气泡图" type="type1" desc="注：颜色越深表示该基因平均表达值越高，点越大，表达比例越大。由于cluster之间的top2的差异基因间可能存在重复，因此实际基因数目可能偏小。" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_1_Statistics/top2_markergene_dotplot.png" />
+	<h3 name="5.4.1 top marker基因展示" type="type1" desc="5.4.1 top marker基因展示" />
+	<p type="type1" desc="从各个cluster的差异基因中挑选出差异倍数排名前10的基因进行展示。" />
+	<pic_list name="图19      Top10 Marker基因的小提琴图" type="type1" desc="注：图中横坐标代表细胞聚类的 cluster ，纵坐标代表基因的表达值。通过该图我们可以很直观的看出 marker 基因在不同的单细胞亚中群的表达量高低分布情况" >
+		<pic name="cluster0_top10_markerVln.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster0_top10_markerVln.png" />
+		<pic name="cluster1_top10_markerVln.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster1_top10_markerVln.png" />
+		<pic name="cluster2_top10_markerVln.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster2_top10_markerVln.png" />
+		<pic name="cluster3_top10_markerVln.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster3_top10_markerVln.png" />
+		<pic name="cluster4_top10_markerVln.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster4_top10_markerVln.png" />
+		<pic name="cluster5_top10_markerVln.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster5_top10_markerVln.png" />
+		<pic name="cluster6_top10_markerVln.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster6_top10_markerVln.png" />
+		<pic name="cluster7_top10_markerVln.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster7_top10_markerVln.png" />
+		<pic name="cluster8_top10_markerVln.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster8_top10_markerVln.png" />
+		<pic name="cluster9_top10_markerVln.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster9_top10_markerVln.png" />
+	</pic_list>
+	<pic_list name="图20      Top10 Marker基因的t-SNE图" type="type1" desc="注：top10 marker 基因所有细胞类型中表达值在t-SNE聚类结果中的可视化，每张图中紫色标记的细胞即为特异表达该 marker 基因的细胞类型。" >
+		<pic name="cluster0_top10_markerTsne.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster0_top10_markerTsne.png" />
+		<pic name="cluster1_top10_markerTsne.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster1_top10_markerTsne.png" />
+		<pic name="cluster2_top10_markerTsne.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster2_top10_markerTsne.png" />
+		<pic name="cluster3_top10_markerTsne.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster3_top10_markerTsne.png" />
+		<pic name="cluster4_top10_markerTsne.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster4_top10_markerTsne.png" />
+		<pic name="cluster5_top10_markerTsne.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster5_top10_markerTsne.png" />
+		<pic name="cluster6_top10_markerTsne.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster6_top10_markerTsne.png" />
+		<pic name="cluster7_top10_markerTsne.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster7_top10_markerTsne.png" />
+		<pic name="cluster8_top10_markerTsne.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster8_top10_markerTsne.png" />
+		<pic name="cluster9_top10_markerTsne.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster9_top10_markerTsne.png" />
+	</pic_list>
+	<pic_list name="图21      Top10 Marker基因的UMAP图" type="type1" desc="注：top10 marker 基因所有细胞类型中表达值在UMAP聚类结果中的可视化，每张图中紫色标记的细胞即为特异表达该 marker 基因的细胞类型。" >
+		<pic name="cluster0_top10_markerUmap.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster0_top10_markerUmap.png" />
+		<pic name="cluster1_top10_markerUmap.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster1_top10_markerUmap.png" />
+		<pic name="cluster2_top10_markerUmap.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster2_top10_markerUmap.png" />
+		<pic name="cluster3_top10_markerUmap.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster3_top10_markerUmap.png" />
+		<pic name="cluster4_top10_markerUmap.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster4_top10_markerUmap.png" />
+		<pic name="cluster5_top10_markerUmap.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster5_top10_markerUmap.png" />
+		<pic name="cluster6_top10_markerUmap.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster6_top10_markerUmap.png" />
+		<pic name="cluster7_top10_markerUmap.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster7_top10_markerUmap.png" />
+		<pic name="cluster8_top10_markerUmap.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster8_top10_markerUmap.png" />
+		<pic name="cluster9_top10_markerUmap.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_2_top10_marker/cluster9_top10_markerUmap.png" />
+	</pic_list>
+	<h2 name="5.5 差异表达基因注释" type="type1" desc="5.5 差异表达基因注释" />
+	<p type="type1" desc="将得到的差异基因与NR$REF_7，Swiss-Prot$REF_8，GO$REF_9，COG$REF_10，KOG$REF_11，Pfam$REF_12，KEGG$REF_13数据库进行序列比对，得到基因的注释信息。" />
+	<file_list name="差异表达基因注释文件" type="xls" desc="">
+		<file name="cluster0.diff_featuregene.annotation.xls" desc="" type="xls" path="Web_Report//HTML/cluster0.diff_featuregene.annotation.xls.html" action="xls" />
+		<file name="cluster1.diff_featuregene.annotation.xls" desc="" type="xls" path="Web_Report//HTML/cluster1.diff_featuregene.annotation.xls.html" action="xls" />
+		<file name="cluster2.diff_featuregene.annotation.xls" desc="" type="xls" path="Web_Report//HTML/cluster2.diff_featuregene.annotation.xls.html" action="xls" />
+		<file name="cluster3.diff_featuregene.annotation.xls" desc="" type="xls" path="Web_Report//HTML/cluster3.diff_featuregene.annotation.xls.html" action="xls" />
+		<file name="cluster4.diff_featuregene.annotation.xls" desc="" type="xls" path="Web_Report//HTML/cluster4.diff_featuregene.annotation.xls.html" action="xls" />
+		<file name="cluster5.diff_featuregene.annotation.xls" desc="" type="xls" path="Web_Report//HTML/cluster5.diff_featuregene.annotation.xls.html" action="xls" />
+		<file name="cluster6.diff_featuregene.annotation.xls" desc="" type="xls" path="Web_Report//HTML/cluster6.diff_featuregene.annotation.xls.html" action="xls" />
+		<file name="cluster7.diff_featuregene.annotation.xls" desc="" type="xls" path="Web_Report//HTML/cluster7.diff_featuregene.annotation.xls.html" action="xls" />
+		<file name="cluster8.diff_featuregene.annotation.xls" desc="" type="xls" path="Web_Report//HTML/cluster8.diff_featuregene.annotation.xls.html" action="xls" />
+		<file name="cluster9.diff_featuregene.annotation.xls" desc="" type="xls" path="Web_Report//HTML/cluster9.diff_featuregene.annotation.xls.html" action="xls" />
+	</file_list>
+	<h2 name="5.6 功能富集分析" type="type1" desc="5.6 功能富集分析" />
+	<h3 name="5.6.1 差异基因GO富集分析" type="type1" desc="5.6.1 差异基因GO富集分析" />
+	<p type="type1" desc="GO数据库是GO组织（Gene Ontology Consortium）于2000年构建的一个结构化的标准生物学注释系统，旨在建立基因及其产物知识的标准词汇体系，适用于各个物种。GO注释系统是一个有向无环图，包含三个主要分支，即：生物学过程（Biological Process，BP），分子功能（Molecular Function，MF）和细胞组分（Cellular Component，CC）。对每个cluster的差异基因集，采用ClusterProfiler对基因分别进行生物学过程，分子功能和细胞组分的富集分析。富集分析采用超几何检验方法来寻找与整个基因组背景相比显著富集的GO条目。对富集结果得到的Term采用绘制柱状图气泡图等进行可视化。" />
+	<pic_list name="图22 差异表达基因富集柱状图" type="type1" desc="注：图中横坐标为-log10(pvalue),纵坐标为对应的GO Term。每个柱子上的数字表示富集到该Term的基因数.不同的颜色分别代表GO的三个本体:BP、CC、MF" >
+		<pic name="cluster0_go_enrich_barplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_2_GO_enrichment/cluster0_go_enrich_barplot.png" />
+		<pic name="cluster1_go_enrich_barplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster1/BMK_2_GO_enrichment/cluster1_go_enrich_barplot.png" />
+		<pic name="cluster2_go_enrich_barplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster2/BMK_2_GO_enrichment/cluster2_go_enrich_barplot.png" />
+		<pic name="cluster3_go_enrich_barplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster3/BMK_2_GO_enrichment/cluster3_go_enrich_barplot.png" />
+		<pic name="cluster4_go_enrich_barplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster4/BMK_2_GO_enrichment/cluster4_go_enrich_barplot.png" />
+		<pic name="cluster5_go_enrich_barplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster5/BMK_2_GO_enrichment/cluster5_go_enrich_barplot.png" />
+		<pic name="cluster6_go_enrich_barplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster6/BMK_2_GO_enrichment/cluster6_go_enrich_barplot.png" />
+		<pic name="cluster7_go_enrich_barplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster7/BMK_2_GO_enrichment/cluster7_go_enrich_barplot.png" />
+		<pic name="cluster8_go_enrich_barplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster8/BMK_2_GO_enrichment/cluster8_go_enrich_barplot.png" />
+		<pic name="cluster9_go_enrich_barplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster9/BMK_2_GO_enrichment/cluster9_go_enrich_barplot.png" />
+	</pic_list>
+	<pic_list name="图23 差异表达基因富集气泡图" type="type1" desc="注：图中每一个圆表示一个Term，纵坐标表示Term名称，横坐标为富集因子，表示差异基因中注释到某Term的基因比例与所有基因中注释到该Term的基因比例的比值。富集因子越大，表示差异表达基因在该Term中的富集水平越显著。圆圈的颜色代表qvalue，qvalue为多重假设检验校正之后的P value，qvalue越小，表示差异表达基因在该Term中的富集显著性越可靠；圆圈的大小表示Term中富集的基因数目，圆圈越大，表示基因越多。" >
+		<pic name="cluster0_Biological_Process_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_2_GO_enrichment/cluster0_Biological_Process_enrich_dotplot.png" />
+		<pic name="cluster0_Cellular_Component_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_2_GO_enrichment/cluster0_Cellular_Component_enrich_dotplot.png" />
+		<pic name="cluster0_Molecular_Function_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_2_GO_enrichment/cluster0_Molecular_Function_enrich_dotplot.png" />
+		<pic name="cluster1_Biological_Process_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster1/BMK_2_GO_enrichment/cluster1_Biological_Process_enrich_dotplot.png" />
+		<pic name="cluster1_Cellular_Component_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster1/BMK_2_GO_enrichment/cluster1_Cellular_Component_enrich_dotplot.png" />
+		<pic name="cluster1_Molecular_Function_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster1/BMK_2_GO_enrichment/cluster1_Molecular_Function_enrich_dotplot.png" />
+		<pic name="cluster2_Biological_Process_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster2/BMK_2_GO_enrichment/cluster2_Biological_Process_enrich_dotplot.png" />
+		<pic name="cluster2_Cellular_Component_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster2/BMK_2_GO_enrichment/cluster2_Cellular_Component_enrich_dotplot.png" />
+		<pic name="cluster2_Molecular_Function_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster2/BMK_2_GO_enrichment/cluster2_Molecular_Function_enrich_dotplot.png" />
+		<pic name="cluster3_Biological_Process_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster3/BMK_2_GO_enrichment/cluster3_Biological_Process_enrich_dotplot.png" />
+		<pic name="cluster3_Cellular_Component_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster3/BMK_2_GO_enrichment/cluster3_Cellular_Component_enrich_dotplot.png" />
+		<pic name="cluster3_Molecular_Function_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster3/BMK_2_GO_enrichment/cluster3_Molecular_Function_enrich_dotplot.png" />
+		<pic name="cluster4_Biological_Process_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster4/BMK_2_GO_enrichment/cluster4_Biological_Process_enrich_dotplot.png" />
+		<pic name="cluster4_Cellular_Component_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster4/BMK_2_GO_enrichment/cluster4_Cellular_Component_enrich_dotplot.png" />
+		<pic name="cluster4_Molecular_Function_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster4/BMK_2_GO_enrichment/cluster4_Molecular_Function_enrich_dotplot.png" />
+		<pic name="cluster5_Biological_Process_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster5/BMK_2_GO_enrichment/cluster5_Biological_Process_enrich_dotplot.png" />
+		<pic name="cluster5_Cellular_Component_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster5/BMK_2_GO_enrichment/cluster5_Cellular_Component_enrich_dotplot.png" />
+		<pic name="cluster5_Molecular_Function_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster5/BMK_2_GO_enrichment/cluster5_Molecular_Function_enrich_dotplot.png" />
+		<pic name="cluster6_Biological_Process_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster6/BMK_2_GO_enrichment/cluster6_Biological_Process_enrich_dotplot.png" />
+		<pic name="cluster6_Cellular_Component_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster6/BMK_2_GO_enrichment/cluster6_Cellular_Component_enrich_dotplot.png" />
+		<pic name="cluster6_Molecular_Function_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster6/BMK_2_GO_enrichment/cluster6_Molecular_Function_enrich_dotplot.png" />
+		<pic name="cluster7_Biological_Process_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster7/BMK_2_GO_enrichment/cluster7_Biological_Process_enrich_dotplot.png" />
+		<pic name="cluster7_Cellular_Component_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster7/BMK_2_GO_enrichment/cluster7_Cellular_Component_enrich_dotplot.png" />
+		<pic name="cluster7_Molecular_Function_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster7/BMK_2_GO_enrichment/cluster7_Molecular_Function_enrich_dotplot.png" />
+		<pic name="cluster8_Biological_Process_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster8/BMK_2_GO_enrichment/cluster8_Biological_Process_enrich_dotplot.png" />
+		<pic name="cluster8_Cellular_Component_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster8/BMK_2_GO_enrichment/cluster8_Cellular_Component_enrich_dotplot.png" />
+		<pic name="cluster8_Molecular_Function_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster8/BMK_2_GO_enrichment/cluster8_Molecular_Function_enrich_dotplot.png" />
+		<pic name="cluster9_Biological_Process_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster9/BMK_2_GO_enrichment/cluster9_Biological_Process_enrich_dotplot.png" />
+		<pic name="cluster9_Cellular_Component_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster9/BMK_2_GO_enrichment/cluster9_Cellular_Component_enrich_dotplot.png" />
+		<pic name="cluster9_Molecular_Function_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster9/BMK_2_GO_enrichment/cluster9_Molecular_Function_enrich_dotplot.png" />
+	</pic_list>
+	<pic_list name="图24 差异表达基因富集网络图" type="type1" desc="注：差异表达基因与GO Term的网络图。边的颜色代表不同的Term，基因节点的颜色代表差异倍数，Term节点越大说明富集到该Term的基因数目越多。" >
+		<pic name="cluster0_Biological_Process_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_2_GO_enrichment/cluster0_Biological_Process_enrich_cnetplot.png" />
+		<pic name="cluster0_Cellular_Component_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_2_GO_enrichment/cluster0_Cellular_Component_enrich_cnetplot.png" />
+		<pic name="cluster0_Molecular_Function_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_2_GO_enrichment/cluster0_Molecular_Function_enrich_cnetplot.png" />
+		<pic name="cluster1_Biological_Process_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster1/BMK_2_GO_enrichment/cluster1_Biological_Process_enrich_cnetplot.png" />
+		<pic name="cluster1_Cellular_Component_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster1/BMK_2_GO_enrichment/cluster1_Cellular_Component_enrich_cnetplot.png" />
+		<pic name="cluster1_Molecular_Function_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster1/BMK_2_GO_enrichment/cluster1_Molecular_Function_enrich_cnetplot.png" />
+		<pic name="cluster2_Biological_Process_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster2/BMK_2_GO_enrichment/cluster2_Biological_Process_enrich_cnetplot.png" />
+		<pic name="cluster2_Cellular_Component_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster2/BMK_2_GO_enrichment/cluster2_Cellular_Component_enrich_cnetplot.png" />
+		<pic name="cluster2_Molecular_Function_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster2/BMK_2_GO_enrichment/cluster2_Molecular_Function_enrich_cnetplot.png" />
+		<pic name="cluster3_Biological_Process_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster3/BMK_2_GO_enrichment/cluster3_Biological_Process_enrich_cnetplot.png" />
+		<pic name="cluster3_Cellular_Component_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster3/BMK_2_GO_enrichment/cluster3_Cellular_Component_enrich_cnetplot.png" />
+		<pic name="cluster3_Molecular_Function_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster3/BMK_2_GO_enrichment/cluster3_Molecular_Function_enrich_cnetplot.png" />
+		<pic name="cluster4_Biological_Process_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster4/BMK_2_GO_enrichment/cluster4_Biological_Process_enrich_cnetplot.png" />
+		<pic name="cluster4_Cellular_Component_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster4/BMK_2_GO_enrichment/cluster4_Cellular_Component_enrich_cnetplot.png" />
+		<pic name="cluster4_Molecular_Function_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster4/BMK_2_GO_enrichment/cluster4_Molecular_Function_enrich_cnetplot.png" />
+		<pic name="cluster5_Biological_Process_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster5/BMK_2_GO_enrichment/cluster5_Biological_Process_enrich_cnetplot.png" />
+		<pic name="cluster5_Cellular_Component_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster5/BMK_2_GO_enrichment/cluster5_Cellular_Component_enrich_cnetplot.png" />
+		<pic name="cluster5_Molecular_Function_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster5/BMK_2_GO_enrichment/cluster5_Molecular_Function_enrich_cnetplot.png" />
+		<pic name="cluster6_Biological_Process_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster6/BMK_2_GO_enrichment/cluster6_Biological_Process_enrich_cnetplot.png" />
+		<pic name="cluster6_Cellular_Component_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster6/BMK_2_GO_enrichment/cluster6_Cellular_Component_enrich_cnetplot.png" />
+		<pic name="cluster6_Molecular_Function_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster6/BMK_2_GO_enrichment/cluster6_Molecular_Function_enrich_cnetplot.png" />
+		<pic name="cluster7_Biological_Process_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster7/BMK_2_GO_enrichment/cluster7_Biological_Process_enrich_cnetplot.png" />
+		<pic name="cluster7_Cellular_Component_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster7/BMK_2_GO_enrichment/cluster7_Cellular_Component_enrich_cnetplot.png" />
+		<pic name="cluster7_Molecular_Function_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster7/BMK_2_GO_enrichment/cluster7_Molecular_Function_enrich_cnetplot.png" />
+		<pic name="cluster8_Biological_Process_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster8/BMK_2_GO_enrichment/cluster8_Biological_Process_enrich_cnetplot.png" />
+		<pic name="cluster8_Cellular_Component_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster8/BMK_2_GO_enrichment/cluster8_Cellular_Component_enrich_cnetplot.png" />
+		<pic name="cluster8_Molecular_Function_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster8/BMK_2_GO_enrichment/cluster8_Molecular_Function_enrich_cnetplot.png" />
+		<pic name="cluster9_Biological_Process_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster9/BMK_2_GO_enrichment/cluster9_Biological_Process_enrich_cnetplot.png" />
+		<pic name="cluster9_Cellular_Component_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster9/BMK_2_GO_enrichment/cluster9_Cellular_Component_enrich_cnetplot.png" />
+		<pic name="cluster9_Molecular_Function_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster9/BMK_2_GO_enrichment/cluster9_Molecular_Function_enrich_cnetplot.png" />
+	</pic_list>
+	<h3 name="5.6.2 GO富集层次分析" type="type1" desc="5.6.2 GO富集层次分析" />
+	<p type="type1" desc="对每个cluster的差异基因进行富集分析，富集到的Term做topGO有向无环图。topGO有向无环图能直观展示差异表达基因富集的GO节点（Term）及其层级关系，是差异表达基因GO富集分析的结果图形化展示，分支代表包含关系，从上至下所定义的功能描述范围越来越具体。差异表达基因的topGO有向无环图如下:" />
+	<pic_list name="图25 GO富集有向无环图" type="type1" desc="注：对每个GO节点进行富集，最显著的10个节点在图中用方框表示，图中还包含其各层对应关系。每个方框（或椭圆）内给出了该GO节点的内容描述和富集显著性值。不同颜色代表不同的富集显著性，颜色越深，显著性越高。" >
+		<pic name="cluster0.topGO_BP.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_2_GO_enrichment/topGO_Graph/cluster0.topGO_BP.png" />
+		<pic name="cluster0.topGO_CC.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_2_GO_enrichment/topGO_Graph/cluster0.topGO_CC.png" />
+		<pic name="cluster0.topGO_MF.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_2_GO_enrichment/topGO_Graph/cluster0.topGO_MF.png" />
+		<pic name="cluster1.topGO_BP.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster1/BMK_2_GO_enrichment/topGO_Graph/cluster1.topGO_BP.png" />
+		<pic name="cluster1.topGO_CC.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster1/BMK_2_GO_enrichment/topGO_Graph/cluster1.topGO_CC.png" />
+		<pic name="cluster1.topGO_MF.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster1/BMK_2_GO_enrichment/topGO_Graph/cluster1.topGO_MF.png" />
+		<pic name="cluster2.topGO_BP.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster2/BMK_2_GO_enrichment/topGO_Graph/cluster2.topGO_BP.png" />
+		<pic name="cluster2.topGO_CC.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster2/BMK_2_GO_enrichment/topGO_Graph/cluster2.topGO_CC.png" />
+		<pic name="cluster2.topGO_MF.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster2/BMK_2_GO_enrichment/topGO_Graph/cluster2.topGO_MF.png" />
+		<pic name="cluster3.topGO_BP.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster3/BMK_2_GO_enrichment/topGO_Graph/cluster3.topGO_BP.png" />
+		<pic name="cluster3.topGO_CC.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster3/BMK_2_GO_enrichment/topGO_Graph/cluster3.topGO_CC.png" />
+		<pic name="cluster3.topGO_MF.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster3/BMK_2_GO_enrichment/topGO_Graph/cluster3.topGO_MF.png" />
+		<pic name="cluster4.topGO_BP.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster4/BMK_2_GO_enrichment/topGO_Graph/cluster4.topGO_BP.png" />
+		<pic name="cluster4.topGO_CC.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster4/BMK_2_GO_enrichment/topGO_Graph/cluster4.topGO_CC.png" />
+		<pic name="cluster4.topGO_MF.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster4/BMK_2_GO_enrichment/topGO_Graph/cluster4.topGO_MF.png" />
+		<pic name="cluster5.topGO_BP.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster5/BMK_2_GO_enrichment/topGO_Graph/cluster5.topGO_BP.png" />
+		<pic name="cluster5.topGO_CC.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster5/BMK_2_GO_enrichment/topGO_Graph/cluster5.topGO_CC.png" />
+		<pic name="cluster5.topGO_MF.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster5/BMK_2_GO_enrichment/topGO_Graph/cluster5.topGO_MF.png" />
+		<pic name="cluster6.topGO_BP.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster6/BMK_2_GO_enrichment/topGO_Graph/cluster6.topGO_BP.png" />
+		<pic name="cluster6.topGO_CC.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster6/BMK_2_GO_enrichment/topGO_Graph/cluster6.topGO_CC.png" />
+		<pic name="cluster6.topGO_MF.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster6/BMK_2_GO_enrichment/topGO_Graph/cluster6.topGO_MF.png" />
+		<pic name="cluster7.topGO_BP.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster7/BMK_2_GO_enrichment/topGO_Graph/cluster7.topGO_BP.png" />
+		<pic name="cluster7.topGO_CC.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster7/BMK_2_GO_enrichment/topGO_Graph/cluster7.topGO_CC.png" />
+		<pic name="cluster7.topGO_MF.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster7/BMK_2_GO_enrichment/topGO_Graph/cluster7.topGO_MF.png" />
+		<pic name="cluster8.topGO_BP.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster8/BMK_2_GO_enrichment/topGO_Graph/cluster8.topGO_BP.png" />
+		<pic name="cluster8.topGO_CC.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster8/BMK_2_GO_enrichment/topGO_Graph/cluster8.topGO_CC.png" />
+		<pic name="cluster8.topGO_MF.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster8/BMK_2_GO_enrichment/topGO_Graph/cluster8.topGO_MF.png" />
+		<pic name="cluster9.topGO_BP.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster9/BMK_2_GO_enrichment/topGO_Graph/cluster9.topGO_BP.png" />
+		<pic name="cluster9.topGO_CC.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster9/BMK_2_GO_enrichment/topGO_Graph/cluster9.topGO_CC.png" />
+		<pic name="cluster9.topGO_MF.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster9/BMK_2_GO_enrichment/topGO_Graph/cluster9.topGO_MF.png" />
+	</pic_list>
+	<h3 name="5.6.3 差异基因KEGG注释" type="type1" desc="5.6.3 差异基因KEGG注释" />
+	<p type="type1" desc="在生物体内，不同的基因产物相互协调来行使生物学功能，对差异表达基因的通路（Pathway）注释分析有助于进一步解读基因的功能。KEGG（Kyoto Encyclopedia of Genes and Genomes）是系统分析基因功能、基因组信息数据库，它有助于研究者把基因及表达信息作为一个整体网络进行研究。作为是有关Pathway的主要公共数据库(Kanehisa,2008），KEGG提供的整合代谢途径(pathway)查询，包括碳水化合物、核苷、氨基酸等的代谢及有机物的生物降解，不仅提供了所有可能的代谢途径，而且对催化各步反应的酶进行了全面的注解，包含有氨基酸序列、PDB库的链接等等，是进行生物体内代谢分析、代谢网络研究的强有力工具。" />
+	<p type="type1" desc="对差异表达基因KEGG的注释结果按照KEGG中通路类型进行分类，分类图如下图所示：" />
+	<pic_list name="图26 差异表达基因KEGG分类图" type="type1" desc="注：纵坐标为KEGG通路的名称，横坐标为注释到该通路下的基因个数及其个数占被注释上的基因总数的比例。" >
+		<pic name="cluster0.KEGG.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_3_KEGG_enrichment/cluster0.KEGG.png" />
+		<pic name="cluster1.KEGG.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster1/BMK_3_KEGG_enrichment/cluster1.KEGG.png" />
+		<pic name="cluster2.KEGG.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster2/BMK_3_KEGG_enrichment/cluster2.KEGG.png" />
+		<pic name="cluster3.KEGG.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster3/BMK_3_KEGG_enrichment/cluster3.KEGG.png" />
+		<pic name="cluster4.KEGG.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster4/BMK_3_KEGG_enrichment/cluster4.KEGG.png" />
+		<pic name="cluster5.KEGG.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster5/BMK_3_KEGG_enrichment/cluster5.KEGG.png" />
+		<pic name="cluster6.KEGG.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster6/BMK_3_KEGG_enrichment/cluster6.KEGG.png" />
+		<pic name="cluster7.KEGG.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster7/BMK_3_KEGG_enrichment/cluster7.KEGG.png" />
+		<pic name="cluster8.KEGG.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster8/BMK_3_KEGG_enrichment/cluster8.KEGG.png" />
+		<pic name="cluster9.KEGG.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster9/BMK_3_KEGG_enrichment/cluster9.KEGG.png" />
+	</pic_list>
+	<p type="type1" desc="差异表达基因的通路注释结果见下图：" />
+	<pic_list name="图27 差异表达基因的KEGG通路注释图" type="type1" desc="注：红色框标记的酶与每个cluster差异高表达基因有关，框内的数字代表酶的编号（EC number），而整个通路由多种酶催化的复杂生化反应构成，此通路图中与差异表达基因相关的酶均用颜色标出，根据研究对象间的差异，重点研究某些代谢通路相关基因的差异表达情况，通过通路解释表型差异的根源。（此处实际共有很多张结果图片，但为了保证浏览报告的流畅性只展示了10张，查看全部图片可以到项目文件中查看，请谅解）" >
+		<pic name="ko00010.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_3_KEGG_enrichment/BMK_1_kegg_map/ko00010.png" />
+		<pic name="ko00020.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_3_KEGG_enrichment/BMK_1_kegg_map/ko00020.png" />
+		<pic name="ko00030.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_3_KEGG_enrichment/BMK_1_kegg_map/ko00030.png" />
+		<pic name="ko00040.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_3_KEGG_enrichment/BMK_1_kegg_map/ko00040.png" />
+		<pic name="ko00051.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_3_KEGG_enrichment/BMK_1_kegg_map/ko00051.png" />
+		<pic name="ko00052.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_3_KEGG_enrichment/BMK_1_kegg_map/ko00052.png" />
+		<pic name="ko00053.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_3_KEGG_enrichment/BMK_1_kegg_map/ko00053.png" />
+		<pic name="ko00062.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_3_KEGG_enrichment/BMK_1_kegg_map/ko00062.png" />
+		<pic name="ko00071.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_3_KEGG_enrichment/BMK_1_kegg_map/ko00071.png" />
+		<pic name="ko00130.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_3_KEGG_enrichment/BMK_1_kegg_map/ko00130.png" />
+	</pic_list>
+	<h3 name="5.6.4 差异基因KEGG富集分析" type="type1" desc="5.6.4 差异基因KEGG富集分析" />
+	<p type="type1" desc="分析差异表达基因在某一通路上是否发生显著差异（over-presentation）即为差异表达基因的通路富集分析。Pathway显著性富集分析以KEGG数据库中Pathway为单位，应用超几何检验，找出与整个基因组背景相比，在差异表达基因中显著性富集的Pathway。差异表达基因KEGG通路富集分析结果见下图。" />
+	<pic_list name="图28 差异表达基因KEGG富集气泡图" type="type1" desc="注：图中每一个圆表示一个KEGG通路，纵坐标表示通路名称，横坐标为富集因子，表示差异基因中注释到某通路的基因比例与所有基因中注释到该通路的基因比例的比值。富集因子越大，表示差异表达基因在该通路中的富集水平越显著。圆圈的颜色代表qvalue，qvalue为多重假设检验校正之后的P value,qvalue越小，表示差异表达基因在该通路中的富集显著性越可靠；圆圈的大小表示通路中富集的基因数目，圆圈越大，表示基因越多。" >
+		<pic name="cluster0_KEGG_pathway_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_3_KEGG_enrichment/cluster0_KEGG_pathway_enrich_dotplot.png" />
+		<pic name="cluster1_KEGG_pathway_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster1/BMK_3_KEGG_enrichment/cluster1_KEGG_pathway_enrich_dotplot.png" />
+		<pic name="cluster2_KEGG_pathway_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster2/BMK_3_KEGG_enrichment/cluster2_KEGG_pathway_enrich_dotplot.png" />
+		<pic name="cluster3_KEGG_pathway_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster3/BMK_3_KEGG_enrichment/cluster3_KEGG_pathway_enrich_dotplot.png" />
+		<pic name="cluster4_KEGG_pathway_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster4/BMK_3_KEGG_enrichment/cluster4_KEGG_pathway_enrich_dotplot.png" />
+		<pic name="cluster5_KEGG_pathway_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster5/BMK_3_KEGG_enrichment/cluster5_KEGG_pathway_enrich_dotplot.png" />
+		<pic name="cluster6_KEGG_pathway_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster6/BMK_3_KEGG_enrichment/cluster6_KEGG_pathway_enrich_dotplot.png" />
+		<pic name="cluster7_KEGG_pathway_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster7/BMK_3_KEGG_enrichment/cluster7_KEGG_pathway_enrich_dotplot.png" />
+		<pic name="cluster8_KEGG_pathway_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster8/BMK_3_KEGG_enrichment/cluster8_KEGG_pathway_enrich_dotplot.png" />
+		<pic name="cluster9_KEGG_pathway_enrich_dotplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster9/BMK_3_KEGG_enrichment/cluster9_KEGG_pathway_enrich_dotplot.png" />
+	</pic_list>
+	<pic_list name="图29 差异表达基因KEGG富集网络图" type="type1" desc="注：差异表达基因与KEGG通路的网络图.边的颜色代表不同的通路,基因节点的颜色代表差异倍数,通路节点越大说明富集到该通路的基因数目越多。" >
+		<pic name="cluster0_KEGG_pathway_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster0/BMK_3_KEGG_enrichment/cluster0_KEGG_pathway_enrich_cnetplot.png" />
+		<pic name="cluster1_KEGG_pathway_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster1/BMK_3_KEGG_enrichment/cluster1_KEGG_pathway_enrich_cnetplot.png" />
+		<pic name="cluster2_KEGG_pathway_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster2/BMK_3_KEGG_enrichment/cluster2_KEGG_pathway_enrich_cnetplot.png" />
+		<pic name="cluster3_KEGG_pathway_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster3/BMK_3_KEGG_enrichment/cluster3_KEGG_pathway_enrich_cnetplot.png" />
+		<pic name="cluster4_KEGG_pathway_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster4/BMK_3_KEGG_enrichment/cluster4_KEGG_pathway_enrich_cnetplot.png" />
+		<pic name="cluster5_KEGG_pathway_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster5/BMK_3_KEGG_enrichment/cluster5_KEGG_pathway_enrich_cnetplot.png" />
+		<pic name="cluster6_KEGG_pathway_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster6/BMK_3_KEGG_enrichment/cluster6_KEGG_pathway_enrich_cnetplot.png" />
+		<pic name="cluster7_KEGG_pathway_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster7/BMK_3_KEGG_enrichment/cluster7_KEGG_pathway_enrich_cnetplot.png" />
+		<pic name="cluster8_KEGG_pathway_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster8/BMK_3_KEGG_enrichment/cluster8_KEGG_pathway_enrich_cnetplot.png" />
+		<pic name="cluster9_KEGG_pathway_enrich_cnetplot.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_3_Anno_enrichment/cluster9/BMK_3_KEGG_enrichment/cluster9_KEGG_pathway_enrich_cnetplot.png" />
+	</pic_list>
+	<h2 name="5.7 差异表达基因蛋白互作网络" type="type1" desc="5.7 差异表达基因蛋白互作网络" />
+	<p type="type1" desc="STRING$REF_14是收录多个物种预测的和实验验证的蛋白质-蛋白质互作的数据库，包括直接的物理互作和间接的功能相关。结合差异表达分析结果和数据库收录的互作关系对，构建差异表达基因互作网络。对于数据库中包含的物种，可直接从数据库中提取出目标基因集的互作关系对构建互作网络；对于数据库中未收录信息的物种，使用BLAST软件，将目的基因与数据库中的蛋白质进行序列比对，寻找同源蛋白，根据同源蛋白的互作关系对构建互作网络。构建完成的蛋白质互作网络可导入Cytoscape软件进行可视化。Cytoscape可视化的差异表达基因蛋白质互作网络如下图：" />
+	<pic_list name="图30 差异表达基因蛋白质互作网络图" type="type1" desc="注：图中的节点为蛋白质，边为互作关系。互作网络中节点(node)的大小与此节点的度(degree)成正比，即与此节点相连的边越多，它的度越大，节点也就越大。节点的颜色与此节点的聚集系数(clustering coefficient)相关，颜色梯度由绿到红对应聚集系数的值由低到高，聚集系数值越高表示此节点的邻接点之间的连通性越好。边(edge)的宽度表示此边连接的两个节点间的互相作用的关系强弱，互相作用的关系越强，边越宽。没有的组合代表没有互作关系" >
+		<pic name="cluster0.ppi.cytoscapeInput.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_4_PPI/cluster0.ppi.cytoscapeInput.png" />
+		<pic name="cluster1.ppi.cytoscapeInput.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_4_PPI/cluster1.ppi.cytoscapeInput.png" />
+		<pic name="cluster2.ppi.cytoscapeInput.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_4_PPI/cluster2.ppi.cytoscapeInput.png" />
+		<pic name="cluster3.ppi.cytoscapeInput.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_4_PPI/cluster3.ppi.cytoscapeInput.png" />
+		<pic name="cluster4.ppi.cytoscapeInput.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_4_PPI/cluster4.ppi.cytoscapeInput.png" />
+		<pic name="cluster5.ppi.cytoscapeInput.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_4_PPI/cluster5.ppi.cytoscapeInput.png" />
+		<pic name="cluster6.ppi.cytoscapeInput.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_4_PPI/cluster6.ppi.cytoscapeInput.png" />
+		<pic name="cluster7.ppi.cytoscapeInput.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_4_PPI/cluster7.ppi.cytoscapeInput.png" />
+		<pic name="cluster8.ppi.cytoscapeInput.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_4_PPI/cluster8.ppi.cytoscapeInput.png" />
+		<pic name="cluster9.ppi.cytoscapeInput.png" desc="" path="BMK_3_seurat_analysis/BMK_3_Integrated/BMK_4_MarkerGene/BMK_4_PPI/cluster9.ppi.cytoscapeInput.png" />
+	</pic_list>
+	<h2 name="5.8 转录因子结合位点预测" type="type1" desc="5.8 转录因子结合位点预测" />
+	<p type="type1" desc="转录因子结合位点（Transcription factor binding site，TFBS）是与转录因子结合的DNA片段，长度通常在 5~20 bp范围内，一个转录因子往往同时调控若干个基因，而它在不同基因上的结合位点具有一定的保守性，又不完全相同。我们用R包TFBStools$REF_15对差异基因的启动子区域（定义基因上游１kb 左右为潜在的启动子区）上的 TFBS 进行了预测，参考的转录因子motif数据库是JASPAR数据库（http://jaspar.genereg.net/）。预测结果如下表：" />
+	<table name="表10  转录因子结合位点预测结果" type="full" path="Web_Report//Template/allGenes_TFBS_predictRes.xls.tmp" desc="注：Model_id：转录因子结合位点模体id；&lt;br&gt;seqname：基因名称；&lt;br&gt;start：开始位置；&lt;br&gt;end：结束位置；&lt;br&gt;score：评分，评分越高，表示该转录因子与输入序列结合的可能性越大；&lt;br&gt;strand：链方向, + 表示正链，- 表示负链；&lt;br&gt;frame：.；&lt;br&gt;Attributes：注释信息。TF：转录因子id；class：转录因子注释；sequence：TFBS序列；&lt;br&gt;Pvalue：P值。" />
+	<p type="type1" desc="TFBS序列特征示例图如下" />
+	<pic name="图31 TFBS序列特征图" type="type1" desc="注：横坐标为 motif 中碱基的相对位置，纵坐标为该位置碱基的序列保守性，而碱基信号的高度代表该碱基在该位置上的相对频率。" path="Template/TFBS_seqlogo.png" />
+	<h2 name="5.9 细胞拟时序分析" type="type1" desc="5.9 细胞拟时序分析" />
+	<p type="type1" desc="拟时间序列（Pseudotime）简称拟时序，它是一种测量一个细胞在一个生物学过程如细胞分化中进展程度的方法，它是对一个生物学过程的抽象，描述了一个细胞当前状态和时间轨迹的起始状态之间的最短路径的距离。拟时分析适用于发育生物学中的发育轨迹研究，或者肿瘤微环境中免疫细胞状态的变化研究等。Monocle$REF_16是一款利用反向图形嵌入（reversed graph embedding） 的机器学习方法，根据细胞基因表达量信息，预测、重构出细胞发育分化轨迹的软件。" />
+	<pic name="图32 细胞状态(stat)的拟时间分布图" type="type1" desc="注：图中每个点代表细胞，不同的分支代表不同的演变或者分化轨迹，横纵坐标表示降维后的成分，不同的颜色表示不同的细胞状态。" path="BMK_3_seurat_analysis/BMK_6_trace_analysis/analysed_integrated.cell_trajectory_state.png" />
+	<pic name="图33 细胞亚群（cluster）的拟时间分布图" type="type1" desc="注：图中每个点代表细胞，不同的分支代表不同的演变或者分化轨迹，横纵坐标表示降维后的成分，不同的颜色表示不同的cluster。" path="BMK_3_seurat_analysis/BMK_6_trace_analysis/analysed_integrated.cell_trajectory_cluster.png" />
+	<p type="type1" desc="挑选与拟时序变化相关的基因（top5）进行展示。" />
+	<pic_list name="图34 top5基因的拟时间分布图" type="type1" desc="注：横坐标表示拟时间，纵坐标表示基因相对表达值。展示单个基因随着拟时间的变化趋势。" >
+		<pic name="analysed_integrated.cell_trajectory_top5_marker_cluster.png" desc="" path="BMK_3_seurat_analysis/BMK_6_trace_analysis/analysed_integrated.cell_trajectory_top5_marker_cluster.png" />
+		<pic name="analysed_integrated.cell_trajectory_top5_marker_state.png" desc="" path="BMK_3_seurat_analysis/BMK_6_trace_analysis/analysed_integrated.cell_trajectory_top5_marker_state.png" />
+	</pic_list>
+	<p type="type1" desc="拟时序相关基因（top50）的热图展示。" />
+	<pic name="图35 top50基因的热图" type="type1" desc="注：行表示基因，列表示伪时间的点，默认是100个。" path="BMK_3_seurat_analysis/BMK_6_trace_analysis/analysed_integrated.cell_trajectory_heatmap.png" />
+	<h2 name="5.10 细胞周期鉴定" type="type1" desc="5.10 细胞周期鉴定" />
+	<p type="type1" desc="细胞周期（cell cycle）分为间期和分裂期，即G1期、S期、G2/M期。我们使用Seurat软件根据已知的细胞周期标记基因的表达进行细胞周期鉴定。" />
+	<table name="表11    细胞周期鉴定表" type="full" path="Web_Report//Template/cell_cycle.xls.tmp" desc="注：Cell：barcode标记的细胞名；&lt;br&gt;sample：样本名；&lt;br&gt;S.Score：计算得到的S期得分；&lt;br&gt;G2M.Score：计算得到的G2/M期得分；&lt;br&gt;Phase：细胞所处的周期。" />
+	<pic name="图36 细胞周期热图" type="type1" desc="注：列是细胞，行是细胞周期标记基因；红色表示高表达，蓝色表示低表达。" path="BMK_3_seurat_analysis/BMK_5_Cell_Cycle/cell_cycle_heatmap.png" />
+	<h1 name="6 单细胞免疫组库分析结果" type="type1" desc="6 单细胞免疫组库分析结果" />
+	<p type="type1" desc="T淋巴细胞（T cell）和B淋巴细胞（B cell）主要负责适应性免疫应答，其抗原识别主要依赖于T细胞受体（T cell recptor, TCR）和B细胞受体（B cell recptor, BCR），这两类细胞表面分子的共同特点是其多样性，可以识别多种多样的抗原分子，而免疫组库就是针对B/T淋巴细胞抗原受体多样性检测，即BCR/TCR的多样性。BCR和TCR一般由可变区（V区）、多变区（D区）、连接区（J区）、恒定区（C区）构成，V(D)J区域在遗传过程中发生重排或重组，形成大量不同的组合形式，导致BCR和TCR基因序列多样性极其丰富，这些序列多样性集合称为免疫组库。" />
+	<p type="type1" desc="TCR和BCR都是不同的V(D)J基因片段组成，BCR是由两条重链（IgH）和两条轻链(Igκ，Igλ)组成，重链包含了一个可变区（VH）和3个恒定区（CH1/CH2/CH3），轻链则包含了一个可变区（VL）和一个恒定区（CL）；而TCR由αβ链/γδ链组成，相应的编码基因TCRA、TCRB、TCRG、TCRD。" />
+	<p type="type1" desc="TCR和BCR的可变区（V）分为 VH 和 VL 两个结构域组成，它们又各有三个互补决定区（complementarities determining region, CDR）CDR1、CDR2、CDR3 和间隔的 4 个骨架区（framework region, FR）构成。CDR1、CDR2 和 FR 区域相对保守，CDR3 变异最大，并直接决定了 TCR 的抗原结合特异性。BCR/TCR 的 CDR3 由 V、D、J 三个基因编码，淋巴细胞的成熟过程中，通过 V、D、J 基因的重排形成了各种重组序列片段，根据不同链V区、D区、J区片段的个数排列组合可以达到上万亿以上的序列组合。" />
+	<p type="type1" desc="基于CellRanger鉴定到的结果，利用immunarch(R包)$REF_17对结果进行统计、可视化和多样性分析等。" />
+	<h2 name="6.1 Clonotypes 多样性分析" type="type1" desc="6.1 Clonotypes 多样性分析" />
+	<h3 name="6.1.1 多样性指数" type="type1" desc="6.1.1 多样性指数" />
+	<h4 name="6.1.1.1 Chao1 指数" type="type1" desc="6.1.1.1 Chao1 指数" />
+	<p type="type1" desc="chao1 指数在生态学中用来估计物种总数，这里我们用来它来反应 Clonotypes 的数目，由Chao(1984) 最早提出。所以 chao1 指数越高，Clonotypes 数目越多。" />
+	<h4 name="6.1.1.2 基尼系数" type="type1" desc="6.1.1.2 基尼系数" />
+	<p type="type1" desc="基尼系数（Gini coefficient）是 1943 年美国经济学家阿尔伯特•赫希曼根据洛伦兹曲线所定义的判断收入分配公平程度的指标。基尼系数是比例数值，在 0 和 1 之间，是国际上用来综合考察居民内部收入分配差异状况的一个重要分析指标。在这我们使用基尼系数来表示Clonotyoes 之间的差异性；越接近1，代表Clonotypes 之间差异性越大；越接近0，代表Clonotypes 之间差异性越小。" />
+	<h4 name="6.1.1.3 基尼辛普森多样性指数" type="type1" desc="6.1.1.3 基尼辛普森多样性指数" />
+	<p type="type1" desc="辛普森多样性指数（Simpson index）是一种简便的测定群落中物种多样性的指数。基尼辛普森多样性指数=随机取样的两个个体属于不同种的概率=1-随机取样的两个个体属于同种的概率。基尼辛普森多样性指数的最低值是 0，最高值为 1；基尼辛普森多样性指数越大表明Clonotypes 多样性越高。" />
+	<h4 name="6.1.1.4 D50" type="type1" desc="6.1.1.4 D50" />
+	<p type="type1" desc="D50 是最新提出的用于评估免疫组库多样性的指标，它计算的是 Clonotypes 所对应的累计序列数大于或等于 50%的序列总数时 Clonotypes 的最小种类数。D50 值越大说明，Clonotypes 种类越多，分布越均匀。" />
+	<table name="表12 TCR/BCR多样性结果统计" type="full" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_3_AllSamples/TCR.All_Sample_diversity_measure.xls" desc="注：Sample：样本名称；&lt;br&gt;Chao1：Chao1指数；&lt;br&gt;Gini：基尼系数；&lt;br&gt;Gini_Simpson：基尼辛普森多样性指数；&lt;br&gt;D50：D50系数。&lt;br&gt;BMK_4_vdj_analysis/BMK_*/BMK_*_AllSamples/*All_Sample_diversity_measure.xls" />
+	<h3 name="6.1.2 Rank abundance" type="type1" desc="6.1.2 Rank abundance" />
+	<p type="type1" desc="Rank-Abundance（等级丰度曲线）是生态学家用来显示相对物种丰度的图表，是生物多样性的一个组成部分。它也可以同时解释Clonotypes 丰富度（Clonotypes数目的多少）和Clonotypes 均匀度（Clonotypes 数目的均匀程度）。曲线越宽，Clonotypes 的组成越丰富；曲线越平坦，Clonotypes 的组成均匀程度越高。" />
+	<pic_list name="图37 Rank Abundance 曲线" type="type1" desc="注：横坐标表示根据Clonotypes数目从多到少的排序的序号，'1'表示的是丰度排名第一的Clonotypes；纵坐标表示对应Clonotypes的数目。" >
+		<pic name="TCR.All_Sample_Rank-abundance.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_3_AllSamples/TCR.All_Sample_Rank-abundance.png" />
+		<pic name="BCR.All_Sample_Rank-abundance.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_4_AllSamples/BCR.All_Sample_Rank-abundance.png" />
+	</pic_list>
+	<h3 name="6.1.3 稀释曲线" type="type1" desc="6.1.3 稀释曲线" />
+	<p type="type1" desc="在生态学中，稀释曲线是一种通过取样结果来评估物种丰富度的技术。对细胞进行随机抽样，以抽到的细胞与它们所能代表Clonotypes 的数目构建曲线。一般当细胞足够多时，曲线会趋于平缓。" />
+	<pic_list name="图38 样本稀释曲线" type="type1" desc="注：横轴为抽样的深度（抽样的细胞数），纵轴是非重复的Clonotypes个数。颜色代表不同的分组。实线和虚线分别标记稀释曲线的插值和外推区域。" >
+		<pic name="TCR.All_Sample_rarefaction.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_3_AllSamples/TCR.All_Sample_rarefaction.png" />
+		<pic name="BCR.All_Sample_rarefaction.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_4_AllSamples/BCR.All_Sample_rarefaction.png" />
+	</pic_list>
+	<h2 name="6.2 结果统计" type="type1" desc="6.2 结果统计" />
+	<p type="type1" desc="因为TCR/BCR存在多条链的信息，且每条链上携带的信息差异较大，所以我们以单链为基础，对单链上的CDR3、V/D/J基因及相关基因对的结果进行统计和分析。" />
+	<table name="表13 TCR结果统计" type="full" path="Web_Report//Template/TCR.All_Samples_stat.xls.tmp" desc="注：Sample：样本名；&lt;br&gt;Chain：链名；&lt;br&gt;CDR3：非重复CDR3的个数 ；&lt;br&gt;V/D/J_Gene_variety：V/D/J 基因个数；&lt;br&gt;V-J_pair：V-J基因对个数；&lt;br&gt;V-D-J_pair：V-D-J基因对个数。" />
+	<table name="表14 BCR结果统计" type="full" path="Web_Report//Template/BCR.All_Samples_stat.xls.tmp" desc="注：Sample：样本名；&lt;br&gt;Chain：链名；&lt;br&gt;CDR3：非重复CDR3的个数 ；&lt;br&gt;V/D/J_Gene_variety：V/D/J 基因个数；&lt;br&gt;V-J_pair：V-J基因对个数；&lt;br&gt;V-D-J_pair：V-D-J基因对个数。" />
+	<h2 name="6.3 CDR3特征分析" type="type1" desc="6.3 CDR3特征分析" />
+	<h3 name="6.3.1 CDR3序列长度分布" type="type1" desc="6.3.1 CDR3序列长度分布" />
+	<p type="type1" desc="以单链进行分组，计算并统计每个样本相同链中CDR3氨基酸序列长度，绘制成直方图，寻找不同样本相同链中表达模式差异。常规的T细胞和B细胞的长度分布呈现一个对称的类高斯分布，而在疾病状态下CDR3长度分布呈现偏倚的形状。" />
+	<pic_list name="图39 CDR3氨基酸序列长度分布" type="type1" desc="注：横坐标表示CDR3氨基酸序列长度，纵坐标表示对应CDR3长度的Clonotypes数量。" >
+		<pic name="TRA_CDR3_lens.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_1_CDR3/TRA_CDR3_lens.png" />
+		<pic name="TRB_CDR3_lens.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_1_CDR3/TRB_CDR3_lens.png" />
+		<pic name="IGH_CDR3_lens.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_1_IGH/BMK_1_CDR3/IGH_CDR3_lens.png" />
+	</pic_list>
+	<h3 name="6.3.2 CDR3序列的相对丰度" type="type1" desc="6.3.2 CDR3序列的相对丰度" />
+	<p type="type1" desc="CDR3氨基酸序列的相对丰度能够评估CDR3多样性。类似于生态学中的相对物种丰度概念，相对丰度是指某一特定种类的CDR3的Clonotypes组成相对于该样本所有Clonotypes的百分比，可以比较不同样本CDR3的分布情况。" />
+	<pic_list name="图40 CDR3多肽序列相对丰度" type="type1" desc="注：横坐标表示样本，纵坐标表示对应CDR3的Clonotypes比例。" >
+		<pic name="TRA_Clonotype_Relative_abundance.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_1_CDR3/TRA_Clonotype_Relative_abundance.png" />
+		<pic name="TRB_Clonotype_Relative_abundance.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_1_CDR3/TRB_Clonotype_Relative_abundance.png" />
+		<pic name="IGH_Clonotype_Relative_abundance.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_1_IGH/BMK_1_CDR3/IGH_Clonotype_Relative_abundance.png" />
+	</pic_list>
+	<h3 name="6.3.3 CDR3序列组成" type="type1" desc="6.3.3 CDR3序列组成" />
+	<p type="type1" desc="以单链进行分组，分别计算每个样本中CDR3氨基酸序列分布，然后提取对应的CDR3序列进行氨基酸组成分析。通过序列标示图 （sequence logo）对CDR3氨基酸序列进行展示。" />
+	<pic_list name="图41 CDR3 多肽序列组成分析" type="type1" desc="注：不同的字母表示不同的氨基酸单字母缩写，颜色表示不同的化学类型；字母越大，表示当前位置中氨基酸的占比越多。" >
+		<pic name="TRA_motif_G1Po-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_1_CDR3/TRA_motif_G1Po-t.png" />
+		<pic name="TRA_motif_G1Pr-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_1_CDR3/TRA_motif_G1Pr-t.png" />
+		<pic name="TRA_motif_G3Po-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_1_CDR3/TRA_motif_G3Po-t.png" />
+		<pic name="TRA_motif_G3Pr-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_1_CDR3/TRA_motif_G3Pr-t.png" />
+		<pic name="TRB_motif_G1Po-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_1_CDR3/TRB_motif_G1Po-t.png" />
+		<pic name="TRB_motif_G1Pr-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_1_CDR3/TRB_motif_G1Pr-t.png" />
+		<pic name="TRB_motif_G3Po-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_1_CDR3/TRB_motif_G3Po-t.png" />
+		<pic name="TRB_motif_G3Pr-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_1_CDR3/TRB_motif_G3Pr-t.png" />
+		<pic name="IGH_motif_G1Po-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_1_IGH/BMK_1_CDR3/IGH_motif_G1Po-b.png" />
+		<pic name="IGH_motif_G1Pr-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_1_IGH/BMK_1_CDR3/IGH_motif_G1Pr-b.png" />
+		<pic name="IGH_motif_G3Po-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_1_IGH/BMK_1_CDR3/IGH_motif_G3Po-b.png" />
+		<pic name="IGH_motif_G3Pr-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_1_IGH/BMK_1_CDR3/IGH_motif_G3Pr-b.png" />
+	</pic_list>
+	<h3 name="6.3.4 CDR3在多样本中的变化趋势" type="type1" desc="6.3.4 CDR3在多样本中的变化趋势" />
+	<p type="type1" desc="以单链进行分组，查看并比较了第一个样本中最多的5种CDR3氨基酸序列的占比情况和这样CDR3在其他样本中的组成情况；并将每个样本中同种CDR3占比进行连接，可以查看最丰富的5种CDR3氨基酸序列在所有样本中的变化过程，能够直观比较样本间CDR3的差异。" />
+	<pic_list name="图42 CDR3氨基酸序列在不同样本中的变化" type="type1" desc="注：横坐标表示样本，纵坐标表示对应CDR3的占比，颜色表示不同的CDR3氨基酸序列。" >
+		<pic name="TRA_trackClonotypes.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_1_CDR3/TRA_trackClonotypes.png" />
+		<pic name="TRB_trackClonotypes.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_1_CDR3/TRB_trackClonotypes.png" />
+		<pic name="IGH_trackClonotypes.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_1_IGH/BMK_1_CDR3/IGH_trackClonotypes.png" />
+	</pic_list>
+	<h3 name="6.3.5 CDR3多样性分析" type="type1" desc="6.3.5 CDR3多样性分析" />
+	<p type="type1" desc="从单链的角度出发，按照单链对数据进行分组，并比较同一单链中不同样本之间的CDR3多样性。计算了样本之间的Chao1指数、基尼系数、基尼辛普森多样性指数和D50系数。" />
+	<file_list name="CDR3单链多样性分析结果" type="xls" desc="">
+		<file name="TRA_diversity_measure.xls" desc="" type="xls" path="Web_Report//HTML/TRA_diversity_measure.xls.html" action="xls" />
+		<file name="TRB_diversity_measure.xls" desc="" type="xls" path="Web_Report//HTML/TRB_diversity_measure.xls.html" action="xls" />
+		<file name="IGH_diversity_measure.xls" desc="" type="xls" path="Web_Report//HTML/IGH_diversity_measure.xls.html" action="xls" />
+	</file_list>
+	<h2 name="6.4 V/D/J 基因使用频率分析" type="type1" desc="6.4 V/D/J 基因使用频率分析" />
+	<h3 name="6.4.1 V/J 基因使用频率分析" type="type1" desc="6.4.1 V/J 基因使用频率分析" />
+	<p type="type1" desc="CDR3 V/J 区基因的丰度可反映出 TCR/BCR 克隆分型的特征。我们以单链为分组，分别统计了单个样本中各V/J基因的频数，并绘制了V/J基因使用频率柱状图。通过查看样本间V/J基因的使用频率是否相似，可以比较样本间V/J基因差异情况。" />
+	<pic_list name="图43 V/J 基因在样本中的使用频率" type="type1" desc="注：横坐标表示具体的V/J基因名，纵坐标表示对应基因的丰度占比，不同颜色代表不同的样本。" >
+		<pic name="TRA_TRAJ_gene.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_2_VDJ/TRA_TRAJ_gene.png" />
+		<pic name="TRB_TRBJ_gene.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_2_VDJ/TRB_TRBJ_gene.png" />
+		<pic name="IGH_IGHJ_gene.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_1_IGH/BMK_2_VDJ/IGH_IGHJ_gene.png" />
+		<pic name="IGL_IGLJ_gene.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_2_IGK/BMK_2_VDJ/IGL_IGLJ_gene.png" />
+		<pic name="IGL_IGLJ_gene.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_3_IGL/BMK_2_VDJ/IGL_IGLJ_gene.png" />
+	</pic_list>
+	<p type="type1" desc="统计了不同样本中不同链上丰度最多的11种Clonotypes的V基因数目，并查看了这些V基因在对应的CDR3氨基酸序列长度中的分布情况。从而查看免疫组库是否存在偏好性问题。" />
+	<pic_list name="图44 不同 CDR3 长度下 V/J 基因组成分布图" type="type1" desc="注：横坐标表示 CDR3 氨基酸序列长度，纵坐标表示对应氨基酸长度的 CDR3 数量，不同的颜色表示不同的V基因。" >
+		<pic name="TRA_CDR3_J_G1Po-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_2_VDJ/TRA_CDR3_J_G1Po-t.png" />
+		<pic name="TRA_CDR3_J_G1Pr-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_2_VDJ/TRA_CDR3_J_G1Pr-t.png" />
+		<pic name="TRA_CDR3_J_G3Po-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_2_VDJ/TRA_CDR3_J_G3Po-t.png" />
+		<pic name="TRA_CDR3_J_G3Pr-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_2_VDJ/TRA_CDR3_J_G3Pr-t.png" />
+		<pic name="TRA_CDR3_V_G1Po-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_2_VDJ/TRA_CDR3_V_G1Po-t.png" />
+		<pic name="TRA_CDR3_V_G1Pr-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_2_VDJ/TRA_CDR3_V_G1Pr-t.png" />
+		<pic name="TRA_CDR3_V_G3Po-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_2_VDJ/TRA_CDR3_V_G3Po-t.png" />
+		<pic name="TRA_CDR3_V_G3Pr-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_2_VDJ/TRA_CDR3_V_G3Pr-t.png" />
+		<pic name="TRB_CDR3_J_G1Po-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_2_VDJ/TRB_CDR3_J_G1Po-t.png" />
+		<pic name="TRB_CDR3_J_G1Pr-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_2_VDJ/TRB_CDR3_J_G1Pr-t.png" />
+		<pic name="TRB_CDR3_J_G3Po-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_2_VDJ/TRB_CDR3_J_G3Po-t.png" />
+		<pic name="TRB_CDR3_J_G3Pr-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_2_VDJ/TRB_CDR3_J_G3Pr-t.png" />
+		<pic name="TRB_CDR3_V_G1Po-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_2_VDJ/TRB_CDR3_V_G1Po-t.png" />
+		<pic name="TRB_CDR3_V_G1Pr-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_2_VDJ/TRB_CDR3_V_G1Pr-t.png" />
+		<pic name="TRB_CDR3_V_G3Po-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_2_VDJ/TRB_CDR3_V_G3Po-t.png" />
+		<pic name="TRB_CDR3_V_G3Pr-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_2_VDJ/TRB_CDR3_V_G3Pr-t.png" />
+		<pic name="IGH_CDR3_V_G1Po-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_1_IGH/BMK_2_VDJ/IGH_CDR3_V_G1Po-b.png" />
+		<pic name="IGH_CDR3_V_G1Pr-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_1_IGH/BMK_2_VDJ/IGH_CDR3_V_G1Pr-b.png" />
+		<pic name="IGH_CDR3_V_G3Po-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_1_IGH/BMK_2_VDJ/IGH_CDR3_V_G3Po-b.png" />
+		<pic name="IGH_CDR3_V_G3Pr-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_1_IGH/BMK_2_VDJ/IGH_CDR3_V_G3Pr-b.png" />
+		<pic name="IGK_CDR3_V_G1Po-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_2_IGK/BMK_2_VDJ/IGK_CDR3_V_G1Po-b.png" />
+		<pic name="IGK_CDR3_V_G1Pr-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_2_IGK/BMK_2_VDJ/IGK_CDR3_V_G1Pr-b.png" />
+		<pic name="IGK_CDR3_V_G3Po-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_2_IGK/BMK_2_VDJ/IGK_CDR3_V_G3Po-b.png" />
+		<pic name="IGK_CDR3_V_G3Pr-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_2_IGK/BMK_2_VDJ/IGK_CDR3_V_G3Pr-b.png" />
+		<pic name="IGL_CDR3_V_G1Po-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_3_IGL/BMK_2_VDJ/IGL_CDR3_V_G1Po-b.png" />
+		<pic name="IGL_CDR3_V_G1Pr-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_3_IGL/BMK_2_VDJ/IGL_CDR3_V_G1Pr-b.png" />
+		<pic name="IGL_CDR3_V_G3Po-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_3_IGL/BMK_2_VDJ/IGL_CDR3_V_G3Po-b.png" />
+		<pic name="IGL_CDR3_V_G3Pr-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_3_IGL/BMK_2_VDJ/IGL_CDR3_V_G3Pr-b.png" />
+	</pic_list>
+	<h3 name="6.4.2 V-J 基因对使用频率分析" type="type1" desc="6.4.2 V-J 基因对使用频率分析" />
+	<p type="type1" desc="以单链为分组，比较不同样本的 V-J 基因对组合丰度能够进一步查看免疫组库中特异基因对的变化。统计 V-J 基因对的丰度能够进一步研究免疫学，比如：比较不同免疫时期高丰度 V-J 基因对可以得到不同免疫时期特异性表达的免疫基因。" />
+	<pic_list name="图45 V-J 基因对使用频率热图" type="type1" desc="注：横坐标表示V 基因，纵坐标表示J 基因，黄色越深代表含有对应 V-J 基因对的Clonotypes数目越多。" >
+		<pic name="TRA_V_J_pair_G1Po-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_2_VDJ/TRA_V_J_pair_G1Po-t.png" />
+		<pic name="TRA_V_J_pair_G1Pr-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_2_VDJ/TRA_V_J_pair_G1Pr-t.png" />
+		<pic name="TRA_V_J_pair_G3Po-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_2_VDJ/TRA_V_J_pair_G3Po-t.png" />
+		<pic name="TRA_V_J_pair_G3Pr-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_2_VDJ/TRA_V_J_pair_G3Pr-t.png" />
+		<pic name="TRB_V_J_pair_G1Po-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_2_VDJ/TRB_V_J_pair_G1Po-t.png" />
+		<pic name="TRB_V_J_pair_G1Pr-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_2_VDJ/TRB_V_J_pair_G1Pr-t.png" />
+		<pic name="TRB_V_J_pair_G3Po-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_2_VDJ/TRB_V_J_pair_G3Po-t.png" />
+		<pic name="TRB_V_J_pair_G3Pr-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_2_VDJ/TRB_V_J_pair_G3Pr-t.png" />
+		<pic name="IGH_V_J_pair_G1Po-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_1_IGH/BMK_2_VDJ/IGH_V_J_pair_G1Po-b.png" />
+		<pic name="IGH_V_J_pair_G1Pr-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_1_IGH/BMK_2_VDJ/IGH_V_J_pair_G1Pr-b.png" />
+		<pic name="IGH_V_J_pair_G3Po-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_1_IGH/BMK_2_VDJ/IGH_V_J_pair_G3Po-b.png" />
+		<pic name="IGH_V_J_pair_G3Pr-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_1_IGH/BMK_2_VDJ/IGH_V_J_pair_G3Pr-b.png" />
+		<pic name="IGK_V_J_pair_G1Po-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_2_IGK/BMK_2_VDJ/IGK_V_J_pair_G1Po-b.png" />
+		<pic name="IGK_V_J_pair_G1Pr-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_2_IGK/BMK_2_VDJ/IGK_V_J_pair_G1Pr-b.png" />
+		<pic name="IGK_V_J_pair_G3Po-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_2_IGK/BMK_2_VDJ/IGK_V_J_pair_G3Po-b.png" />
+		<pic name="IGK_V_J_pair_G3Pr-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_2_IGK/BMK_2_VDJ/IGK_V_J_pair_G3Pr-b.png" />
+		<pic name="IGL_V_J_pair_G1Po-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_3_IGL/BMK_2_VDJ/IGL_V_J_pair_G1Po-b.png" />
+		<pic name="IGL_V_J_pair_G1Pr-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_3_IGL/BMK_2_VDJ/IGL_V_J_pair_G1Pr-b.png" />
+		<pic name="IGL_V_J_pair_G3Po-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_3_IGL/BMK_2_VDJ/IGL_V_J_pair_G3Po-b.png" />
+		<pic name="IGL_V_J_pair_G3Pr-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_3_IGL/BMK_2_VDJ/IGL_V_J_pair_G3Pr-b.png" />
+	</pic_list>
+	<p type="type1" desc="根据不同样本的 V-J 基因对组合丰度，绘制了 V-J 基因对组合圈图。" />
+	<pic_list name="图46 V-J paired circos 图" type="type1" desc="注：图分两部分，一部分是V基因，一部分是J基因。不同颜色代表不同基因，连线越宽代表包含该V-J对的Clonotypes数目越多。" >
+		<pic name="TRA_Circos_G1Po-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_2_VDJ/TRA_Circos_G1Po-t.png" />
+		<pic name="TRA_Circos_G1Pr-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_2_VDJ/TRA_Circos_G1Pr-t.png" />
+		<pic name="TRA_Circos_G3Po-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_2_VDJ/TRA_Circos_G3Po-t.png" />
+		<pic name="TRA_Circos_G3Pr-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRA/BMK_2_VDJ/TRA_Circos_G3Pr-t.png" />
+		<pic name="TRB_Circos_G1Po-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_2_VDJ/TRB_Circos_G1Po-t.png" />
+		<pic name="TRB_Circos_G1Pr-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_2_VDJ/TRB_Circos_G1Pr-t.png" />
+		<pic name="TRB_Circos_G3Po-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_2_VDJ/TRB_Circos_G3Po-t.png" />
+		<pic name="TRB_Circos_G3Pr-t.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/BMK_1_TRB/BMK_2_VDJ/TRB_Circos_G3Pr-t.png" />
+		<pic name="IGH_Circos_G1Po-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_1_IGH/BMK_2_VDJ/IGH_Circos_G1Po-b.png" />
+		<pic name="IGH_Circos_G1Pr-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_1_IGH/BMK_2_VDJ/IGH_Circos_G1Pr-b.png" />
+		<pic name="IGH_Circos_G3Po-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_1_IGH/BMK_2_VDJ/IGH_Circos_G3Po-b.png" />
+		<pic name="IGH_Circos_G3Pr-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_1_IGH/BMK_2_VDJ/IGH_Circos_G3Pr-b.png" />
+		<pic name="IGK_Circos_G1Po-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_2_IGK/BMK_2_VDJ/IGK_Circos_G1Po-b.png" />
+		<pic name="IGK_Circos_G1Pr-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_2_IGK/BMK_2_VDJ/IGK_Circos_G1Pr-b.png" />
+		<pic name="IGK_Circos_G3Po-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_2_IGK/BMK_2_VDJ/IGK_Circos_G3Po-b.png" />
+		<pic name="IGK_Circos_G3Pr-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_2_IGK/BMK_2_VDJ/IGK_Circos_G3Pr-b.png" />
+		<pic name="IGL_Circos_G1Po-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_3_IGL/BMK_2_VDJ/IGL_Circos_G1Po-b.png" />
+		<pic name="IGL_Circos_G1Pr-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_3_IGL/BMK_2_VDJ/IGL_Circos_G1Pr-b.png" />
+		<pic name="IGL_Circos_G3Po-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_3_IGL/BMK_2_VDJ/IGL_Circos_G3Po-b.png" />
+		<pic name="IGL_Circos_G3Pr-b.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BMK_3_IGL/BMK_2_VDJ/IGL_Circos_G3Pr-b.png" />
+	</pic_list>
+	<h3 name="6.4.3 V-D-J 基因对使用频率分析" type="type1" desc="6.4.3 V-D-J 基因对使用频率分析" />
+	<p type="type1" desc="除了查看V-J基因对外，我们还以单链为分组，比较不同样本中的V-D-J 基因对频率。通过比较不同样本之间的V-D-J基因对使用频率可以获得样本特异的V-D-J基因对。" />
+	<h1 name="7 单细胞转录组数据和单细胞免疫组库数据联合分析" type="type1" desc="7 单细胞转录组数据和单细胞免疫组库数据联合分析" />
+	<p type="type1" desc="当同时获得样本的转录组测序数据和免疫组库测序数据时，在完成各自分析之后，可以基于数据共同的 barcode 信息将单细胞转录组数据和免疫组库数据进行合并。我们使用scRepertoire（R包）$REF_18去整合单细胞转录组数据和免疫组库测试数据，利用可视化展示了Clonotype在Seurat聚类结果中的分布情况。同时还统计了不同Cluster中的Clonotype所占细胞数。最终比较了不同Cluster中共有Clonotypes的比例。" />
+	<h2 name="7.1 Clonotype在Cluster中的分布" type="type1" desc="7.1 Clonotype在Cluster中的分布" />
+	<pic_list name="图48 Clonotype分布 t-SNE 图" type="type1" desc="注：左图：不同的颜色表示不同的聚类；右图：不同的颜色表示不同类型的Clonotype，灰色表示不含Clonotype的细胞。" >
+		<pic name="TCR_cloneType_tsne.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/TCR_cloneType_tsne.png" />
+		<pic name="BCR_cloneType_tsne.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BCR_cloneType_tsne.png" />
+	</pic_list>
+	<pic_list name="图49 Clonotype分布 UMAP 图" type="type1" desc="注：左图：不同的颜色表示不同的聚类；右图：不同的颜色表示不同类型的Clonotype，灰色表示不含Clonotype的细胞。" >
+		<pic name="TCR_cloneType_ump.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/TCR_cloneType_ump.png" />
+		<pic name="BCR_cloneType_ump.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BCR_cloneType_ump.png" />
+	</pic_list>
+	<pic_list name="图50 Clonotype统计图" type="type1" desc="注：横轴表是不同的Cluster分类，纵轴表示Cluster中不同Clonotype类型细胞数目，不同的颜色代表不同的Clonotype类型。" >
+		<pic name="TCR_cluster_cloneType.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/TCR_cluster_cloneType.png" />
+		<pic name="BCR_cluster_cloneType.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BCR_cluster_cloneType.png" />
+	</pic_list>
+	<h2 name="7.2 Cluster中共有的Clonotypes" type="type1" desc="7.2 Cluster中共有的Clonotypes" />
+	<p type="type1" desc="利用scRepertoire获取了各Cluster中的Clonotypes类型和数目，并计算比较了不同Cluster分组中共有Clonotypes的比例。从而比较不同Cluster之间的相似度。" />
+	<pic_list name="图51 Cluster的overlap图" type="type1" desc="注：横轴纵轴都表示Cluster分组，数字表示Cluster中Clonotypes的共有比例，值越大共有的Clonotypes越多，两个Cluster之间的相似程度越高。颜色随着值变大而变红。" >
+		<pic name="TCR_cluster_Overlap.png" desc="" path="BMK_4_vdj_analysis/BMK_1_Tcell/TCR_cluster_Overlap.png" />
+		<pic name="BCR_cluster_Overlap.png" desc="" path="BMK_4_vdj_analysis/BMK_2_Bcell/BCR_cluster_Overlap.png" />
+	</pic_list>
+	<h1 name="8 名词解释" type="type1" desc="8 名词解释" />
+	<p type="type1" desc="免疫组库(immune repertoire, IR)：是指在某一时间, 某个个体的循环系统内所有功能多样性T细胞和B细胞的总和。" />
+	<p type="type1" desc="CDR3(Complementarity-Determining Region 3)：互补决定区域3，是部分TCR/BCR氨基酸序列，它们能够与抗原结合。编码CDR3的核苷酸区域跨越了V(D)J连接，使得它比其他CDR更加多样化。" />
+	<p type="type1" desc="Clonotype：通过精确的核苷酸匹配，收集共享一组CDR3生产序列的细胞。" />
+	<p type="type1" desc="Contig：基于reads之间的overlap区，拼接获得的序列称为Contig（重叠群）。" />
+</report>

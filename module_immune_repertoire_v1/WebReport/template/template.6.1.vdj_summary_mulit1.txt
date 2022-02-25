@@ -1,0 +1,23 @@
+》
+二级标题
+样本相关性
+》
+三级标题
+多样本之间Clonotypes相似性
+》
+正文
+计算两两样本中共有的Clonotypes的个数在样本所有Clonotypes中的占比（0-1），比值越大表明两个样本的共有的Clonotypes越多，说明两个样本之间的相似性也就越高。
+》
+图片	BMK_4_vdj_analysis/BMK_*/BMK_*_AllSamples/*.All_Sample_overlap.png
+图17	Clonotypes overlap
+注：横、纵坐标表示样本，数字表示两个样本之间共有的Clonotypes占比，数字越大表示样本之间相似度高。
+》
+三级标题
+多样本之间V基因相似性
+》
+正文
+因为TCR中只有较少的D基因，BCR中只有较少的J基因。所以我们比较了多样本之间共有的V基因，从V基因的角度比较了样本相似性。通过计算两两样本中共有V基因的个数在样本中的占比（0-1），比值越大表明两个样本的共有的V基因越多，说明两个样本之间的相似性也就越高。
+》
+图片	BMK_4_vdj_analysis/BMK_*/BMK_*_AllSamples/*All_Sample_VGene_cor.png
+图17	V基因样本相关性
+注：横、纵坐标表示样本，数字表示两个样本之间共有的V基因占比，数字越大表示样本之间相似度高。
