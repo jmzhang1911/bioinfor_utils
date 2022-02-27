@@ -92,6 +92,9 @@ class VdjAnalysis(ScBasic):
 
         cmd = self._sc_repertoire(cmd, 't_results/input', 't_results/combined', 'T')
 
+        if not cmd:
+            return ['echo no T file, skipping t analysis']
+
         return [cmd]
 
     @MyRunner.count_running_time
@@ -122,6 +125,9 @@ class VdjAnalysis(ScBasic):
 
         cmd = self._sc_repertoire(cmd, 'b_results/input', 'b_results/combined', 'B')
 
+        if not cmd:
+            return ['echo no T file, skipping t analysis']
+        
         return [cmd]
 
 

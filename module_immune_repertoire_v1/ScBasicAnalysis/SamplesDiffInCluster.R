@@ -67,8 +67,11 @@ suppressMessages(library(scales))
 suppressMessages(library(cowplot))
 suppressMessages(library(parallel))
 suppressMessages(library(circlize))
+library(future)
+plan("multiprocess", workers = 10)
+options(future.globals.maxSize = 1572864000)
 
-### suppressMessages(library(ComplexHeatmap, lib.loc = "/share/nas1/ranjr/packages/3.6"))
+## suppressMessages(library(ComplexHeatmap, lib.loc = "/share/nas1/ranjr/packages/3.6"))
 suppressMessages(library(ComplexHeatmap))
 ### 
 
@@ -258,7 +261,45 @@ GlobPlotTheme <- function (font.size = size){
 #####修改zhangjm@2021.11.02，目的跳过没有差异基因的cluster，避免报错
 prob <- diff.exp.all.filter %>% count(cluster) %>% filter(n > 0) %>% pull(cluster)
 #####原始：sapply(sort(unique(Idents(single.integrated))), function(x){
-sapply(prob, function(x){
+# sapply(prob, function(x){
+  # # diff.features <- diff.exp.all.filter[match(intersect(rownames(single.integrated), diff.exp.all.filter$gene), diff.exp.all.filter$gene),]
+  # DefaultAssay(single.integrated) <- my.assay
+  # diff.features <- diff.exp.all.filter[diff.exp.all.filter$gene %in% intersect(rownames(single.integrated), diff.exp.all.filter$gene),]
+  # deg <- diff.features$cluster %>% table() %>% as.matrix() %>% t() %>% as.data.frame()
+  # top10.genes <- diff.features %>% group_by(cluster) %>% filter(., cluster == x) %>% top_n(., n = top.n, wt = avg_logFC) %>% .[order(.[,'avg_logFC'], decreasing = TRUE),] %>% .[, "gene", drop = TRUE] %>% head(n = top.n) %>% unique()
+  # len <- length(intersect(top10.genes, rownames(single.integrated)))
+  # print(paste("cluster", x,  " intersect gene number: ",len, sep = ""))
+  
+  # if(len == 0){
+    # print(paste('None diff gene in cluster', x, sep=' '))
+	# return(paste('None diff gene in cluster', x, sep=' '))
+  # }
+  # # p.tsne <- FeaturePlot(single.integrated, features = top10.genes, slot = "scale.data", reduction = "tsne", cols = c("lightgrey", "purple"), ncol = 5, pt.size = 0.1) & NoLegend() & GlobPlotTheme()
+  
+  # top_gene_num = length(top10.genes)
+  # if(top_gene_num < 5){tmp_ncol = top_gene_num}else{tmp_ncol = ceiling(top_gene_num / 2)}
+	
+  # p.tsne <- FeaturePlot(single.integrated, features = top10.genes, slot = "data", reduction = "tsne", cols = c("lightgrey", "purple"), ncol = tmp_ncol, pt.size = 0.1) & NoLegend() & GlobPlotTheme()
+  # outfile <- paste(paste("cluster", x, sep = ""), paste("top", top.n, sep = ""), "markerTsne", sep = "_")
+  # SavePlot(od = outputdir, filename = outfile, data = p.tsne)
+  # # p.umap <- FeaturePlot(single.integrated, features = top10.genes, slot = "scale.data", reduction = "umap", cols = c("lightgrey", "purple"), ncol = 5, pt.size = 0.1) & NoLegend() & GlobPlotTheme()
+  # p.umap <-
+# (single.integrated, features = top10.genes, slot = "data", reduction = "umap", cols = c("lightgrey", "purple"), ncol = tmp_ncol, pt.size = 0.1) & NoLegend() & GlobPlotTheme()
+  # outfile <- paste(paste("cluster", x, sep = ""), paste("top", top.n, sep = ""), "markerUmap", sep = "_")
+  # SavePlot(od = outputdir, filename = outfile, data = p.umap)
+  # p.vln <- VlnPlot(single.integrated, features = top10.genes, slot = "data", ncol = 5, pt.size = 0) * theme(title = element_text(size = 7), 
+      # axis.ticks = element_blank(), 
+      # axis.title = element_blank(), 
+      # axis.text.y = element_text(size = 7),
+	  # axis.text.x  = element_text(size = 6, angle = 90))
+  # outfile <- paste(paste("cluster", x, sep = ""), paste("top", top.n, sep = ""), "markerVln", sep = "_")
+  # SavePlot(od = outputdir, filename = outfile, data = p.vln)
+  # finish <- paste("cluster", x, ":", top.n, "gene display is","done")
+  # return(finish)
+# })
+
+for(x in prob){
+  print(paste('doing', x, sep = ' '))
   # diff.features <- diff.exp.all.filter[match(intersect(rownames(single.integrated), diff.exp.all.filter$gene), diff.exp.all.filter$gene),]
   DefaultAssay(single.integrated) <- my.assay
   diff.features <- diff.exp.all.filter[diff.exp.all.filter$gene %in% intersect(rownames(single.integrated), diff.exp.all.filter$gene),]
@@ -269,7 +310,7 @@ sapply(prob, function(x){
   
   if(len == 0){
     print(paste('None diff gene in cluster', x, sep=' '))
-	return(paste('None diff gene in cluster', x, sep=' '))
+	next
   }
   # p.tsne <- FeaturePlot(single.integrated, features = top10.genes, slot = "scale.data", reduction = "tsne", cols = c("lightgrey", "purple"), ncol = 5, pt.size = 0.1) & NoLegend() & GlobPlotTheme()
   
@@ -291,8 +332,11 @@ sapply(prob, function(x){
   outfile <- paste(paste("cluster", x, sep = ""), paste("top", top.n, sep = ""), "markerVln", sep = "_")
   SavePlot(od = outputdir, filename = outfile, data = p.vln)
   finish <- paste("cluster", x, ":", top.n, "gene display is","done")
-  return(finish)
-})
+  print(finish)
+}
+
+
+
 print("top 10 diff marker gene in clusters done...")
 
 
@@ -323,7 +367,8 @@ write.table(marker.gene.avgExp, file = file.path(outputdir, "All_cluster_Markerg
 TopMarkerHeatmapAndDotplot(single.integrated, diff.exp.all.filter, top.n, outputdir, celltype = cell.type)
 
 header <- c("ID", "symbol", "Pvalue", "log2FC", "pct.1", "pct.2", "Qvalue", "Cluster")
-sapply(sort(unique(Idents(single.integrated))) %>% as.character(), function(x){
+for(x in sort(unique(Idents(single.integrated))) %>% as.character() ){
+  print(paste('doing', x, sep = ' '))
   clusterx <- diff.exp.all.filter %>% group_by(cluster) %>% filter(., cluster == x) %>% .[order(.[,'avg_logFC'], decreasing = TRUE),]
   outfile <- paste(paste("cluster", x, sep = ""),"diff_featuregene.xls", sep = ".")
   write.table(t(header), file = file.path(outputdir, outfile), sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
@@ -332,7 +377,8 @@ sapply(sort(unique(Idents(single.integrated))) %>% as.character(), function(x){
   outfile <- paste(paste("cluster", x, sep = ""),"all_featuregene.xls", sep = ".")
   write.table(t(header), file = file.path(outputdir, outfile), sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
   write.table(clusterx.all, file = file.path(outputdir, outfile), sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE, append = T)
-})
+  print(paste('--> done', x, sep = ' '))
+}
 # statistic marker gene in clusters
 # up.deg.stat <- diff.exp.all.filter$cluster %>% table() %>% as.matrix() %>% t() %>% as.data.frame() %>% mutate(cluster = "up_deg_number", .before = 1)
 up.deg <- diff.exp.all.filter$cluster %>% table() %>% as.matrix() %>% t() %>% as.data.frame()

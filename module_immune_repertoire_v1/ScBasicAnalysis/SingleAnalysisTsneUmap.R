@@ -56,6 +56,9 @@ suppressMessages(library(cowplot))
 suppressMessages(library(circlize))
 suppressMessages(library(parallel))
 suppressMessages(library(ComplexHeatmap))
+# library(future)
+# plan("multiprocess", workers = 6)
+# options(future.globals.maxSize = 1572864000)
 # suppressMessages(library(ComplexHeatmap, lib.loc = "/share/nas1/ranjr/packages/3.6"))
 
 time1 <- proc.time()
@@ -210,28 +213,56 @@ GlobPlotTheme <- function (font.size = size){
                    axis.text = element_blank())
   return(Theme)
 }
+#
+# parallel::mclapply(sort(unique(Idents(single.seurat))) %>% as.character(), function(x){
+#   print(paste(c('doing', x), sep = ' '))
+#   top10.genes <- diff.exp.all.filter %>% group_by(cluster) %>% filter(., cluster == x) %>% top_n(., n = top.n, wt = avg_logFC) %>% .[order(.[,'avg_logFC'], decreasing = TRUE),] %>%  .[, "gene", drop = TRUE] %>% head(n = top.n) %>% unique()
+#
+#   top_gene_num = length(top10.genes)
+#   if(top_gene_num < 5){tmp_ncol = top_gene_num}else{tmp_ncol = ceiling(top_gene_num / 2)}
+#
+#   p.tsne <- FeaturePlot(single.seurat, features = top10.genes, reduction = "tsne", cols = c("lightgrey", "purple"), ncol = tmp_ncol, pt.size = 0.1) & NoLegend() & GlobPlotTheme()
+#   outfile <- paste(paste("cluster", x, sep = ""), paste("top", top.n, sep = ""), "markerTsne", sep = "_")
+#   SavePlot(od = outputdir, filename = outfile, data = p.tsne)
+#   p.umap <- FeaturePlot(single.seurat, features = top10.genes, reduction = "umap", cols = c("lightgrey", "purple"), ncol = tmp_ncol, pt.size = 0.1) & NoLegend() & GlobPlotTheme()
+#   outfile <- paste(paste("cluster", x, sep = ""), paste("top", top.n, sep = ""), "markerUmap", sep = "_")
+#   SavePlot(od = outputdir, filename = outfile, data = p.umap)
+#   p.vln <- VlnPlot(single.seurat, features = top10.genes, ncol = 5, pt.size = 0) * theme(title = element_text(size = 7),
+#       axis.ticks = element_blank(),
+#       axis.title = element_blank(),
+#       axis.text.y = element_text(size = 7),
+# 	  axis.text.x  = element_text(size = 6, angle = 90))
+#   outfile <- paste(paste("cluster", x, sep = ""), paste("top", top.n, sep = ""), "markerVln", sep = "_")
+#   SavePlot(od = outputdir, filename = outfile, data = p.vln)
+#   print(paste('---> done', x, sep = ' '))
+#   return("done")
+# }, mc.cores = length(unique(Idents(single.seurat))))
 
-parallel::mclapply(sort(unique(Idents(single.seurat))) %>% as.character(), function(x){
+
+
+for(x in c(sort(unique(Idents(single.seurat))) %>% as.character())){
+  print(paste('doing', x, sep = ' '))
   top10.genes <- diff.exp.all.filter %>% group_by(cluster) %>% filter(., cluster == x) %>% top_n(., n = top.n, wt = avg_logFC) %>% .[order(.[,'avg_logFC'], decreasing = TRUE),] %>%  .[, "gene", drop = TRUE] %>% head(n = top.n) %>% unique()
-  
+
   top_gene_num = length(top10.genes)
   if(top_gene_num < 5){tmp_ncol = top_gene_num}else{tmp_ncol = ceiling(top_gene_num / 2)}
-  
+
   p.tsne <- FeaturePlot(single.seurat, features = top10.genes, reduction = "tsne", cols = c("lightgrey", "purple"), ncol = tmp_ncol, pt.size = 0.1) & NoLegend() & GlobPlotTheme()
   outfile <- paste(paste("cluster", x, sep = ""), paste("top", top.n, sep = ""), "markerTsne", sep = "_")
   SavePlot(od = outputdir, filename = outfile, data = p.tsne)
   p.umap <- FeaturePlot(single.seurat, features = top10.genes, reduction = "umap", cols = c("lightgrey", "purple"), ncol = tmp_ncol, pt.size = 0.1) & NoLegend() & GlobPlotTheme()
   outfile <- paste(paste("cluster", x, sep = ""), paste("top", top.n, sep = ""), "markerUmap", sep = "_")
   SavePlot(od = outputdir, filename = outfile, data = p.umap)
-  p.vln <- VlnPlot(single.seurat, features = top10.genes, ncol = 5, pt.size = 0) * theme(title = element_text(size = 7), 
-      axis.ticks = element_blank(), 
-      axis.title = element_blank(), 
+  p.vln <- VlnPlot(single.seurat, features = top10.genes, ncol = 5, pt.size = 0) * theme(title = element_text(size = 7),
+      axis.ticks = element_blank(),
+      axis.title = element_blank(),
       axis.text.y = element_text(size = 7),
 	  axis.text.x  = element_text(size = 6, angle = 90))
   outfile <- paste(paste("cluster", x, sep = ""), paste("top", top.n, sep = ""), "markerVln", sep = "_")
   SavePlot(od = outputdir, filename = outfile, data = p.vln)
-  return("done")
-}, mc.cores = length(unique(Idents(single.seurat))))
+  print(paste('---> done', x, sep = ' '))
+}
+
 
 # marker gene expression
 # marker.gene.avgExp.data <- lapply(sort(unique(Idents(single.seurat))), function(x) {
@@ -290,7 +321,19 @@ SavePlot(od = outputdir, filename = "markergene_heatmap", data = P.heatmap)
 SavePlot(od = outputdir, filename = "top2_markergene_dotplot", data = P.dotplot)
 
 header <- c("ID", "symbol", "Pvalue", "log2FC", "pct.1", "pct.2", "Qvalue", "Cluster")
-sapply(sort(unique(Idents(single.seurat))) %>% as.character(), function(x){
+# sapply(sort(unique(Idents(single.seurat))) %>% as.character(), function(x){
+  # clusterx <- diff.exp.all.filter %>% group_by(cluster) %>% filter(., cluster == x) %>% .[order(.[,'avg_logFC'], decreasing = TRUE),]
+  # outfile <- paste(sample, paste("cluster", x, sep = ""),"diff_featuregene.xls", sep = ".")
+  # write.table(t(header), file = file.path(outputdir, outfile), sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  # write.table(clusterx, file = file.path(outputdir, outfile), sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE, append = T)	
+  # clusterx.all <- diff.exp.all %>% group_by(cluster) %>% filter(., cluster == x) %>% .[order(.[,'avg_logFC'], decreasing = TRUE),]
+  # outfile <- paste(paste("cluster", x, sep = ""),"all_featuregene.xls", sep = ".")
+  # write.table(t(header), file = file.path(outputdir, outfile), sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
+  # write.table(clusterx.all, file = file.path(outputdir, outfile), sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE, append = T)
+# })
+
+for(x in sort(unique(Idents(single.seurat))) %>% as.character()){
+  print(paste('doing', x, sep = ' '))
   clusterx <- diff.exp.all.filter %>% group_by(cluster) %>% filter(., cluster == x) %>% .[order(.[,'avg_logFC'], decreasing = TRUE),]
   outfile <- paste(sample, paste("cluster", x, sep = ""),"diff_featuregene.xls", sep = ".")
   write.table(t(header), file = file.path(outputdir, outfile), sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
@@ -299,7 +342,12 @@ sapply(sort(unique(Idents(single.seurat))) %>% as.character(), function(x){
   outfile <- paste(paste("cluster", x, sep = ""),"all_featuregene.xls", sep = ".")
   write.table(t(header), file = file.path(outputdir, outfile), sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
   write.table(clusterx.all, file = file.path(outputdir, outfile), sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE, append = T)
-})
+  print(paste('---> done', x, sep = ' '))
+}
+
+
+
+
 outputdir <- od
 # write.table(t(header), file = file.path(outputdir, "nofilter_All_clusetr_featuregene.xls"), sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
 # write.table(diff.exp.all, file = file.path(outputdir, "nofilter_All_clusetr_featuregene.xls"), sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE, append = T)

@@ -68,6 +68,8 @@ class ScGeneFunctionalAnalysis(ScBasic):
             cmd = '{} {} --indir {} --cfg {} --id_list {}'. \
                 format(self.PERL, self.enricher, file, self._config, self._id_list)
             cmd_list.append(cmd)
+        if not cmd_list:
+            cmd_list = ['echo no file for enrich analysis']
         return cmd_list
 
     @MyRunner.count_running_time
@@ -79,6 +81,8 @@ class ScGeneFunctionalAnalysis(ScBasic):
             cmd = '{} {} --idir {} --cfg {}'. \
                 format(self.PERL, self.ppi_network_runner, file, self._config)
             cmd_list.append(cmd)
+        if not cmd_list:
+            cmd_list = ['echo no file for ppi analysis']
         return cmd_list
 
     @MyRunner.count_running_time
@@ -89,6 +93,8 @@ class ScGeneFunctionalAnalysis(ScBasic):
         for file in self._all_cluster_marker_avg:
             cmd = '{} {} --all {} --cfg {}'.format(self.PERL, self.tf_analysis_runner, file, self._config)
             cmd_list.append(cmd)
+        if not cmd_list:
+            cmd_list = ['echo no file for tf analysis']
         return cmd_list
 
 

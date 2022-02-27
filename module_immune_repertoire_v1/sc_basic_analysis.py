@@ -52,10 +52,14 @@ class ScBasicAnalysis(ScBasic):
         return [cmd]
 
     @MyRunner.count_running_time
-    @MyRunner.cmd_wrapper(cmd_name='sample_diff_inte_analyse', threads_num=5)
+    @MyRunner.cmd_wrapper(cmd_name='sample_diff_inte_analyse', threads_num=3)
     def sample_diff_inte_analyse(self):
         """output : 1) clusterDiff_integrated 2) sampleDiff_integrated"""
         logging.info('------> ScBasicAnalysis is running sample_diff_inte_analyse')
+
+        if len(self._sample_file) == 1:
+            cmd_list = 'echo there is only one sample, skipping inte analysis'
+            return [cmd_list]
 
         # 1) clusterDiff_integrated
         MyPath.mkdir('cluster_diff_integrated')
@@ -108,7 +112,8 @@ class ScBasicAnalysis(ScBasic):
         output: 1) analysed_integrated
         """
         if len(self._sample_file) == 1:
-            return None
+            inte_cmd = 'echo there is only one sample, skipping inte analysis'
+            return [inte_cmd]
 
         logging.info('------> ScBasicAnalysis is running basic_analyse_inte')
         MyPath.mkdir('analysed_integrated')
@@ -130,7 +135,7 @@ class ScBasicAnalysis(ScBasic):
         return [inte_cmd]
 
     @MyRunner.count_running_time
-    @MyRunner.cmd_wrapper(threads_num=3)
+    @MyRunner.cmd_wrapper(threads_num=5)
     def basic_analyse(self):
         logging.info('------> ScBasicAnalysis is running basic_analyse')
         MyPath.mkdir('analysed')
