@@ -1,13 +1,10 @@
 #!/usr/bin/env python
+from myrunner import MyPath, MyRunner
+from sc_utils import ScBasic
 from pathlib import Path
 import argparse
 import shutil
-import sys
 import re
-
-sys.path.append(str(Path(__file__).parent))
-from myrunner import MyPath, MyRunner
-from sc_utils import ScBasic
 
 
 class WebReport(ScBasic):

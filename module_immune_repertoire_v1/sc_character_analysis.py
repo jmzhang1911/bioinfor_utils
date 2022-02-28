@@ -1,14 +1,11 @@
 #!/usr/bin/env python
+from myrunner import MyPath, MyRunner
 from concurrent import futures
+from sc_utils import ScBasic
 from pathlib import Path
 import argparse
 import logging
 import time
-import sys
-
-sys.path.append(str(Path(__file__).parent))
-from myrunner import MyPath, MyRunner
-from sc_utils import ScBasic
 
 FORMAT = '%(asctime)s %(threadName)s=> %(message)s'
 logging.basicConfig(level=logging.INFO, format=FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
@@ -33,7 +30,6 @@ class ScCharacterAnalysis(ScBasic):
         tmp_dict = {}
         for file in self._rds.split(','):
             sample = Path(file).name.replace('.single_seruat.Rds', '')
-            MyPath.mkdir(sample + '.cell_trace', sample + '.cell_typeAnno', sample + '.cell_cycle')
             tmp_dict[sample] = file
         return tmp_dict
 
@@ -103,9 +99,8 @@ if __name__ == '__main__':
 
     runner = ScCharacterAnalysis(input_args.config, input_args.rds)
 
-    executor = futures.ProcessPoolExecutor(max_workers=3)
-    fs = [executor.submit(runner.trace_analyse),
-          executor.submit(runner.cell_anno_analyse),
+    executor = futures.ProcessPoolExecutor(max_workers=2)
+    fs = [executor.submit(runner.cell_anno_analyse),
           executor.submit(runner.cell_cycle_analyse)]
 
     while True:
@@ -116,3 +111,6 @@ if __name__ == '__main__':
         if flag:
             executor.shutdown()
             break
+
+    # trace资源消耗过大，放在最后
+    runner.trace_analyse()

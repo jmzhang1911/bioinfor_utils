@@ -47,7 +47,7 @@ if(!is.null(opt$SCT)) {
 }else{
   opt$assay <- 'RNA'
 }
-if(!dir.exists(opt$od)) {dir.create(opt$od)}
+
 
 ### .libPaths('/share/nas1/ranjr/packages/3.6')
 #cmd <- paste("echo ", paste0("'.libPaths('/share/nas1/ranjr/packages/3.6')'"), "> ~/.Rprofile")
@@ -230,6 +230,7 @@ wtf_runner <- function(){
 	# monocle_cds <- clusterCells(monocle_cds, num_clusters = length(levels(single.seurat))+ 1)
 	monocle_cds <- orderCells(monocle_cds)
 
+	###为什么这里重新找maker，什么傻逼逻辑
 	single.marker <- FindAllMarkers(single.seurat, assay = my.assay)
 	if(!is.null(opt$FDR)) {single.marker %<>% filter(p_val_adj < FDR)}
 	if(!is.null(opt$pvalue)) {single.marker %<>% filter(p_val < pvalue)} 
@@ -260,4 +261,4 @@ wtf_runner <- function(){
 
 single.seurat <- readRDS(seurat.object)
 
-if(dim(single.seurat)[2]<= 30000){wtf_runner()}else{print('cells are more than 3w, skipping')}
+if(dim(single.seurat)[2]<= 30000){if(!dir.exists(opt$od)) {dir.create(opt$od)};wtf_runner()}else{print('cells are more than 3w, skipping')}

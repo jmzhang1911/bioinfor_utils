@@ -1,16 +1,13 @@
 #!/usr/bin/env python
+from myrunner import MyPath, MyRunner
 from collections import defaultdict
 from concurrent import futures
+from sc_utils import ScBasic
 from pathlib import Path
 import argparse
 import logging
 import shutil
 import time
-import sys
-
-sys.path.append(str(Path(__file__).parent))
-from myrunner import MyPath, MyRunner
-from sc_utils import ScBasic
 
 FORMAT = '%(asctime)s %(threadName)s=> %(message)s'
 logging.basicConfig(level=logging.INFO, format=FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
@@ -127,7 +124,7 @@ class VdjAnalysis(ScBasic):
 
         if not cmd:
             return ['echo no T file, skipping t analysis']
-        
+
         return [cmd]
 
 

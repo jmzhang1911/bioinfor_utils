@@ -1,12 +1,9 @@
 #!/usr/bin/env python
+from myrunner import MyRunner, MyPath
+from sc_utils import ScBasic
 from pathlib import Path
 import argparse
 import logging
-import sys
-
-sys.path.append(str(Path(__file__).parent))
-from myrunner import MyRunner, MyPath
-from sc_utils import ScBasic
 
 FORMAT = '%(asctime)s %(threadName)s=> %(message)s'
 logging.basicConfig(level=logging.INFO, format=FORMAT, datefmt='%Y-%m-%d %H:%M:%S')

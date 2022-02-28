@@ -245,7 +245,7 @@ my $seurat_dir="$Web_Report/BMK_3_seurat_analysis";
 		mkdirOrDie("$cell_cycle_dir") unless(-d $cell_cycle_dir); # Web_Report/BMK_3_seurat_analysis/BMK_5_Cell_Cycle
 		runOrDie("cp -r $cell_cycle/* $cell_cycle_dir");
 	}
-	if(defined $allsample_trace){
+	if($allsample_trace == 'None'){
 		my $allsample_trace_dir = "$seurat_dir/BMK_6_trace_analysis";
 		mkdirOrDie("$allsample_trace_dir") unless(-d $allsample_trace_dir); # Web_Report/BMK_3_seurat_analysis/BMK_6_trace_analysis
 		runOrDie("cp -r $allsample_trace/*analysed_integrated* $allsample_trace_dir");
