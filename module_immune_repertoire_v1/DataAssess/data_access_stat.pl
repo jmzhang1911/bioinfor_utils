@@ -74,13 +74,19 @@ sub summary_qc_stat_info{
 		# get last line information
 		open(IN,"$paraf")||die"can't open $paraf\n";
 		<IN>;
+		<IN>;
 		my $now;
 		while (<IN>)
 		{
 			chomp;
-			my @A=split/\s+/,$_;
-			my $str=join"\t", @A[1..5];
-			$now="$file\t$str\t$A[7]\n";
+			my @B=split/\s+/,$_;
+			my $str=join"\t", @B[3..5];
+			my $now_tmp="$str\t$B[7]\n";
+			while (<IN>){
+				chomp;
+	                        my @AB=split/\s+/,$_;
+				$now="$file\t$AB[1]\t$AB[2]\t$now_tmp";
+			}
 		}
 		close(IN);
 		print OUT $now;
