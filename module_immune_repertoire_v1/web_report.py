@@ -131,6 +131,7 @@ class WebReport(ScBasic):
 
         wang_xi_perl = Path(__file__).parent / 'WebReport/analysis_report.pl'
 
+        # 传进来其实是所有的类型的文件，没有区分整合数据还是单个样本数据，因此在后续进行拆分并分别传参给王茜的脚本
         all_anno_file = single_enrichment.split(',')
         all_ppi_file = single_sample_ppi.split(',')
         all_tf_file = single_tf_analysis.split(',')
@@ -164,7 +165,8 @@ class WebReport(ScBasic):
             cluster_tf_result = 'None'
 
         ########
-        single_typeanno = ','.join([i for i in all_type_anno_file if not Path(i).name.startswith('analysed_integrated')])
+        single_typeanno = ','.join(
+            [i for i in all_type_anno_file if not Path(i).name.startswith('analysed_integrated')])
 
         cell_typeanno = [i for i in all_type_anno_file if Path(i).name.startswith('analysed_integrated')]
         if not cell_typeanno:
@@ -179,7 +181,6 @@ class WebReport(ScBasic):
         if allsample_trace != 'None':
             cell_trace_all_files = allsample_trace.split(',')
             allsample_trace = [i for i in cell_trace_all_files if Path(i).name.startswith('analysed_integrated')][0]
-
 
         cmd = '{} {} --sample_filter {} ' \
               '--sample_analysis {} ' \
