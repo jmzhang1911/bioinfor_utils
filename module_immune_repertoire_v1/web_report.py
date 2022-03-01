@@ -139,7 +139,7 @@ class WebReport(ScBasic):
         ######### 功能富集
         single_enrichment = ','.join(
             [i for i in all_anno_file if not Path(i).name.startswith('cluster_diff_integrated') or
-             re.findall('.*_vs_.*', str(Path(i).name))])
+             not str(Path(i).name).startswith('analysed_integrated')])
 
         # cluster_diff_integrated.Anno_enrichment
         cluster_enrichment = ','.join([i for i in all_anno_file if Path(i).name.startswith('cluster_diff_integrated')])
@@ -148,29 +148,38 @@ class WebReport(ScBasic):
         #########
         single_sample_ppi = ','.join(
             [i for i in all_ppi_file if not Path(i).name.startswith('cluster_diff_integrated') or
-             re.findall('.*_vs_.*', str(Path(i).name))])
+             not Path(i).name.startswith('analysed_integrated')])
 
-        cluster_ppi = ','.join([i for i in all_ppi_file if Path(i).name.startswith('cluster_diff_integrated')])
+        cluster_ppi = [i for i in all_ppi_file if Path(i).name.startswith('cluster_diff_integrated')]
+        if not cluster_ppi:
+            cluster_ppi = 'None'
 
         ########
         single_tf_analysis = ','.join(
             [i for i in all_tf_file if not Path(i).name.startswith('cluster_diff_integrated') or
-             re.findall('.*_vs_.*', str(Path(i).name))])
+             re.findall('.*_vs_.*', str(Path(i).name)) or not Path(i).name.startswith('analysed_integrated')])
 
-        cluster_tf_result = ','.join([i for i in all_tf_file if Path(i).name.startswith('cluster_diff_integrated')])
+        cluster_tf_result = [i for i in all_tf_file if Path(i).name.startswith('cluster_diff_integrated')]
+        if not cluster_tf_result:
+            cluster_tf_result = 'None'
 
         ########
-        single_typeanno = ','.join(
-            [i for i in all_type_anno_file if not Path(i).name.startswith('analysed_integrated')])
-        cell_typeanno = ','.join([i for i in all_type_anno_file if Path(i).name.startswith('analysed_integrated')])
+        single_typeanno = ','.join([i for i in all_type_anno_file if not Path(i).name.startswith('analysed_integrated')])
+
+        cell_typeanno = [i for i in all_type_anno_file if Path(i).name.startswith('analysed_integrated')]
+        if not cell_typeanno:
+            cell_typeanno = 'None'
 
         ######
-        cell_cycle_all_files = cell_cycle.split(',')
-        cell_cycle = ','.join([i for i in cell_cycle_all_files if Path(i).name.startswith('analysed_integrated')])
+        if cell_cycle != 'None':
+            cell_cycle_all_files = cell_cycle.split(',')
+            cell_cycle = ','.join([i for i in cell_cycle_all_files if Path(i).name.startswith('analysed_integrated')])
 
-        #####
-        cell_trace_all_files = allsample_trace.split(',')
-        allsample_trace = ','.join([i for i in cell_trace_all_files if Path(i).name.startswith('analysed_integrated')])
+        ##### 这里只拷贝多样本的
+        if allsample_trace != 'None':
+            cell_trace_all_files = allsample_trace.split(',')
+            allsample_trace = [i for i in cell_trace_all_files if Path(i).name.startswith('analysed_integrated')][0]
+
 
         cmd = '{} {} --sample_filter {} ' \
               '--sample_analysis {} ' \
@@ -384,20 +393,20 @@ if __name__ == '__main__':
     parser.add_argument('--cellranger', type=str)
     parser.add_argument('--cellranger_stat', type=str)
     parser.add_argument('--sample_filter', type=str)
-    parser.add_argument('--sample_analysis', type=str)
-    parser.add_argument('--single_enrichment', type=str)
-    parser.add_argument('--single_sample_ppi', type=str)
-    parser.add_argument('--single_tf_analysis', type=str)
-    parser.add_argument('--single_typeanno', type=str)
-    parser.add_argument('--integrated_result', type=str)
-    parser.add_argument('--allcluster_statistic', type=str)
-    parser.add_argument('--groupdiff_statistic', type=str)
-    parser.add_argument('--cell_cycle', type=str)
-    parser.add_argument('--allsample_trace', type=str)
+    parser.add_argument('--sample_analysis', type=str, default='None')
+    parser.add_argument('--single_enrichment', type=str, default='None')
+    parser.add_argument('--single_sample_ppi', type=str, default='None')
+    parser.add_argument('--single_tf_analysis', type=str, default='None')
+    parser.add_argument('--single_typeanno', type=str, default='None')
+    parser.add_argument('--integrated_result', type=str, default='None')
+    parser.add_argument('--allcluster_statistic', type=str, default='None')
+    parser.add_argument('--groupdiff_statistic', type=str, default='None')
+    parser.add_argument('--cell_cycle', type=str, default='None')
+    parser.add_argument('--allsample_trace', type=str, default='None')
     parser.add_argument('--cfg1', type=str)  # data.cfg
     parser.add_argument('--cfg2', type=str)  # detail.cfg
-    parser.add_argument('--t_results', type=str)
-    parser.add_argument('--b_results', type=str)
+    parser.add_argument('--t_results', type=str, default='None')
+    parser.add_argument('--b_results', type=str, default='None')
     input_args = parser.parse_args()
 
     web = WebReport(config=input_args.cfg2)
