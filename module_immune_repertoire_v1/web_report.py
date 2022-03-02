@@ -139,48 +139,74 @@ class WebReport(ScBasic):
 
         ######### 功能富集
         single_enrichment = ','.join(
-            [i for i in all_anno_file if not Path(i).name.startswith('cluster_diff_integrated') or
-             not str(Path(i).name).startswith('analysed_integrated')])
+            [i for i in all_anno_file if not Path(i).name.startswith('cluster_diff_integrated') and
+             not str(Path(i).name).startswith('analysed_integrated') and
+             not re.findall('.*_vs_.*', str(Path(i).name))])
 
-        # cluster_diff_integrated.Anno_enrichment
-        cluster_enrichment = ','.join([i for i in all_anno_file if Path(i).name.startswith('cluster_diff_integrated')])
-        group_enrichment = ','.join([i for i in all_anno_file if re.findall('.*_vs_.*', str(Path(i).name))])
+        # cluster_enrichment, group_enrichment
+        cluster_enrichment = [i for i in all_anno_file if Path(i).name.startswith('cluster_diff_integrated')]
+        if not cluster_enrichment:
+            cluster_enrichment = 'None'
+        else:
+            cluster_enrichment = cluster_enrichment[0]
 
-        #########
+        group_enrichment = [i for i in all_anno_file if re.findall('.*_vs_.*', str(Path(i).name))]
+        if not group_enrichment:
+            group_enrichment = 'None'
+        else:
+            group_enrichment = ','.join(group_enrichment)
+
+        ######### PPI分析
         single_sample_ppi = ','.join(
-            [i for i in all_ppi_file if not Path(i).name.startswith('cluster_diff_integrated') or
-             not Path(i).name.startswith('analysed_integrated')])
+            [i for i in all_ppi_file if not Path(i).name.startswith('cluster_diff_integrated') and
+             not Path(i).name.startswith('analysed_integrated') and
+             not re.findall('.*_vs_.*', str(Path(i).name))])
 
         cluster_ppi = [i for i in all_ppi_file if Path(i).name.startswith('cluster_diff_integrated')]
         if not cluster_ppi:
             cluster_ppi = 'None'
+        else:
+            cluster_ppi = cluster_ppi[0]
 
-        ########
+        ######## TF分析
         single_tf_analysis = ','.join(
-            [i for i in all_tf_file if not Path(i).name.startswith('cluster_diff_integrated') or
-             re.findall('.*_vs_.*', str(Path(i).name)) or not Path(i).name.startswith('analysed_integrated')])
+            [i for i in all_tf_file if not Path(i).name.startswith('cluster_diff_integrated') and
+             not re.findall('.*_vs_.*', str(Path(i).name)) and
+             not Path(i).name.startswith('analysed_integrated')])
 
         cluster_tf_result = [i for i in all_tf_file if Path(i).name.startswith('cluster_diff_integrated')]
         if not cluster_tf_result:
             cluster_tf_result = 'None'
+        else:
+            cluster_tf_result = cluster_tf_result[0]
 
-        ########
+        ######## 细胞注释
         single_typeanno = ','.join(
             [i for i in all_type_anno_file if not Path(i).name.startswith('analysed_integrated')])
 
         cell_typeanno = [i for i in all_type_anno_file if Path(i).name.startswith('analysed_integrated')]
         if not cell_typeanno:
             cell_typeanno = 'None'
+        else:
+            cell_typeanno = cell_typeanno[0]
 
-        ######
+        ######## 细胞周期
         if cell_cycle != 'None':
             cell_cycle_all_files = cell_cycle.split(',')
-            cell_cycle = ','.join([i for i in cell_cycle_all_files if Path(i).name.startswith('analysed_integrated')])
+            cell_cycle = [i for i in cell_cycle_all_files if Path(i).name.startswith('analysed_integrated')]
+            if not cell_cycle:
+                cell_cycle = 'None'
+            else:
+                cell_cycle = cell_cycle[0]
 
         ##### 这里只拷贝多样本的
         if allsample_trace != 'None':
             cell_trace_all_files = allsample_trace.split(',')
-            allsample_trace = [i for i in cell_trace_all_files if Path(i).name.startswith('analysed_integrated')][0]
+            allsample_trace = [i for i in cell_trace_all_files if Path(i).name.startswith('analysed_integrated')]
+            if not allsample_trace:
+                allsample_trace = 'None'
+            else:
+                allsample_trace = allsample_trace[0]
 
         cmd = '{} {} --sample_filter {} ' \
               '--sample_analysis {} ' \
@@ -377,28 +403,17 @@ class WebReport(ScBasic):
 
 
 if __name__ == '__main__':
-    # detail = 'detail.cfg'
-    # gc = 'gc/AllSample_GC_Q.stat'
-    # qc = 'qc/G1Po-b_S1_L001_R2_001_fastqc,qc/G1Po-sc_S1_L001_R2_001_fastqc,qc/G1Po-t_S1_L001_R2_001_fastqc,' \
-    #      'qc/G1Pr-b_S1_L001_R2_001_fastqc,qc/G1Pr-sc_S1_L001_R2_001_fastqc,qc/G1Pr-t_S1_L001_R2_001_fastqc,' \
-    #      'qc/G3Po-b_S1_L001_R2_001_fastqc,qc/G3Po-sc_S1_L001_R2_001_fastqc,qc/G3Po-t_S1_L001_R2_001_fastqc,' \
-    #      'qc/G3Pr-b_S1_L001_R2_001_fastqc,qc/G3Pr-sc_S1_L001_R2_001_fastqc,qc/G3Pr-t_S1_L001_R2_001_fastqc'
-    # cellranger = 'cellranger/G1Po-b.origin_results,cellranger/G1Po-sc.origin_results,cellranger/G1Po-t.origin_results,' \
-    #              'cellranger/G1Pr-b.origin_results,cellranger/G1Pr-sc.origin_results,cellranger/G1Pr-t.origin_results,' \
-    #              'cellranger/G3Po-b.origin_results,cellranger/G3Po-sc.origin_results,cellranger/G3Po-t.origin_results,' \
-    #              'cellranger/G3Pr-b.origin_results,cellranger/G3Pr-sc.origin_results,cellranger/G3Pr-t.origin_results'
-
     parser = argparse.ArgumentParser(description='running sb web report')
     parser.add_argument('--gc', type=str)
     parser.add_argument('--qc', type=str)
     parser.add_argument('--cellranger', type=str)
     parser.add_argument('--cellranger_stat', type=str)
     parser.add_argument('--sample_filter', type=str)
-    parser.add_argument('--sample_analysis', type=str, default='None')
-    parser.add_argument('--single_enrichment', type=str, default='None')
-    parser.add_argument('--single_sample_ppi', type=str, default='None')
-    parser.add_argument('--single_tf_analysis', type=str, default='None')
-    parser.add_argument('--single_typeanno', type=str, default='None')
+    parser.add_argument('--sample_analysis', type=str)
+    parser.add_argument('--single_enrichment', type=str)
+    parser.add_argument('--single_sample_ppi', type=str)
+    parser.add_argument('--single_tf_analysis', type=str)
+    parser.add_argument('--single_typeanno', type=str)
     parser.add_argument('--integrated_result', type=str, default='None')
     parser.add_argument('--allcluster_statistic', type=str, default='None')
     parser.add_argument('--groupdiff_statistic', type=str, default='None')

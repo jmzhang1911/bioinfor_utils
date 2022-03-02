@@ -196,7 +196,7 @@ steps:
         - class: ResourceRequirement
           coresMax: 1
           ramMax: 0
-          baseRam: 3000
+          baseRam: 100
           modulus: 0
       inputs:
         - id: r1_fqs
@@ -485,9 +485,9 @@ steps:
         - class: DockerRequirement
           dockerImageId: immune_repertoire_pipeline
         - class: ResourceRequirement
-          coresMax: 7
+          coresMax: 13
           ramMax: 0
-          baseRam: 20000
+          baseRam: 35000
           modulus: 0
       inputs:
         - id: config
@@ -564,10 +564,13 @@ steps:
         type: directory
       - id: analysed_integrated
         type: directory
+        nonSymbol: True
       - id: cluster_diff_integrated
         type: directory
+        nonSymbol: True
       - id: sample_diff_integrated
         type: directory
+        nonSymbol: True
       - id: sample_statistic
         type:
          type: array
@@ -582,6 +585,7 @@ steps:
          items: File
       - id: inte_rds
         type: File
+        nonSymbol: True
       - id: id_list
         type: File
       - id: avg
@@ -669,9 +673,9 @@ steps:
         - class: DockerRequirement
           dockerImageId: immune_repertoire_pipeline
         - class: ResourceRequirement
-          coresMax: 6
+          coresMax: 4
           ramMax: 0
-          baseRam: 10000
+          baseRam: 35000
           modulus: 0
       inputs:
         - id: rds
@@ -720,6 +724,7 @@ steps:
         type:
           type: array
           items: directory
+        nonSymbol: True
 #################################################################
   - id: vdj_analysis
     run:
@@ -767,8 +772,10 @@ steps:
     outputs:
       - id: b_results
         type: directory
+        nonSymbol: True
       - id: t_results
         type: directory
+        nonSymbol: True
 #################################################################
   - id: web_report
     run:
@@ -780,7 +787,7 @@ steps:
         - class: ResourceRequirement
           coresMax: 1
           ramMax: 0
-          baseRam: 1000
+          baseRam: 6000
           modulus: 0
       inputs:
         - id: gc
@@ -896,15 +903,15 @@ steps:
       - { id: single_sample_ppi, source: "sc_gene_functional_analysis.ppi_result" }
       - { id: single_tf_analysis, source: "sc_gene_functional_analysis.TFBS_Analysis" }
       - { id: single_typeanno, source: "sc_character_analysis.cell_typeAnno_results" }
-      - { id: allcluster_statistic, source: "sc_basic_analysis.cluster_diff_integrated" }
-      - { id: groupdiff_statistic, source: "sc_basic_analysis.sample_diff_integrated" }
-      - { id: allsample_trace, source: "sc_character_analysis.cell_trace_results" }
+      - { id: allcluster_statistic, source: "sc_basic_analysis.cluster_diff_integrated", nonSymbol: true }
+      - { id: groupdiff_statistic, source: "sc_basic_analysis.sample_diff_integrated", nonSymbol: true }
+      - { id: allsample_trace, source: "sc_character_analysis.cell_trace_results", nonSymbol: true}
       - { id: cfg1, source: "Phred_Change.data_cfg" }
       - { id: cfg2, source: "creat_detail_cfg.detail_cfg" }
       - { id: cellranger_stat, source: "cellranger_stat.statistic" }
-      - { id: t_results, source: "vdj_analysis.t_results" }
-      - { id: b_results, source: "vdj_analysis.b_results" }
-      - { id: integrated_result, source: "sc_basic_analysis.analysed_integrated" }
+      - { id: t_results, source: "vdj_analysis.t_results", nonSymbol: true }
+      - { id: b_results, source: "vdj_analysis.b_results", nonSymbol: true }
+      - { id: integrated_result, source: "sc_basic_analysis.analysed_integrated", nonSymbol: true}
       - { id: cellranger_results, source: "cellranger.origin_results" }
       - { id: cell_cycle, source: "sc_character_analysis.cell_cycle_results" }
     outputs:

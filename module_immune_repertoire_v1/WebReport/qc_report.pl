@@ -115,10 +115,10 @@ while(<GC>){
 if($tmp[2] < 90000000000){
                 $UseData ++;  
          }
-if($tmp[5] < 80){
+if($tmp[5] < 90){
 		$UseQ20 ++;
 	}
- if($tmp[6] < 70){
+ if($tmp[6] < 85){
                 $UseQ30 ++;
         }
  if($tmp[3] <=30 and $tmp[4] >=40 ){
@@ -235,15 +235,15 @@ if ($UseGC == 0){
 	}
 
 if ($UseQ20 == 0){
-	print OUV "UseQ20\t\>\=80\t<font color='#00cc00'>yes</font>\n\n";
+	print OUV "UseQ20\t\>\=90\t<font color='#00cc00'>yes</font>\n\n";
 }else {
-	print OUV "UseQ20\t\>\=80\t<font color='#ff0000'>no</font>\n";
+	print OUV "UseQ20\t\>\=90\t<font color='#ff0000'>no</font>\n";
 	}
 
 if ($UseQ30 == 0){
-        print OUV "UseQ30\t\>\=70\t<font color='#00cc00'>yes</font>\n\n";
+        print OUV "UseQ30\t\>\=85\t<font color='#00cc00'>yes</font>\n\n";
         }else {
-        print OUV "UseQ30\t\>\=70\t<font color='#ff0000'>no</font>\n";
+        print OUV "UseQ30\t\>\=85\t<font color='#ff0000'>no</font>\n";
         }
 ##cellranger
 if ($Valid_Barcodes == 0){
