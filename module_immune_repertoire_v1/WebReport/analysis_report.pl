@@ -155,7 +155,7 @@ my $seurat_dir="$Web_Report/BMK_3_seurat_analysis";
 			my $single_tf_TFBS = "$single_tf/TFBS_Analysis";
 			mkdirOrDie($single_tf) unless (-d $single_tf); # Web_Report/BMK_3_seurat_analysis/BMK_2_Analysis/BMK_1_GC03-sc/BMK_2_Diff_anlaysis/BMK_5_TF_analysis
 			mkdirOrDie($single_tf_TFBS) unless (-d $single_tf_TFBS);# Web_Report/BMK_3_seurat_analysis/BMK_2_Analysis/BMK_1_GC03-sc/BMK_2_Diff_anlaysis/BMK_5_TF_analysis/TFBS_Analysis
-			runOrDie("cp -r $single_tf_dir/* $single_tf_TFBS || echo skipping!!! || echo skipping!!");
+			runOrDie("cp -r $single_tf_dir/* $single_tf_TFBS || echo skipping!!!");
 		}
 	}
 

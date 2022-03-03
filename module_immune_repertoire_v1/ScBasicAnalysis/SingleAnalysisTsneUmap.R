@@ -245,6 +245,9 @@ for(x in c(sort(unique(Idents(single.seurat))) %>% as.character())){
   top10.genes <- diff.exp.all.filter %>% group_by(cluster) %>% filter(., cluster == x) %>% top_n(., n = top.n, wt = avg_logFC) %>% .[order(.[,'avg_logFC'], decreasing = TRUE),] %>%  .[, "gene", drop = TRUE] %>% head(n = top.n) %>% unique()
 
   top_gene_num = length(top10.genes)
+  if(top_gene_num == 0){
+    next
+  }
   if(top_gene_num < 5){tmp_ncol = top_gene_num}else{tmp_ncol = ceiling(top_gene_num / 2)}
 
   p.tsne <- FeaturePlot(single.seurat, features = top10.genes, reduction = "tsne", cols = c("lightgrey", "purple"), ncol = tmp_ncol, pt.size = 0.1) & NoLegend() & GlobPlotTheme()

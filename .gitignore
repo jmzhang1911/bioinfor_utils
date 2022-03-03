@@ -1,3 +1,4 @@
 *.rds
 *.Rdata
 *.Rds
+*.tbl

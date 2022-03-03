@@ -90,7 +90,7 @@ class WebReport(ScBasic):
                                 format(config_dict[file.parts[-3]], sample_name, file_name))
 
             else:
-                des_tb = config_dict['t'] if sample_name.endswith('-t') else config_dict['b']
+                des_tb = config_dict['t'] if sample_name.endswith('t') else config_dict['b']
 
                 shutil.copy('{}/outs/web_summary.html'.format(sample),
                             'BMK_2_cellranger_analysis/{}/BMK_1_summary/{}.web_summary.xls'.
