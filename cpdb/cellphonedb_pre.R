@@ -1,4 +1,5 @@
 #!/usr/bin/env Rscript
+.libPaths('/share/nas1/zhangjm/software/miniconda3/envs/RNA_velocyto/lib/R/library')
 library(optparse)
 
 option_list <- list(
