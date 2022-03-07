@@ -330,8 +330,15 @@ $writer->emptyTag('table','desc'=>"注：SampleID：样本名；Reads：Raw Data
 ##CellRanger测序数据产出结果
 $writer -> emptyTag('p','desc' => '该项目各样品测序数据产出统计见下表：','type'=> "type1");
 $writer->emptyTag('table','desc'=>"注：sampleID：样本ID；Number of Reads：reads总数；Valid Barcodes：有效的10X Barcode比例 ；Sequencing Saturation：测序饱和度；Q30 Bases in Barcode：Barcode序列中质量值大于或等于30的碱基所占的百分比；Q30 Bases in RNA Read：reads中质量值大于或等于30的碱基所占的百分比；Q30 Bases in Sample Index：sample index中质量值大于或等于30的碱基所占的百分比；Q30 Bases in UMI：UMI序列中质量值大于或等于30的碱基所占的百分比。",'name'=>"CellRanger分析序列统计","type"=>"full",'path'=>"/QC_Report/sc_total_seqence_info_stat.xls");
-$writer->emptyTag('table','desc'=>"注：sampleID：样本ID；Number of Reads：reads总数；Valid Barcodes：有效的10X Barcode比例 ；Q30 Bases in Barcode：Barcode序列中质量值大于或等于30的碱基所占的百分比；Q30 Bases in RNA Read：reads中质量值大于或等于30的碱基所占的百分比；Q30 Bases in Sample Index：sample index中质量值大于或等于30的碱基所占的百分比；Q30 Bases in UMI：UMI序列中质量值大于或等于30的碱基所占的百分比。",'name'=>"B 细胞序列统计","type"=>"full",'path'=>"/QC_Report/b_total_seqence_info_stat.xls");
-$writer->emptyTag('table','desc'=>"注：sampleID：样本ID；Number of Reads：reads总数；Valid Barcodes：有效的10X Barcode比例 ；Q30 Bases in Barcode：Barcode序列中质量值大于或等于30的碱基所占的百分比；Q30 Bases in RNA Read：reads中质量值大于或等于30的碱基所占的百分比；Q30 Bases in Sample Index：sample index中质量值大于或等于30的碱基所占的百分比；Q30 Bases in UMI：UMI序列中质量值大于或等于30的碱基所占的百分比。",'name'=>"T 细胞序列统计","type"=>"full",'path'=>"/QC_Report/t_total_seqence_info_stat.xls");
+
+if(-f "$output/Web_Report/QC_Report/b_total_seqence_info_stat.xls") {
+	$writer->emptyTag('table','desc'=>"注：sampleID：样本ID；Number of Reads：reads总数；Valid Barcodes：有效的10X Barcode比例 ；Q30 Bases in Barcode：Barcode序列中质量值大于或等于30的碱基所占的百分比；Q30 Bases in RNA Read：reads中质量值大于或等于30的碱基所占的百分比；Q30 Bases in Sample Index：sample index中质量值大于或等于30的碱基所占的百分比；Q30 Bases in UMI：UMI序列中质量值大于或等于30的碱基所占的百分比。",'name'=>"B 细胞序列统计","type"=>"full",'path'=>"/QC_Report/b_total_seqence_info_stat.xls");
+}
+
+
+if(-f "$output/Web_Report/QC_Report/t_total_seqence_info_stat.xls") {
+	$writer->emptyTag('table','desc'=>"注：sampleID：样本ID；Number of Reads：reads总数；Valid Barcodes：有效的10X Barcode比例 ；Q30 Bases in Barcode：Barcode序列中质量值大于或等于30的碱基所占的百分比；Q30 Bases in RNA Read：reads中质量值大于或等于30的碱基所占的百分比；Q30 Bases in Sample Index：sample index中质量值大于或等于30的碱基所占的百分比；Q30 Bases in UMI：UMI序列中质量值大于或等于30的碱基所占的百分比。",'name'=>"T 细胞序列统计","type"=>"full",'path'=>"/QC_Report/t_total_seqence_info_stat.xls");
+}
 
 ##CellRanger分析比对结果
 $writer -> emptyTag('p','desc' => '采用10X Genomics官方软件CellRanger对测序数据进行比对及定量。CellRanger将read2通过STAR软件比对到参考基因组上。基于 S统计基因组上各个区域的reads覆盖信息，可以得到比对到外显子，内含子，基因间区的比例信息，做为数据质控的参考指标。','type'=> "type1");

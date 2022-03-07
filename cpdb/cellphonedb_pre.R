@@ -157,6 +157,7 @@ if(isTRUE(opt$MyMakeMatrix)){
   }
   
   if(opt$group_config == 'None'){
+    # 如果不指定，整个seurat对象一起做"
     SeuratObj <- readRDS(opt$seurat_Obj)
     des = str_c(opt$results, '/', 'all_sample_cpdb')
     MyMakeMatrix(SeuratObj = SeuratObj, 
@@ -165,7 +166,7 @@ if(isTRUE(opt$MyMakeMatrix)){
                  output = des)
     
   }else{
-    # 解析分组config信息
+    # 若设置分组信息按照分组进行细胞通讯，解析分组config信息
     group <- read.table(opt$group_config, sep = '\t', header = F) %>% separate_rows(V2, sep = '@')
     group_anno <- group$V1;names(group_anno) <- group$V2
     

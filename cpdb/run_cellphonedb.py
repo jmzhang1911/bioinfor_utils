@@ -131,7 +131,7 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--cell_type_col', type=str, default='cellType', help='colname of celltype')
     parser.add_argument('-t', '--threads', type=int, default=15, help='number of threads')
     parser.add_argument('-g', '--group_config', type=str, default='None',
-                        help='config file ps:{}'.format(doc_path_group_config))
+                        help='config file ps:{}, if not set will do all the seurat_obj whole together'.format(doc_path_group_config))
     input_args = parser.parse_args()
 
     runner = Cpdb(seurat_obj=input_args.seurat_obj, species=input_args.species,
