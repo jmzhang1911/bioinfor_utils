@@ -75,7 +75,7 @@ class ScBasicAnalysis(ScBasic):
             format(self.avg, self.avg)
 
         # 整合数据clusters之间的差异分析先跑，脚本脚本内占用10个线程
-        myrunner.runner(cmd_list=[diff_cmd], threads_num=1)
+        MyRunner.runner(cmd_list=[diff_cmd], threads_num=1)
 
         # 2) sampleDiff_integrated
         MyPath.mkdir('sample_diff_integrated')
