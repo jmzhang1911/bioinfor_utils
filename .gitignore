@@ -1,4 +1,6 @@
 *.rds
 *.Rdata
 *.Rds
+*.Rda
 *.tbl
+.Rproj.user

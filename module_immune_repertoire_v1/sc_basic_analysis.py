@@ -49,7 +49,7 @@ class ScBasicAnalysis(ScBasic):
         return [cmd]
 
     @MyRunner.count_running_time
-    @MyRunner.cmd_wrapper(cmd_name='sample_diff_inte_analyse', threads_num=3)
+    @MyRunner.cmd_wrapper(cmd_name='sample_diff_inte_analyse', threads_num=2)
     def sample_diff_inte_analyse(self):
         """output : 1) clusterDiff_integrated 2) sampleDiff_integrated"""
         logging.info('------> ScBasicAnalysis is running sample_diff_inte_analyse')
