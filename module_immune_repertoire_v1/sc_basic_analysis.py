@@ -73,10 +73,13 @@ class ScBasicAnalysis(ScBasic):
         diff_cmd += ' && cp -r cluster_diff_integrated/statistic cluster_diff_integrated.statistic'
         diff_cmd += ' && cp -r cluster_diff_integrated/statistic/{} cluster_diff_integrated.{}'. \
             format(self.avg, self.avg)
-        cmd_list = [diff_cmd]
+
+        # 整合数据clusters之间的差异分析先跑，脚本脚本内占用10个线程
+        myrunner.runner(cmd_list=[diff_cmd], threads_num=1)
 
         # 2) sampleDiff_integrated
         MyPath.mkdir('sample_diff_integrated')
+        cmd_list = []
         if self._diff_dict:
             for group, vs in self._diff_dict.items():
                 if not self._config_dict.get('FDR', None):
@@ -99,6 +102,9 @@ class ScBasicAnalysis(ScBasic):
 
                 sample_diff_group_cmd += ' && cp -r sample_diff_integrated/statistic sample_diff_integrated.statistic'
                 cmd_list.append(sample_diff_group_cmd)
+
+        if not cmd_list:
+            cmd_list = ['there is no diff groups, skipping ...']
 
         return cmd_list
 
