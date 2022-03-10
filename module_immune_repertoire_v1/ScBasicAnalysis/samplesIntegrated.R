@@ -50,9 +50,9 @@ suppressMessages(library(cowplot))
 suppressMessages(library(parallel))
 suppressMessages(library(circlize))
 suppressMessages(library(RColorBrewer))
-library(future)
-plan("multiprocess", workers = 10)
-options(future.globals.maxSize = 1572864000)
+# library(future)
+# plan("multiprocess", workers = 10)
+# options(future.globals.maxSize = 1572864000)
 
 time1 <- proc.time()
 # parameter set
