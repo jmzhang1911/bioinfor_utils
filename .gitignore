@@ -3,4 +3,5 @@
 *.Rds
 *.Rda
 *.tbl
+*.xml
 .Rproj.user

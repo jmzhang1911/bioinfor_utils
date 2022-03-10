@@ -36,15 +36,20 @@ class ScBasicAnalysis(ScBasic):
     @MyRunner.cmd_wrapper(threads_num=1)
     def cell_filter(self):
         logging.info('------> ScBasicAnalysis is running cell_filter')
-        cmd = '{} {} -i {} -o filtered -u {} -g {} -P {} -c {}'.format(
-            self.RSCRIPT,
-            self.cell_filter_runner,
-            self._sample_cellranger_result,  # -i
-            self._config_dict['minUMI'],
-            self._config_dict['minGene'],
-            self._config_dict['maxpct'],
-            self._config_dict['mincell'])
-        cmd += ' && cp -r filtered/symbol.list ./'
+        # 如果此样本跑过cell_filter并且成功，则直接跳过，判断依据：symbol.list是否存在
+        if Path('symbol.list').exists():
+            cmd = 'cell filter has been done, skipping ...'
+
+        else:
+            cmd = '{} {} -i {} -o filtered -u {} -g {} -P {} -c {}'.format(
+                self.RSCRIPT,
+                self.cell_filter_runner,
+                self._sample_cellranger_result,  # -i
+                self._config_dict['minUMI'],
+                self._config_dict['minGene'],
+                self._config_dict['maxpct'],
+                self._config_dict['mincell'])
+            cmd += ' && cp -r filtered/symbol.list ./'
 
         return [cmd]
 
@@ -60,6 +65,7 @@ class ScBasicAnalysis(ScBasic):
 
         # 1) clusterDiff_integrated
         MyPath.mkdir('cluster_diff_integrated')
+
         sample_diff_cluster_cmd = '{} {} -R analysed_integrated/single_seruat.Rds -o cluster_diff_integrated ' \
                                   '-f {} -m {} -n {} -i {}'. \
             format(self.RSCRIPT,
@@ -73,6 +79,10 @@ class ScBasicAnalysis(ScBasic):
         diff_cmd += ' && cp -r cluster_diff_integrated/statistic cluster_diff_integrated.statistic'
         diff_cmd += ' && cp -r cluster_diff_integrated/statistic/{} cluster_diff_integrated.{}'. \
             format(self.avg, self.avg)
+
+        # 如果此样本跑过clusterDiff_integrated并且成功，则直接跳过，判断依据：是否存在cluster_diff_integrated.vag
+        if Path('cluster_diff_integrated.{}'.format(self.avg)).exists():
+            diff_cmd = 'echo clusterDiff_integrated has been done, skipping ...'
 
         # 整合数据clusters之间的差异分析先跑，脚本脚本内占用10个线程
         MyRunner.runner(cmd_list=[diff_cmd], threads_num=1)
@@ -101,6 +111,10 @@ class ScBasicAnalysis(ScBasic):
                     sample_diff_group_cmd += ' -P {}'.format(self._config_dict['pvalue'])
 
                 sample_diff_group_cmd += ' && cp -r sample_diff_integrated/statistic sample_diff_integrated.statistic'
+
+                if Path('sample_diff_integrated.statistic').exists():
+                    sample_diff_group_cmd = 'echo {} has been done, skipping ...'.format(vs)
+
                 cmd_list.append(sample_diff_group_cmd)
 
         if not cmd_list:
@@ -121,6 +135,7 @@ class ScBasicAnalysis(ScBasic):
         logging.info('------> ScBasicAnalysis is running basic_analyse_inte')
         MyPath.mkdir('analysed_integrated')
 
+        # 如果此样本跑过basic_analyse_inte并且成功，则直接跳过，判断依据：analysed_integrated.single_analysis.Rda是否存在
         inte_cmd = '{} {} -d filtered/upload.Rdata -R filtered/upload.Rdata -r {} -o {} -i {}'. \
             format(self.RSCRIPT,
                    self.basic_analyse_inte_runner,
@@ -134,6 +149,10 @@ class ScBasicAnalysis(ScBasic):
         inte_cmd += '&& cp -r analysed_integrated/{} analysed_integrated.{}'.format(self.avg, self.avg)
         inte_cmd += '&& cp -r analysed_integrated/single_seruat.Rds analysed_integrated.single_seruat.Rds'
         inte_cmd += '&& cp -r analysed_integrated/single_analysis.Rda analysed_integrated.single_analysis.Rda'
+
+        # 如果此样本跑过basic_analyse_inte并且成功，则直接跳过，判断依据：analysed_integrated.single_analysis.Rda是否存在
+        if Path('analysed_integrated.single_analysis.Rda').exists():
+            inte_cmd = 'echo basic_analyse_inte has been done, skipping ...'
 
         return [inte_cmd]
 
@@ -172,6 +191,10 @@ class ScBasicAnalysis(ScBasic):
             # TODO：警报信息
             basic_cmd += ' && cp -r analysed/{}/{}.{} ./'. \
                 format(sample.parent.name, sample.parent.name, self.avg)
+
+            # 如果此样本跑过basic_analysis并且成功，则直接跳过，判断依据：sample.single_analysis.Rda是否存在
+            if Path('{}.single_analysis.Rda'.format(sample.parent.name)).exists():
+                basic_cmd = 'echo {} has been done, skipping ...'.format(sample.parent.name)
 
             cmd_list.append(basic_cmd)
 
