@@ -120,10 +120,13 @@ if(!is.null(opt$rda) & is.null(opt$mix)){
 sample <- names(singleList)
 ensemble.id.symbol <- read.table(file = ensembleID_symbol, header = FALSE, col.names = c("EnsembleId", "Symbol"))
 # Findvariabls, Normalized, scaledata and remove batch effect
+print('doing sct')
 if(!is.null(opt$SCT)){
   for (i in 1:length(singleList)){
+    print(str_c('doing ', i))
     singleList[[i]] <- SCTransform(object = singleList[[i]], do.scale = TRUE, verbose = FALSE, vars.to.regress = c("nCount_RNA"))
   }
+  print('doing integrated')
   pancreas.features <- SelectIntegrationFeatures(object.list = singleList, nfeatures = 3000)
   pancreas.list <- PrepSCTIntegration(object.list = singleList, anchor.features = pancreas.features)
   print("Done")
