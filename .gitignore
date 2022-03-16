@@ -5,3 +5,10 @@
 *.tbl
 *.xml
 .Rproj.user
+small_task/gene_id2trans_id.txt
+small_task/Known.longest_transcript.fa.GO.anno.txt
+cell_cycle_analysis/tmp_GO.anno.txt
+small_task/Known.longest_transcript.fa.GO.list.txt
+small_task/Known.longest_transcript.fa.Kegg.pathway
+small_task/results/Known.longest_transcript.fa.Kegg.pathway
+small_task/symbol.list
