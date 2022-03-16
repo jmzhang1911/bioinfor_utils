@@ -44,6 +44,14 @@ Known_longest_transcript_fa_GO_anno %>%
   rowwise() %>%
   mutate(`#Gene` = MyChangeKegg(x = `#Gene`)) -> go_anno
 
+
+ppi %>% mutate(`#Query_id1` = str_remove(`#Query_id1`, '.gene'), 
+               `Query_id2` = str_remove(`Query_id2`, '.gene')) %>% 
+  left_join(gene_id2trans_id, by = c('#Query_id1'='V2')) %>% 
+  mutate(`#Query_id1` = V1) %>% select(-V1) %>%
+  left_join(gene_id2trans_id, by = c('Query_id2'='V2')) %>%
+  mutate(Query_id2 = V1) %>% select(-V1) -> res
+
 # save
 dir.create('results')
 
