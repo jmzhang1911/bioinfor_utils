@@ -68,6 +68,9 @@ class ScCharacterAnalysis(ScBasic):
     @MyRunner.cmd_wrapper(threads_num=2)
     def cell_anno_analyse(self):
         logging.info('doing the cell_anno_analyse')
+        if self._config_dict['refData'] == 'null':
+            return ['echo no refData has benn choose, skipping cell anno analysis']
+
         cmd_list = []
         refdata = (Path(__file__).parent / 'ref.singleR' / 'ref.{}.Rds'.format(self._config_dict['refData']))
         for sample, rds in self._rds_dict.items():
