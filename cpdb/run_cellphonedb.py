@@ -12,6 +12,7 @@ logging.basicConfig(level=logging.INFO, format=FORMAT, datefmt='%Y-%m-%d %H:%M:%
 
 
 class Cpdb:
+    PYTHON = '/share/nas1/zhangjm/software/miniconda3/envs/cpdb/bin/python3'
     RSCRIPT = '/share/nas1/zhangjm/software/miniconda3/envs/RNA_velocyto/bin/Rscript'
     cpdb = '/share/nas1/zhangjm/software/miniconda3/envs/cpdb/bin/cellphonedb'
     cellphonedb_pre = '/share/nas1/zhangjm/workspace/MyUtils/cpdb/cellphonedb_pre.R'
@@ -31,18 +32,20 @@ class Cpdb:
         self.threads = threads
         self.group_config = group_config
 
-        MyPath.mkdir(self.result_dir)
-
     @MyRunner.count_running_time
     @MyRunner.cmd_wrapper(threads_num=1)
     def run_get_matrix(self):
         """获取meta_data以及gene_count"""
-        logging.info('running get matrix')
-        cmd = '{} {} --MyMakeMatrix --seurat_Obj {} --species {} --cell_type {} --results {} --group_config {}'. \
-            format(self.RSCRIPT, self.cellphonedb_pre,
-                   self.seurat_obj, self.species,
-                   self.cell_type_col, self.result_dir,
-                   self.group_config)
+        if Path(self.result_dir).exists():
+            cmd = 'echo run_get_matrix has benn done! Skipping ...'
+        else:
+            MyPath.mkdir(self.result_dir)
+            logging.info('running get matrix')
+            cmd = '{} {} --MyMakeMatrix --seurat_Obj {} --species {} --cell_type {} --results {} --group_config {}'. \
+                format(self.RSCRIPT, self.cellphonedb_pre,
+                       self.seurat_obj, self.species,
+                       self.cell_type_col, self.result_dir,
+                       self.group_config)
 
         return [cmd]
 
@@ -55,21 +58,24 @@ class Cpdb:
         cmd_list = []
         for file in file_list:
             # 计算
-            cmd = '{} method statistical_analysis {} {} --threads {} --output-path {}'. \
-                format(self.cpdb,
+            cmd = '{} {} method statistical_analysis {} {} --threads {} --output-path {}'. \
+                format(self.PYTHON,
+                       self.cpdb,
                        file.absolute() / 'meta_data.txt',
                        file.absolute() / 'gene_count.txt', self.threads,
                        Path(self.result_dir) / file.name / 'out')
             # 点图
-            cmd += '&& {} plot dot_plot --means-path {} --pvalues-path {} --output-path {}'. \
-                format(self.cpdb,
+            cmd += '&& {} {} plot dot_plot --means-path {} --pvalues-path {} --output-path {}'. \
+                format(self.PYTHON,
+                       self.cpdb,
                        Path(self.result_dir) / file.name / 'out/means.txt',
                        Path(self.result_dir) / file.name / 'out/pvalues.txt',
                        Path(self.result_dir) / file.name / 'out')
 
             # 热图，并生成net_count.txt用于可视化
-            cmd += ' && {} plot heatmap_plot  {} --pvalues-path {} --output-path {}'. \
-                format(self.cpdb,
+            cmd += ' && {} {} plot heatmap_plot  {} --pvalues-path {} --output-path {}'. \
+                format(self.PYTHON,
+                       self.cpdb,
                        file.absolute() / 'meta_data.txt',
                        Path(self.result_dir) / file.name / 'out/pvalues.txt',
                        Path(self.result_dir) / file.name / 'out')
@@ -131,7 +137,8 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--cell_type_col', type=str, default='cellType', help='colname of celltype')
     parser.add_argument('-t', '--threads', type=int, default=15, help='number of threads')
     parser.add_argument('-g', '--group_config', type=str, default='None',
-                        help='config file ps:{}, if not set will do all the seurat_obj whole together'.format(doc_path_group_config))
+                        help='config file ps:{}, if not set will do all the seurat_obj whole together'.format(
+                            doc_path_group_config))
     input_args = parser.parse_args()
 
     runner = Cpdb(seurat_obj=input_args.seurat_obj, species=input_args.species,

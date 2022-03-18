@@ -118,7 +118,7 @@ class MyRunner:
             threads_num = 1
 
         if not cmd_list:
-            logging.info('myrunner|> Exception: there are no cmds')
+            raise Exception('myrunner||>> Exception: there are no cmds')
 
         if qsub:
             cmd_list = cls._run_qsub(func_name, cmd_list, queue)
