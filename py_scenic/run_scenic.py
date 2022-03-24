@@ -125,6 +125,7 @@ class PyScenic:
         if Path(reg).exists():
             logging.info('ctx analysis has benn done, skipping ...')
         else:
+            logging.info('doing ctx analysis ...')
             cmd = '{} {} ctx {}/adj.sample.tsv {} --annotations_fname {} --expression_mtx_fname {} ' \
                   '--output reg --num_workers {} --mask_dropouts'. \
                 format(self.PYTHON,
@@ -141,14 +142,14 @@ class PyScenic:
         if Path(sample_scenic).exists():
             logging.info('ctx analysis has benn done, skipping ...')
         else:
-            cmd = '{} {} aucell {} --output {}/sample_SCENIC.loom --num_workers {}'\
+            logging.info('doing aucell analysis ...')
+            cmd = '{} {} aucell {} --output {}/sample_SCENIC.loom --num_workers {}' \
                 .format(self.PYTHON,
                         self.RUN_pyscenic,
                         self.loom,
                         self.output,
                         self.threads)
             MyRunner.runner([cmd], threads_num=1)
-
 
 
 if __name__ == '__main__':
@@ -174,3 +175,4 @@ if __name__ == '__main__':
                   cell_type=input_args.cell_type)
     ps.run_pp()
     ps.run_grn()
+    ps.run_ctx_aucell()
