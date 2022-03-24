@@ -127,14 +127,15 @@ class PyScenic:
         else:
             logging.info('doing ctx analysis ...')
             cmd = '{} {} ctx {}/adj.sample.tsv {} --annotations_fname {} --expression_mtx_fname {} ' \
-                  '--output reg --num_workers {} --mask_dropouts'. \
+                  '--output {} --num_workers {} --mask_dropouts'. \
                 format(self.PYTHON,
                        self.RUN_pyscenic,
                        self.output,
-                       self.database_config['Ranking_database'],
+                       self.database_config['rank_database'],
                        self.database_config['motif_anno'],
                        self.loom,
-                       reg, self.threads)
+                       reg,
+                       self.threads)
             MyRunner.runner([cmd], threads_num=1)
 
         # aucell分析，生成sample_SCENIC.loom
