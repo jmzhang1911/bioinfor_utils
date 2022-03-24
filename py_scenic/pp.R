@@ -16,6 +16,9 @@ get_loom_and_metadata <- function(seob_obj, output){
   MyMkdir(output)
   
   seob <- readRDS(seob_obj)
+  meta_data <- seob@meta.data %>% rownames_to_column('barcodes')
+  save(meta_data, file = file.path(output, 'meta_data.RData'))
+  
   DefaultAssay(seob) <- 'RNA'
   my_loom <- as.loom(seob, filename=file.path(output, 'seob_obj.loom'))
   my_loom$close_all()

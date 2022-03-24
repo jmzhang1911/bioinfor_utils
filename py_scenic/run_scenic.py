@@ -1,7 +1,9 @@
 #!/usr/bin/env python
-
-from myrunner import MyRunner, MyPath
+import sys
 from pathlib import Path
+
+sys.path.append(str(Path(__file__).parent.parent))
+from myrunner import MyRunner, MyPath
 import scanpy as sc
 import loompy as lp
 import numpy as np
@@ -20,20 +22,14 @@ class PyScenic:
     pp = _ / 'pp.R'
 
     def __init__(self, seurat_obj, species, cell_type='cellType', output='pySCENIC_results', threads=20):
-        """
-        threads: 如果loom文件大小超过0.5G程序无法运行，建议对seurat进行筛选
-        """
         self.output = output
         self.seurat_obj = seurat_obj
         self.cell_type = cell_type
         self.database_config = self.get_anno_data(species)
         self.threads = threads
+
         self.loom = ''
-
-        if Path(self.loom).stat().st_size >= 500 * (10 ** 6):
-            raise Exception('seurat obj is too big to run pySCENIC ... please filter it!!!')
-
-        MyPath.mkdir(output)
+        self.meta_data = ''
 
     def get_anno_data(self, species):
         """
@@ -53,10 +49,22 @@ class PyScenic:
 
         return database_config
 
+    @MyRunner.count_running_time
     def run_pp(self):
         """
-        传入seurat导出RNA count的loom格式，并对loom文件进行修改（解决后续BUG问题）
+        - 传入seurat导出RNA count的loom格式，并对loom文件进行修改（解决后续BUG问题)
+        - 如果loom文件大小超过0.5G程序无法运行，建议对seurat进行筛选
         """
+        MyPath.mkdir(self.output)
+        loom = '{}/seob_obj_reformed.loom'.format(self.output)
+        results = self.output + '/seob_obj.loom'
+
+        if Path(loom).exists():
+            logging.info('seob_obj_reformed.loom exists, skipping ...')
+            self.loom = loom
+            self.meta_data = self.output + '/meta_data.RData'
+            return
+
         logging.info('getting seurat@RNA$count matrix and convert it to loom file ...')
 
         cmd = '{} {} --seurat_Obj {} --output {}'.format(self.RSCRIPT, self.pp, self.seurat_obj, self.output)
@@ -64,7 +72,7 @@ class PyScenic:
 
         # pyscenic后续分析会遇到bug，解决思路是修改这里的loom文件
         logging.info('reforming loom file ...')
-        results = self.output + '/seob_obj.loom'
+
         if Path(results).exists():
             adata = sc.read_loom(Path(results))
             row_attrs = {
@@ -79,9 +87,13 @@ class PyScenic:
             for key, values in adata.obs.items():
                 col_attrs[key] = np.array(values)
 
-            loom = '{}/seob_obj_reformed.loom'.format(self.output)
             lp.create(loom, adata.X.transpose(), row_attrs, col_attrs)
+
             self.loom = loom
+            self.meta_data = self.output + '/meta_data.RData'
+
+            if Path(self.loom).stat().st_size >= 500 * (10 ** 6):
+                raise Exception('seurat obj is too big to run pySCENIC ... please filter it!!!')
 
         else:
             raise Exception('there is no seob_obj_reformed.loom, wrong in pp.R')
@@ -102,8 +114,41 @@ class PyScenic:
                        self.database_config['TF_list'],
                        self.threads,
                        res)
-            
+            self.adj_sample_tsv = self.output + '/adj.sample.tsv'
+
         return [cmd]
+
+    @MyRunner.count_running_time
+    def run_ctx_aucell(self):
+        # ctx分析，生成reg.csv文件
+        reg = self.output + '/reg.csv'
+        if Path(reg).exists():
+            logging.info('ctx analysis has benn done, skipping ...')
+        else:
+            cmd = '{} {} ctx {}/adj.sample.tsv {} --annotations_fname {} --expression_mtx_fname {} ' \
+                  '--output reg --num_workers {} --mask_dropouts'. \
+                format(self.PYTHON,
+                       self.RUN_pyscenic,
+                       self.output,
+                       self.database_config['Ranking_database'],
+                       self.database_config['motif_anno'],
+                       self.loom,
+                       reg, self.threads)
+            MyRunner.runner([cmd], threads_num=1)
+
+        # aucell分析，生成sample_SCENIC.loom
+        sample_scenic = self.output + '/sample_SCENIC.loom'
+        if Path(sample_scenic).exists():
+            logging.info('ctx analysis has benn done, skipping ...')
+        else:
+            cmd = '{} {} aucell {} --output {}/sample_SCENIC.loom --num_workers {}'\
+                .format(self.PYTHON,
+                        self.RUN_pyscenic,
+                        self.loom,
+                        self.output,
+                        self.threads)
+            MyRunner.runner([cmd], threads_num=1)
+
 
 
 if __name__ == '__main__':
