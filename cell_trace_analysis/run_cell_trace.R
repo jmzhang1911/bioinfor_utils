@@ -29,7 +29,7 @@ monocle_trace <- function(seob, dir, cell_type){
   perplexity <- 30
   
   single.seurat <- readRDS(seob)
-  single.seurat@meta.data %>% filter(!is.na(cellType)) %>% rownames() -> bar
+  single.seurat@meta.data %>% filter(!is.na(cell_type)) %>% rownames() -> bar
   single.seurat <- single.seurat[, bar]
   
   if(!cell_type %in% colnames(single.seurat@meta.data)){
@@ -92,7 +92,7 @@ plot_marker <- function(seob, monocle_cds, dir, cell_type){
   
   library(future)
   seob <- readRDS(seob)
-  seob@meta.data %>% filter(!is.na(cellType)) %>% rownames() -> bar
+  seob@meta.data %>% filter(!is.na(cell_type)) %>% rownames() -> bar
   seob <- seob[, bar]
   
   plan("multiprocess", workers = 10)

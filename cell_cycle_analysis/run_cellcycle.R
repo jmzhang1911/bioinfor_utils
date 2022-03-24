@@ -18,7 +18,8 @@ library(Seurat)
 
 cell_cycle_score <- function(seob, species, output){
   suppressPackageStartupMessages(library(here))
-  here::i_am('./run_cellcycle.R');pwd <- here()
+  #here::i_am('./run_cellcycle.R');pwd <- here()
+  pwd <- '/share/nas1/zhangjm/workspace/MyUtils/cell_cycle_analysis/'
   
   MyMkdir(output)
   

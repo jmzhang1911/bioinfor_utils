@@ -1,9 +1,0 @@
-》
-一级标题
-3 信息分析流程
-》
-正文
-利用10X Genomics官方软件CellRanger$REF_1进行数据比对、基因定量以及细胞鉴定。同时CellRanger还基于鉴定的细胞进行了细胞亚群分析以及差异表达基因分析。根据CellRanger鉴定出的细胞类型以及定量结果，后续采用Seurat软件对数据做了二次过滤，对过滤后的数据进行二次分析，包括：细胞亚群分析、差异表达基因分析、GO/KEGG富集分析以及PPI网络分析等等。CellRanger中的vdj模块能够识别reads上的标记对单个细胞进行组装并获得contig序列，将contig序列VDJ参考序列进行比对注释，得到V、D、J基因注释信息和CDR3序列信息，对得到的contig进行过滤，最终确定Clonotypes。为了保证报告的流畅所有文件链接以及表格都只展示前6行，完整内容请见相应的结果文件。
-》
-示意图      Template/analysis_workflow.png
-图02	10X单细胞免疫组库生信分析流程图

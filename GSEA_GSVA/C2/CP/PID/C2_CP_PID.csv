@@ -1,0 +1,2 @@
+ID,Description,setSize,enrichmentScore,NES,pvalue,p.adjust,qvalues,rank,leading_edge,core_enrichment,gs_description,results_path
+PID_CD8_TCR_PATHWAY,PID_CD8_TCR_PATHWAY,29,0.63308337809221,2.04713341645907,0.000263352432875079,0.0260718908546328,0.0243947516768494,302,tags=52%, list=13%, signal=45%,CD3E/CD3D/CD3G/LCK/CD28/LAT/ZAP70/PLCG1/CD247/FYN/RASGRP1/PTPRC/LCP2/PAG1/PRKCA,TCR signaling in na&#xef;ve CD8+ T cells,C2/CP/PID
