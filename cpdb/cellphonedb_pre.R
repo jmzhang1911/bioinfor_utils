@@ -24,78 +24,85 @@ MyMkdir <- function(x){if(!dir.exists(x)){dir.create(x,recursive = T)}else(cat('
 MyMakeMatrix <- function(SeuratObj,species='human',cell_type='cellType',output='results'){
   "获取seurat中的count矩阵以及matedata"
   MyMkdir(output)
-
-  #读取同源文件
-  anno_df <- '/share/nas1/zhangjm/workspace/MyUtils/cpdb/mouse_human_rat_Homologous.txt'
-  anno_df <- read.table(anno_df, sep = '\t',header = T) %>% 
-    mutate(mouse_gene_symbol = str_to_upper(mouse_gene_symbol),
-           rat_gene_symbol = str_to_upper(rat_gene_symbol)) %>%
-    select(human_gene_id, all_of(str_c(species, '_gene_symbol'))) %>%
-    drop_na()
   
-  anno_ve <- anno_df[,1];names(anno_ve) <- anno_df[,2]
-  changeID2symbol <- function(gene_id){
-    if(!is.na(anno_ve[gene_id])){
-      return(anno_ve[[gene_id]])
-    }else{
-      print(str_c(gene_id, 'is not in the anno_df file'))
-      return(NA)
-  }}
+  if(!file.exists(file.path(output, '/meta_data.txt'))){
+    #读取同源文件
+    anno_df <- '/share/nas1/zhangjm/workspace/MyUtils/cpdb/mouse_human_rat_Homologous.txt'
+    anno_df <- read.table(anno_df, sep = '\t',header = T) %>% 
+      mutate(mouse_gene_symbol = str_to_upper(mouse_gene_symbol),
+             rat_gene_symbol = str_to_upper(rat_gene_symbol)) %>%
+      select(human_gene_id, all_of(str_c(species, '_gene_symbol'))) %>%
+      drop_na()
     
-  #导出meta_data
-  SeuratObj@meta.data %>% as.data.frame() %>%
-    rownames_to_column(var = 'barcodes') %>%
-    select(barcodes, all_of(cell_type)) %>%
-    drop_na() %>%
-    write.table(file = str_c(output, '/meta_data.txt'), sep = '\t', col.names = T, row.names = F, quote = F)
+    anno_ve <- anno_df[,1];names(anno_ve) <- anno_df[,2]
+    changeID2symbol <- function(gene_id){
+      if(!is.na(anno_ve[gene_id])){
+        return(anno_ve[[gene_id]])
+      }else{
+        #print(str_c(gene_id, 'is not in the anno_df file'))
+        return(NA)
+      }}
+    
+    #导出meta_data
+    SeuratObj@meta.data %>% as.data.frame() %>%
+      rownames_to_column(var = 'barcodes') %>%
+      select(barcodes, all_of(cell_type)) %>%
+      drop_na() %>%
+      write.table(file = str_c(output, '/meta_data.txt'), sep = '\t', col.names = T, row.names = F, quote = F)
+  }
+
   
-  #导出matrix
-  gene_count <- SeuratObj@assays$RNA@counts %>% as.data.frame() %>%
-    rownames_to_column(var = 'gene_symbol') %>%
-    mutate(gene_symbol = str_to_upper(gene_symbol)) %>% rowwise() %>%
-    mutate(gene_symbol = changeID2symbol(gene_symbol)) %>%
-    drop_na()
-  
-  # if(species == 'human'){
-  #   print('doing human')
-  #   gene_count <- SeuratObj@assays$RNA@counts %>% as.data.frame() %>%
-  #     rownames_to_column(var = 'gene_symbol') %>%
-  #     mutate(gene_symbol = str_to_upper(gene_symbol)) %>%
-  #     left_join(anno_df %>% select(human_gene_symbol, human_gene_id),
-  #               by = c('gene_symbol'='human_gene_symbol')) %>%
-  #     mutate(gene_symbol = human_gene_id) %>%
-  #     select(-human_gene_id) %>%
-  #     drop_na()
-  #   
-  # }else if(species == 'mouse'){
-  #   print('doing mouse')
-  #   gene_count <- SeuratObj@assays$RNA@counts %>% as.data.frame() %>%
-  #     rownames_to_column(var = 'gene_symbol') %>%
-  #     mutate(gene_symbol = str_to_upper(gene_symbol)) %>%
-  #     left_join(anno_df %>% select(mouse_gene_symbol, human_gene_id),
-  #               by = c('gene_symbol'='mouse_gene_symbol')) %>%
-  #     mutate(gene_symbol = human_gene_id) %>%
-  #     select(-human_gene_id) %>%
-  #     drop_na()
-  #   
-  # }else if(species == 'rat'){
-  #   print('doing rat')
-  #   gene_count <- SeuratObj@assays$RNA@counts %>% as.data.frame() %>%
-  #     rownames_to_column(var = 'gene_symbol') %>%
-  #     mutate(gene_symbol = str_to_upper(gene_symbol)) %>%
-  #     left_join(anno_df %>% select(rat_gene_symbol, human_gene_id),
-  #               by = c('gene_symbol'='rat_gene_symbol')) %>%
-  #     mutate(gene_symbol = human_gene_id) %>%
-  #     select(-human_gene_id) %>%
-  #     drop_na()
-  # }
-  # else{
-  #   stop('wrong species! human, mouse, rat are supported.')
-  # }
-  
-  #导出gene matrix文件
-  print('writing gene matrix file ...')
-  gene_count %>% write.table(file = str_c(output, '/gene_count.txt'), sep = '\t', col.names = T, row.names = F, quote = F)
+  if(!file.exists(file.path(output, 'gene_count.txt'))){
+    
+    #导出matrix
+    gene_count <- SeuratObj@assays$RNA@data %>% as.data.frame() %>%
+      rownames_to_column(var = 'gene_symbol') %>%
+      mutate(gene_symbol = str_to_upper(gene_symbol)) %>% rowwise() %>%
+      mutate(gene_symbol = changeID2symbol(gene_symbol)) %>%
+      drop_na()
+    
+    # if(species == 'human'){
+    #   print('doing human')
+    #   gene_count <- SeuratObj@assays$RNA@counts %>% as.data.frame() %>%
+    #     rownames_to_column(var = 'gene_symbol') %>%
+    #     mutate(gene_symbol = str_to_upper(gene_symbol)) %>%
+    #     left_join(anno_df %>% select(human_gene_symbol, human_gene_id),
+    #               by = c('gene_symbol'='human_gene_symbol')) %>%
+    #     mutate(gene_symbol = human_gene_id) %>%
+    #     select(-human_gene_id) %>%
+    #     drop_na()
+    #   
+    # }else if(species == 'mouse'){
+    #   print('doing mouse')
+    #   gene_count <- SeuratObj@assays$RNA@counts %>% as.data.frame() %>%
+    #     rownames_to_column(var = 'gene_symbol') %>%
+    #     mutate(gene_symbol = str_to_upper(gene_symbol)) %>%
+    #     left_join(anno_df %>% select(mouse_gene_symbol, human_gene_id),
+    #               by = c('gene_symbol'='mouse_gene_symbol')) %>%
+    #     mutate(gene_symbol = human_gene_id) %>%
+    #     select(-human_gene_id) %>%
+    #     drop_na()
+    #   
+    # }else if(species == 'rat'){
+    #   print('doing rat')
+    #   gene_count <- SeuratObj@assays$RNA@counts %>% as.data.frame() %>%
+    #     rownames_to_column(var = 'gene_symbol') %>%
+    #     mutate(gene_symbol = str_to_upper(gene_symbol)) %>%
+    #     left_join(anno_df %>% select(rat_gene_symbol, human_gene_id),
+    #               by = c('gene_symbol'='rat_gene_symbol')) %>%
+    #     mutate(gene_symbol = human_gene_id) %>%
+    #     select(-human_gene_id) %>%
+    #     drop_na()
+    # }
+    # else{
+    #   stop('wrong species! human, mouse, rat are supported.')
+    # }
+    
+    #导出gene matrix文件
+    print('writing gene matrix file ...')
+    gene_count %>% write.table(file = str_c(output, '/gene_count.txt'), sep = '\t', col.names = T, row.names = F, quote = F)
+  }
+
 }
 
 

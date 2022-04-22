@@ -21,6 +21,9 @@ cell_cycle_score <- function(seob, species, output){
   #here::i_am('./run_cellcycle.R');pwd <- here()
   pwd <- '/share/nas1/zhangjm/workspace/MyUtils/cell_cycle_analysis/'
   
+  # 拷贝readme文件
+  file.copy(file.path(pwd, './cell_cycle_readme.zip'), to = output)
+  
   MyMkdir(output)
   
   print('reading rds ...')

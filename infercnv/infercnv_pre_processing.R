@@ -28,12 +28,12 @@ MyPP <- function(seob, group_config, cell_config){
   
   # 读取cell config文件，第二列不可重复
   ref_cell <- read.table(cell_config, sep = '\t', header = F)
-  ref_cell_name <- ref_cell$V2
+  ref_cell_name <- unique(ref_cell$V2)
   
   #判断配置文件第二列是否重复
-  if(length(unique(ref_cell_name)) != length(ref_cell_name)){
-    stop('wrong cell config file!!!')
-  }
+#   if(length(unique(ref_cell_name)) != length(ref_cell_name)){
+#     stop('wrong cell config file!!!')
+#   }
   
   #判断配置文件第三列是否仅且必须包括ref和ob
   if(length(unique(ref_cell$V3)) != 2){
@@ -43,9 +43,9 @@ MyPP <- function(seob, group_config, cell_config){
   }
   
   #判断配置文件中是否一个细胞既做了ref也做了ob
-  if(dim(ref_cell)[1] != dim(ref_cell %>% distinct(V2, V3))[1]){
-    stop('wrong cell config file!!!')
-  }
+#   if(dim(ref_cell)[1] != dim(ref_cell %>% distinct(V2, V3))[1]){
+#     stop('wrong cell config file!!!')
+#   }
 
   MyAddCellInfo <- function(sample, cell){
     # 添加标签，
@@ -75,15 +75,35 @@ MyPP <- function(seob, group_config, cell_config){
   
   # meta中添加ref信息，分组信息，降温信息
   print('processing meta')
+  # seob@meta.data %>% rownames_to_column(var = 'barcodes') %>% 
+  #   rowwise() %>%
+  #   mutate(infercnv_group = MyAddGroup(sample),
+  #          infercnv_reference = MyAddCellInfo(sample, cellType)) %>%
+  #   left_join(as.data.frame(seob@reductions$umap@cell.embeddings) %>%
+  #               rownames_to_column(var = 'barcodes'), 
+  #             by = 'barcodes')  %>%
+  #   filter(str_detect(infercnv_reference, '_observation|_reference')) %>% 
+  #   drop_na() -> meta
+  
+  
+  ref_cell %>% mutate(infercnv_reference = str_c(V2, if_else(V3 == 'ref', '_reference', '_observation')), 
+                      V1 = if_else(V1 == 'all', str_c(unique(seob@meta.data$sample), collapse = '@'), V1)) %>% 
+    separate_rows(V1, sep = '@') -> tmp_df 
   seob@meta.data %>% rownames_to_column(var = 'barcodes') %>% 
     rowwise() %>%
-    mutate(infercnv_group = MyAddGroup(sample),
-           infercnv_reference = MyAddCellInfo(sample, cellType)) %>%
+    mutate(infercnv_group = MyAddGroup(sample)) %>% ungroup() %>%
+    left_join(tmp_df, by = c('cellType'='V2', 'sample'='V1')) %>%
     left_join(as.data.frame(seob@reductions$umap@cell.embeddings) %>%
                 rownames_to_column(var = 'barcodes'), 
               by = 'barcodes')  %>%
     filter(str_detect(infercnv_reference, '_observation|_reference')) %>% 
     drop_na() -> meta
+  
+  meta %>% as.data.frame() %>% 
+    mutate(class = if_else(str_detect(infercnv_reference, '_observation'), 'ob', 'ref')) %>%
+    count(class) -> tmp
+  print(tmp)
+  
   save(meta, file = 'step1_infercnv_pp/meta.RData')
   
   # gene matrix
@@ -110,6 +130,8 @@ MyPP <- function(seob, group_config, cell_config){
                          cell_anno = 'step1_infercnv_pp/anno_file.txt',
                          ref_cell = ref_cell)
   save(myinfercnv_obj, file = 'step1_infercnv_pp/myinfer_obj.RData')
+  
+  print('step1 done')
 }
 
 

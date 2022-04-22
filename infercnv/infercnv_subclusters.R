@@ -14,6 +14,7 @@ MyMkdir <- function(x){if(!dir.exists(x)){dir.create(x,recursive = T)}else(cat('
 library(ComplexHeatmap)
 library(RColorBrewer)
 library(circlize)
+library(ggsci)
 library(Seurat)
 getPalette_chr = colorRampPalette(brewer.pal(12, "Set3"))
 getPalette_ref = colorRampPalette(brewer.pal(8, "Set2"))
@@ -327,13 +328,67 @@ MySubclusterPlot <- function(myinfercnv_obj, cell_anno_ob, output){
   
 }
 
+
+MyCnvScore <- function(myinfercnv_obj, output){
+  df <- read.table(myinfercnv_obj$infercnv.observations)
+  infer_obj <- readRDS(myinfercnv_obj$infer_obj)
+  
+  if(length(infer_obj@observation_grouped_cell_indices)>=2){
+    meta <- myinfercnv_obj$meta %>% select(barcodes, infercnv_reference)
+    df %>% rownames_to_column('genes') %>%
+      pivot_longer(cols = -1, names_to = 'barcodes', values_to = 'expr')  %>%
+      mutate(barcodes = str_replace_all(barcodes, '\\.', '-')) %>%
+      group_by(barcodes) %>%
+      summarise(total = sum(expr ^ 2)) %>% 
+      left_join(meta, by = 'barcodes') %>%
+      ggplot(aes(x = infercnv_reference, y = total)) +
+      geom_violin(aes(fill = infercnv_reference)) +
+      labs(y = 'CNV scores', x = '') +
+      scale_fill_nejm() +
+      theme_bw() +
+      theme(text = element_text(size = 18), 
+            axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), 
+            legend.position = 'top') -> p
+    
+  }else{
+    print('running k-means')
+    kmeans_res <- kmeans(t(as.matrix(df %>% drop_na())), centers = 6)
+    results <- as.data.frame(kmeans_res$cluster) %>% 
+      rename(cluster = `kmeans_res$cluster`) %>%
+      rownames_to_column('barcodes') %>%
+      mutate(barcodes = str_replace_all(barcodes, '\\.', '-'))
+    
+    df %>% rownames_to_column('genes') %>%
+      pivot_longer(cols = -1, names_to = 'barcodes', values_to = 'expr')  %>%
+      mutate(barcodes = str_replace_all(barcodes, '\\.', '-')) %>%
+      group_by(barcodes) %>%
+      summarise(total = sum(expr ^ 2)) %>% 
+      left_join(results, by = 'barcodes') %>%
+      mutate(cluster = str_c('cluster_', as.character(cluster))) %>%
+      ggplot(aes(x = cluster, y = total)) +
+      geom_violin(aes(fill = cluster)) +
+      labs(y = 'CNV scores', x = '') +
+      scale_fill_nejm() + 
+      theme_bw() +
+      theme(text = element_text(size = 18), 
+            axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), 
+            legend.position = 'top') -> p
+  }
+  
+  ggsave(p, filename = 'step3_infercnv_subclusters/score_volin.png')
+  ggsave(p, filename = 'step3_infercnv_subclusters/score_volin.pdf')
+}
+
+
 load(opt$myinfercnv_obj)
 
 if(myinfercnv_obj$mode == 'subclusters'){
   MyMkdir('step3_infercnv_subclusters')
-  cell_anno_ob <- MyHeatMapPlot(myinfercnv_obj = myinfercnv_obj, 
+  cell_anno_ob <- MyHeatMapPlot(myinfercnv_obj = myinfercnv_obj,
                                 output = 'step3_infercnv_subclusters')
   MySubclusterPlot(myinfercnv_obj = myinfercnv_obj,
-                   output = 'step3_infercnv_subclusters', 
+                   output = 'step3_infercnv_subclusters',
                    cell_anno_ob = cell_anno_ob)
+
+  MyCnvScore(myinfercnv_obj = myinfercnv_obj, output = 'step3_infercnv_subclusters')
 }

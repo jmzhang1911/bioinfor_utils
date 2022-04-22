@@ -91,3 +91,4 @@ PAGA(partition‐based graph abstraction)分析可以将单细胞数据进行整
 1	La Manno et al. (2018), RNA velocity of single cells.	https://www.nature.com/articles/s41586-018-0414-6
 2	Bergen et al. (2020), Generalizing RNA velocity to transient cell states through dynamical modeling.	https://www.nature.com/articles/s41587-020-0591-3
 3	Wolf et al. (2018), Scanpy: large-scale single-cell gene expression data analysis.	https://genomebiology.biomedcentral.com/articles/10.1186/s13059-017-1382-0
+4	Qiu, X., Mao, Q., Tang, Y. et al. Reversed graph embedding resolves complex single-cell trajectories. Nat Methods 14, 979–982 (2017). https://doi.org/10.1038/nmeth.4402

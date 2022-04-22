@@ -36,21 +36,19 @@ class Cpdb:
     @MyRunner.cmd_wrapper(threads_num=1)
     def run_get_matrix(self):
         """获取meta_data以及gene_count"""
-        if Path(self.result_dir).exists():
-            cmd = 'echo run_get_matrix has benn done! Skipping ...'
-        else:
-            MyPath.mkdir(self.result_dir)
-            logging.info('running get matrix')
-            cmd = '{} {} --MyMakeMatrix --seurat_Obj {} --species {} --cell_type {} --results {} --group_config {}'. \
-                format(self.RSCRIPT, self.cellphonedb_pre,
-                       self.seurat_obj, self.species,
-                       self.cell_type_col, self.result_dir,
-                       self.group_config)
+
+        MyPath.mkdir(self.result_dir)
+        logging.info('running get matrix')
+        cmd = '{} {} --MyMakeMatrix --seurat_Obj {} --species {} --cell_type {} --results {} --group_config {}'. \
+            format(self.RSCRIPT, self.cellphonedb_pre,
+                   self.seurat_obj, self.species,
+                   self.cell_type_col, self.result_dir,
+                   self.group_config)
 
         return [cmd]
 
     @MyRunner.count_running_time
-    @MyRunner.cmd_wrapper(threads_num=1)
+    @MyRunner.cmd_wrapper(threads_num=2)
     def run_cellphone_db(self):
         """运行cellphonedb，计算，点图，及热图"""
         logging.info('running cellphonedb')
@@ -128,6 +126,7 @@ if __name__ == '__main__':
     Description: cellphonedb analysis
      - Support human, mouse, rat
      - Support custom setting groups conveniently
+     - using data instead of RNA
     """
 
     parser = argparse.ArgumentParser(description=desc, formatter_class=argparse.RawTextHelpFormatter)

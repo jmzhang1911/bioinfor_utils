@@ -31,7 +31,7 @@ class MyInferCnv:
     @MyRunner.count_running_time
     @MyRunner.cmd_wrapper()
     def pp(self):
-        if Path('step1_infercnv_pp').exists():
+        if Path('step1_infercnv_pp/myinfer_obj.RData').exists():
             cmd = 'echo step1_infercnv_pp done!'
             return [cmd]
 

@@ -287,7 +287,7 @@ class ScveloAnalysis:
 
     @staticmethod
     def run_report(config):
-        """生成报告"""
+        """生成报告, 所有东西一定得拷贝到Web_Report"""
         des = 'Web_Report/BMK_1_data'
         MyPath.mkdir(des)
         template_file = Path(__file__).parent / 'template.txt'
@@ -295,7 +295,7 @@ class ScveloAnalysis:
             if str(i).endswith('.png') or str(i).endswith('.csv'):
                 shutil.copy(str(i), des)
 
-        wr = WebReport(config=config, template=template_file)
+        wr = WebReport(config=config, template=template_file, report_name='RNA-velcyto_report')
         wr.config_template()
         wr.make_report()
 

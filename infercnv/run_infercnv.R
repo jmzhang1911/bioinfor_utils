@@ -40,6 +40,8 @@ myinfercnv_obj['infer_obj'] = 'step2_infercnv_temp/run.final.infercnv_obj'
 myinfercnv_obj['subclusters_cell_groupings'] = subclusters_cell_groupings
 # 添加热图阈值信息
 myinfercnv_obj['thresholds'] = 'step2_infercnv_temp/infercnv.21_denoised.heatmap_thresholds.txt'
+# 添加cnv得分信息表
+myinfercnv_obj['infercnv.observations'] = 'step2_infercnv_temp/infercnv.observations.txt'
 # 添加分析模式信息
 myinfercnv_obj['mode'] = opt$modes
 
