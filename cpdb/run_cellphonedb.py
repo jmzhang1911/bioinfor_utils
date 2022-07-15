@@ -2,7 +2,7 @@
 import sys
 
 sys.path.append('/share/nas1/zhangjm/workspace/MyUtils')
-from myrunner import MyPath, MyRunner
+from myrunner import MyPath, MyRunner, make_summary
 from pathlib import Path
 import argparse
 import logging
@@ -110,8 +110,8 @@ class Cpdb:
         cmd = 'cp {} {} && tar -zcvf {}.tar.gz {} --exclude gene_count.txt --exclude meta_data.txt'. \
             format(self.read_me,
                    self.result_dir,
-                   self.result_dir,
-                   self.result_dir)
+                   Path(self.result_dir).name,
+                   Path(self.result_dir).name)
         return [cmd]
 
 
@@ -140,6 +140,8 @@ if __name__ == '__main__':
                             doc_path_group_config))
     input_args = parser.parse_args()
 
+    make_summary(Path(__file__), status='doing')
+
     runner = Cpdb(seurat_obj=input_args.seurat_obj, species=input_args.species,
                   result_dir=input_args.result_dir, cell_type_col=input_args.cell_type_col,
                   threads=input_args.threads, group_config=input_args.group_config)
@@ -148,3 +150,5 @@ if __name__ == '__main__':
     runner.run_cellphone_db()
     runner.run_plot()
     runner.run_output()
+
+    make_summary(Path(__file__), status='done')

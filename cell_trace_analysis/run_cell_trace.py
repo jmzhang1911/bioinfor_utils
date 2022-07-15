@@ -4,7 +4,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 from make_web_report.web_report import WebReport
-from myrunner import MyPath, MyRunner
+from myrunner import MyPath, MyRunner, make_summary
 import argparse
 import logging
 import shutil
@@ -95,5 +95,7 @@ if __name__ == '__main__':
                    report_name=input_args.report_name,
                    report_title=input_args.report_title)
 
+    make_summary(Path(__file__), status='doing')
     ct.run_cell_trace_monocle2()
     ct.run_report()
+    make_summary(Path(__file__), status='done')

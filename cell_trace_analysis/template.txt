@@ -1,6 +1,6 @@
 》
 摘要
-使用Monocle对${cell_number}个细胞，${cell_type_number}个细胞亚群进行拟时序分析，预测细胞的发育分化轨迹。
+使用Monocle对${cell_number}个${assay}，${cell_type_number}个亚群进行拟时序分析，预测${assay}的发育分化轨迹。
 》
 一级标题
 背景介绍
@@ -18,12 +18,16 @@ Monocle 2主要分析过程及原理如下：1）重建轨迹基因选择。推�
 正文
 利用monocle对目标细胞亚群的基因表达矩阵进行细胞分化轨迹分析，并对不同分化状态（state）和不同细胞亚群（cluster）分别进行拟时间可视化，state指monocle生成的树形结构中（细胞轨迹）的某一段。
 》
+图片  BMK_1_data/cell_trajectory_pseudotime.png
+图01  细胞拟时间点（pseudotime）的轨迹分布图
+注：图中每个点代表细胞，点颜色表示拟时间点大小，点颜色越深表示拟时间越小，发育分化时期越早
+》
 图片    BMK_1_data/cell_trajectory_state.png
-图01    细胞状态（state）的拟时轨迹图
+图02    细胞状态（state）的拟时轨迹图
 注：图中每个点代表细胞，不同的分支代表不同的演变或者分化轨迹，横纵坐标表示DDRTree降维后的成分，不同的颜色表示不同的细胞状态。
 》
 图片    BMK_1_data/cell_trajectory_cluster.png
-图02    细胞亚群（cluster）的拟时轨迹图
+图03    细胞亚群（cluster）的拟时轨迹图
 注：图中每个点代表细胞，不同的分支代表不同的演变或者分化轨迹，横纵坐标表示DDRTree降维后的成分，不同的颜色表示不同的cluster。
 》
 二级标题
@@ -33,18 +37,18 @@ Monocle 2主要分析过程及原理如下：1）重建轨迹基因选择。推�
 基于每个细胞的拟时间值，筛选随拟时间线差异表达基因，并对差异基因进行聚类分析，寻找具有相似表达趋势的基因，根据显著性挑选与拟时序变化相关的差异基因（top5）绘制拟时间分布图，展示单个基因随着拟时间的变化趋势。
 》
 图片    BMK_1_data/*cell_trajectory_top5_marker_cluster.png
-图03    top5基因（state）的拟时间分布图
+图04    top5基因（state）的拟时间分布图
 注：横坐标表示拟时间，纵坐标表示top5基因（cluster）相对表达值。
 》
 图片    BMK_1_data/*cell_trajectory_top5_marker_state.png    
-图04    top5基因（cluster）的拟时间分布图
+图05    top5基因（cluster）的拟时间分布图
 注：横坐标表示拟时间点，纵坐标表示 top5基因（cluster）相对表达值。
 》
 正文
 利用热图展示不同分化状态细胞的拟时序相关基因表达模式。
 》
 图片    BMK_1_data/cell_trajectory_heatmap.png
-图05    拟时序基因表达热图
+图06    拟时序基因表达热图
 注：横坐标表示基因，纵坐标表示拟时间点，默认展示100个基因。这里的cluster表示拟时间聚类成的不同state，要与细胞亚群的cluster区分开。
 》
 二级标题
@@ -54,8 +58,12 @@ Monocle 2主要分析过程及原理如下：1）重建轨迹基因选择。推�
 在发育过程中，当细胞做出命运选择时，分支会出现在轨迹上：一个发育谱系沿着一条路径前进，而另一个谱系产生第二条路径。细胞的不同分化路径在拟时序分析中表现为不同的分支轨迹，这些分支的出现是因为细胞执行替代的基因表达程序。
 》
 图片    BMK_1_data/plot_genes_branched_heatmap.png
-图片06  分支轨迹基因表达热图
+图07  分支轨迹基因表达热图
 注：横坐标表示拟时间点（由中间向两边分化成两个分支），纵坐标表示基因表达水平，不同颜色表示基因表达水平的高低，cluster表示具有相似表达趋势的基因集。
+》
+图片  BMK_1_data/TOP10_BEAM_genes_branch_point_*.png
+图08  Top10显著基因的拟时序分布图
+注：横坐标表示拟时间点，纵坐标表示基因表达水平，每个点为一个细胞，黑色实线/虚线表示不同分支基因表达水平的拟合线
 》
 参考文献：
 1	Monocle	https://www.nature.com/articles/nmeth.4402#citeas

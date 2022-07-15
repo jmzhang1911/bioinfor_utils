@@ -113,11 +113,11 @@ MyCpdbPlot <- function(config, count_network, output){
                               escape_double = FALSE,
                               trim_ws = TRUE) %>%
     filter(count > 0) %>% rowwise() %>%
-    mutate(col = config[SOURCE])
+    mutate(col = config[as.character(SOURCE)])
   
   nodes <- data.frame(cell = unique(c(count_network$SOURCE,
                                       count_network$TARGET))) %>%
-    mutate(col = config[cell])
+    mutate(col = config[as.character(cell)])
   
   net<- graph_from_data_frame(d = count_network, vertices = nodes, directed = T)
   E(net)$width  <- E(net)$count/50
@@ -143,7 +143,7 @@ MyCpdbPlot <- function(config, count_network, output){
        vertex.label.cex=.45, width=0.1) 
   dev.off()
   
-  pdf(str_c(output, '/cell_talk.pdf'))
+  pdf(str_c(output, '/cell_talk.pdf'), width = 12, height = 8)
   plot(net, edge.arrow.size=.2, 
        edge.curved= .2,
        #vertex.color=getPalette(celltype_num),

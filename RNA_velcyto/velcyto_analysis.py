@@ -6,7 +6,7 @@ sys.path.append('/share/nas1/zhangjm/workspace/MyUtils')
 
 from concurrent.futures import ThreadPoolExecutor
 from make_web_report.web_report import WebReport
-from myrunner import MyRunner, MyPath
+from myrunner import MyRunner, MyPath, make_summary
 from anndata import AnnData
 from pathlib import Path
 import seaborn as sns
@@ -17,6 +17,7 @@ import numpy as np
 import argparse
 import logging
 import loompy
+import os
 
 FORMAT = '%(asctime)s %(threadName)s=> %(message)s'
 logging.basicConfig(level=logging.INFO, format=FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
@@ -90,6 +91,7 @@ class ScveloAnalysis:
             self.merge_loom()
 
     @staticmethod
+    @MyRunner.count_running_time
     @MyRunner.cmd_wrapper(threads_num=WORKERS, test=False)
     def run_samtools(cellranger_results, thread=SAMTOOLS_THREADS, overwrite=False) -> list:
         samtools = '/share/nas1/zhangjm/software/miniconda3/bin/samtools'
@@ -117,15 +119,16 @@ class ScveloAnalysis:
         return cmd_list
 
     @staticmethod
+    @MyRunner.count_running_time
     @MyRunner.cmd_wrapper(threads_num=WORKERS, test=False)
     def run_velcyto(cellranger_results, RMSK, seurat_GTF, overwrite=False) -> list:
-        python3 = '/home/zhangjm/software/python3.9.6/bin/python3'
-        RNA_velocyto = '/home/zhangjm/software/python3.9.6/bin/velocyto'
+        python3 = '/share/nas1/zhangjm/software/python3.9.6/bin/python3'
+        RNA_velocyto = '/share/nas1/zhangjm/software/python3.9.6/bin/velocyto'
 
         def get_cmd(sample):
             cmd = '{} {} run10x -m {} {}/{} {}'.format(python3, RNA_velocyto, RMSK, cellranger_results, sample.name,
                                                        seurat_GTF)
-            if (sample / 'outs/velocyto' / '{}.loom'.format(sample.name)).exists():
+            if Path(sample / 'outs/velocyto' / '{}.loom'.format(sample.name)).exists():
                 cmd = 'echo {} loom file already exist!'.format(sample) if not overwrite else cmd
 
             return cmd
@@ -159,7 +162,8 @@ class ScveloAnalysis:
     def merge_loom(self, output='Merged_loom'):
         def combine(loom_list: list, output_file):
             logging.info('doing -> {}'.format(output_file))
-            loompy.combine(loom_list, output_file=output_file)
+            if not Path(output_file).exists():
+                loompy.combine(loom_list, output_file=output_file)
 
         MyPath.mkdir(output)
         logging.info('Merging the loom files')
@@ -412,8 +416,28 @@ class ScveloAnalysis:
                            color=self.cluster, save=str(out_put / (sample + '_drive_top15.png')),
                            dpi=self.DPI)
 
+            scv.pl.scatter(anndata, x='latent_time', y=top_genes[:15], frameon=False,
+                           color=self.cluster, ncols=5, dpi=self.DPI,
+                           save=str(out_put / (sample + '_drive_top15_latent_time.png')))
+
             anndata.var['fit_likelihood'].sort_values(ascending=False).head(15). \
                 to_csv(out_put / (sample + '_top15_fit_likelihood.csv'))
+
+            # gene velocity
+            p = scv.pl.velocity(anndata, top_genes[:6], ncols=2, add_outline=True,dpi=self.DPI,
+                                color=self.cluster, size=30, figsize=(7, 10), show=False)
+            self._save_fig(p, out_put / (sample + '_TOP6_gene_velocity'))
+
+            # drive gene in clusters
+            scv.tl.rank_dynamical_genes(anndata, groupby=self.cluster)
+            df = scv.get_df(anndata, 'rank_dynamical_genes/names')
+            df.to_csv(out_put / (sample + '_dirve_genes_in_clusters.csv'))
+
+            for cluster in anndata.obs.loc[:, self.cluster].unique():
+                file_name = str(Path(out_put) / (cluster + '_velocity_pseudotime_dy_clusters.png'))
+                scv.pl.scatter(anndata, df[cluster][:15],
+                               frameon=False, color=self.cluster,
+                               ncols=5, save=file_name)
 
             return anndata
 
@@ -471,6 +495,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     arg, _ = args.action
 
+    os.environ['NUMEXPR_NUM_THREADS'] = str(args.max_workers)
 
     def up_stream():
         MyScveloAnalysis.run_samtools(cellranger_results=args.input,
@@ -506,12 +531,25 @@ if __name__ == '__main__':
             logging.info('ready to go...')
 
 
+    make_summary(Path(__file__), status='doing')
+
     if arg == 'run_velcyto':
+        logging.info('----> doing step1 run_velcyto')
         up_stream()
+        logging.info('----> done step1 run_velcyto')
 
     if arg == 'run_scVelo':
+        logging.info('----> doing step2 run_scVelo')
         down_steam()
+        logging.info('----> done step2 run_scVelo')
 
     if arg == 'rna_velcyto':
+        logging.info('----> doing step1 run_velcyto')
         up_stream()
+        logging.info('----> done step1 run_velcyto')
+
+        logging.info('----> doing step2 run_scVelo')
         down_steam()
+        logging.info('----> done step2 run_scVelo')
+
+    make_summary(Path(__file__), status='done')

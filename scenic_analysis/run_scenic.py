@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
-from myrunner import MyRunner, MyPath
+from myrunner import MyRunner, MyPath, make_summary
 import scanpy as sc
 import loompy as lp
 import numpy as np
@@ -51,8 +51,13 @@ class PyScenic:
             database_config['motif_anno'] = motif_anno_database / 'motifs-v9-nr.hgnc-m0.001-o0.0.tbl'
             database_config['rank_database'] = rank_database / 'hg38__refseq-r80__10kb_up_and_down_tss.mc9nr.feather'
             database_config['TF_list'] = self._ / 'TF_list/hs_hgnc_tfs.txt'
+
+        elif species == 'mouse':
+            database_config['motif_anno'] = motif_anno_database / 'motifs-v9-nr.mgi-m0.001-o0.0.tbl'
+            database_config['rank_database'] = rank_database / 'mm10__refseq-r80__10kb_up_and_down_tss.mc9nr.feather'
+            database_config['TF_list'] = self._ / 'TF_list/mm_mgi_tfs.txt'
         else:
-            raise Exception('wrong species, only support human')
+            raise Exception('wrong species, only support human|mouse')
 
         return database_config
 
@@ -187,9 +192,11 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--cell_type', type=str, help='colnames of cell type')
     parser.add_argument('-o', '--output', type=str, help='output dirname', default='pySCENIC_results')
     parser.add_argument('-t', '--threads', type=str, help='threads', default='20')
-    parser.add_argument('-p', '--species', type=str, help='species:[human]')
+    parser.add_argument('-p', '--species', type=str, help='species:[human]', default='human')
     parser.add_argument('-g', '--groups', type=str, help='colnames of groups', default='orig.ident')
     input_args = parser.parse_args()
+
+    make_summary(Path(__file__), status='doing')
 
     ps = PyScenic(seurat_obj=input_args.seurat_obj,
                   threads=input_args.threads,
@@ -201,3 +208,5 @@ if __name__ == '__main__':
     ps.run_grn()
     ps.run_ctx_aucell()
     ps.run_down_analysis()
+
+    make_summary(Path(__file__), status='done')

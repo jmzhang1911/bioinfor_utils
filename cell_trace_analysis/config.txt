@@ -1,2 +1,0 @@
-cell_number	12804
-cell_type_number	12

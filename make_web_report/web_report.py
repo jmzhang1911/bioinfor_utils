@@ -4,7 +4,11 @@ sys.path.append('/share/nas1/zhangjm/workspace/MyUtils')
 from myrunner import MyPath, MyRunner
 from pathlib import Path
 import argparse
+import logging
 import re
+
+FORMAT = '%(asctime)s %(threadName)s=> %(message)s'
+logging.basicConfig(level=logging.INFO, format=FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
 
 
 class WebReport:
@@ -29,8 +33,10 @@ class WebReport:
         with open(self.config, 'r', encoding='utf-8') as f:
             config_dict = {}
             for line in f:
+                if line.strip().startswith('#') or line.strip() == '':
+                    continue
                 k, v = line.strip().split()
-                config_dict[k] = str(v)
+                config_dict[k] = str(v).strip()
 
         # 修改后的template，用于生成最后的报告
         with open('_tmp_template.txt', 'w', encoding='utf-8') as f2:
@@ -49,10 +55,14 @@ class WebReport:
         cmd = '{} -i Web_Report -c {} -t _tmp_template.txt -x Web_Report/configtest_xmlconvert.xml -b'. \
             format(self.MK_XML, self.config)
         cmd += ' && {} -i Web_Report/configtest_xmlconvert.xml -o Web_Report'.format(self.XML_HTML)
-        cmd += ' && rm Web_Report/configtest_xmlconvert.xml _tmp_template.txt'
+        #cmd += ' && rm Web_Report/configtest_xmlconvert.xml _tmp_template.txt'
         cmd += ' && tar -zcvf {}.tar.gz Web_Report'.format(self.report_name)
 
         return [cmd]
+
+    def run_report(self):
+        self.config_template()
+        self.make_report()
 
 
 if __name__ == '__main__':

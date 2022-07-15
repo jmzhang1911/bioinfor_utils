@@ -4,27 +4,33 @@ library(optparse)
 option_list <- list(
   make_option(c('-s', '--seob_obj'), type = 'character', help = 'Seurat Obj'), 
   make_option(c('-o', '--output'), type = 'character', help = 'plot output', default = 'GSVA_results'),
-  make_option(c('-c', '--cell_type'), type = 'character', help = 'colnames of celltype', default = 'cellType'))
+  make_option(c('-c', '--cell_type'), type = 'character', help = 'colnames of celltype', default = 'cellType'),
+  make_option(c('-p', '--species'), type = 'character', help = 'species [hs|mm]', default = 'hs'),
+  make_option(c('-g', '--gs_cat'), type = 'character', help = '[C1|C2|C3|C4|C5|C6|C7|C8|H], sep by ,', default = 'all')
+)
+
 opt <- parse_args(OptionParser(option_list = option_list))
 
 
-library(msigdbr)
-library(Seurat)
-library(GSVA)
-library(tidyverse)
-library(clusterProfiler)
-library(ComplexHeatmap)
-library(patchwork)
-library(RColorBrewer)
-library(circlize)
-library(cowplot)
-library(ggplotify)
-library(foreach)
-library(doParallel)
-library(ggsci)
-
-
-MyMkdir <- function(x){if(!dir.exists(x)){dir.create(x,recursive = T)}}
+suppressMessages({
+  library(funr)
+  library(msigdbr)
+  library(Seurat)
+  library(GSVA)
+  library(tidyverse)
+  library(clusterProfiler)
+  library(ComplexHeatmap)
+  library(patchwork)
+  library(RColorBrewer)
+  library(circlize)
+  library(cowplot)
+  library(ggplotify)
+  library(foreach)
+  library(doParallel)
+  library(ggsci)
+  
+  source(file.path(dirname(sys.script()), '../Utils.R'))
+})
 
 
 MyGSVAPlot <- function(matrix, marker_genes, title = 'GSVA results Top5'){
@@ -96,7 +102,21 @@ run <- function(term, gene_expr, output = './'){
     lapply(function(x){return(x$gene_symbol)}) -> tmp_gene_set
   
   # 运算GSVA
-  gsva_results <- gsva(as.matrix(gene_expr), tmp_gene_set) 
+  gsva_results <- tryCatch({
+    gsva(as.matrix(gene_expr), tmp_gene_set)
+  }, error = function(e) {
+  })
+  
+  if(is.null(gsva_results)){
+    return()
+  }
+  
+  nrow_number <- nrow(as.data.frame(gsva_results))
+  if( nrow_number< 1){
+    print('no results')
+    return(NULL)
+  }
+  
   gsva_results %>% as.data.frame() %>% 
     rownames_to_column('terms') %>%
     pivot_longer(cols = -1, names_to = 'cellType', values_to = 'value') -> all_terms_results 
@@ -135,11 +155,26 @@ run <- function(term, gene_expr, output = './'){
               sep = '\t', quote = F, row.names = F)
 }
 
-
+make_summary(sys.script(), 'doing')
 if(T){
   
-  load('/share/nas1/zhangjm/workspace/project/GSEA/msigdbr_data.RData') # 加载整理后的基因集
-  split.data.frame(msigdbr_data, msigdbr_data$results_path) -> all_gene_set_list
+  if(opt$species == 'hs'){
+    load(file.path(dirname(sys.script()), 'hs_msigdbr_data.RData'))
+  }else if(opt$species == 'mm'){
+    load(file.path(dirname(sys.script()), 'mm_msigdbr_data.RData'))
+  }else{
+    stop('wrong species, only for hs|mm') 
+  }
+  
+  print('making dataset ...')
+  df <- msigdbr_data %>% ungroup()
+  if (opt$gs_cat != 'all') {
+    gs_cat_vector <- str_split(opt$gs_cat, ',')[[1]]
+    df <- df %>% filter(gs_cat %in% gs_cat_vector)
+    print(str_c('using ', gs_cat_vector))
+  }
+  
+  split.data.frame(df, df$results_path) -> all_gene_set_list
   
   print('getting expr matrix')
   readRDS(opt$seob_obj) %>% 
@@ -162,6 +197,7 @@ if(T){
     run(term = x, gene_expr = expr, output = opt$output)
   stopCluster(cl)
 }
+make_summary(sys.script(), 'done')
 
 ####测试
 # read_delim("gene_expr.txt", 

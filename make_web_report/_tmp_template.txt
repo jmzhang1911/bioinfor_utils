@@ -1,7 +1,0 @@
-》
-摘要
-使用Velocyto软件及scVelo对99个单细胞样本进行RNA速度分析，基于mRNA的spliced/unspliced信息 ，推断RNA变化速度和方向，并预测细胞的未来状态和最终命。
-》
-一级标题
-背景介绍
-》

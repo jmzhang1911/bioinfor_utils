@@ -12,14 +12,17 @@ option_list <- list(
 
 opt <- parse_args(OptionParser(option_list = option_list))
 
-library(SCENIC)
-library(tidyverse)
-library(SCopeLoomR)
-library(ComplexHeatmap)
-library(RColorBrewer)
-library(pheatmap)
-library(circlize)
-library(Cairo)
+suppressMessages({
+  library(SCENIC)
+  library(tidyverse)
+  library(SCopeLoomR)
+  library(ComplexHeatmap)
+  library(RColorBrewer)
+  library(pheatmap)
+  library(circlize)
+  library(Cairo)
+})
+
 
 MyMkdir <- function(x){if(!dir.exists(x)){dir.create(x,recursive = T)}}
 
@@ -31,8 +34,9 @@ MyPySenicHeatPlot <- function(expr, meta_data, cell_type='cellType', groups='ori
   getPalette_sample = colorRampPalette(brewer.pal(8, "Accent"))
   
   #设置注释颜色
-  meta_data %>% rownames_to_column('barcodes') %>%
-    filter(barcodes %in% colnames(expr)) -> meta_df
+  meta_data %>% 
+    filter(barcodes %in% colnames(expr)) %>%
+    drop_na() -> meta_df
   
   getPalette_cell(length(unique(meta_df[[cell_type]]))) -> cells
   meta_df[[cell_type]] %>% unique() -> names(cells)
@@ -40,8 +44,11 @@ MyPySenicHeatPlot <- function(expr, meta_data, cell_type='cellType', groups='ori
   getPalette_sample(length(unique(meta_df[[groups]]))) -> samples
   meta_df[[groups]] %>% unique() -> names(samples)
   
+  print(cells);print(samples)
+  
   #获取每个细胞类型中最活跃的转录因子
   expr %>% t() %>% as.data.frame() %>% rownames_to_column('barcodes') %>% 
+    filter(barcodes %in% meta_df$barcodes) %>%
     pivot_longer(cols = -1, names_to = 'TF', values_to = 'value') %>%
     left_join(meta_df %>% select(barcodes, !!as.symbol(cell_type)), by = 'barcodes') %>%
     group_by(!!as.symbol(cell_type), TF) %>%
@@ -51,8 +58,12 @@ MyPySenicHeatPlot <- function(expr, meta_data, cell_type='cellType', groups='ori
   print(marker)
   
   # 极高和极低值处理
+  expr <- expr[,colnames(expr) %in% meta_df$barcodes]
   expr[expr > 2] <- 2 
   expr[expr < -2] <- -2
+  
+
+  
   
   # 列注释
   top_anno_ref <- HeatmapAnnotation(
@@ -63,10 +74,21 @@ MyPySenicHeatPlot <- function(expr, meta_data, cell_type='cellType', groups='ori
     show_legend = FALSE
   )
   
+  
   # 行注释
+  # 调整大小
+  if(length(marker) >= 50){
+    fontsize <- 3
+  }else{
+    fontsize <- 6
+  }
+  
   row_anno <- rowAnnotation(foo = anno_mark(at = match(marker, rownames(expr)), 
                                             labels = marker, 
-                                            labels_gp = gpar(fontsize = 8)))
+                                            labels_gp = gpar(fontsize = fontsize)))
+  row_anno2 <- rowAnnotation(foo = anno_mark(at = match(marker, rownames(expr[marker, ])), 
+                                            labels = marker, 
+                                            labels_gp = gpar(fontsize = fontsize)))
   
   # 整体颜色
   col_fun = colorRamp2(c(-2, 0, 2), c("#87CEFA", "white", "#CC2121")) 
@@ -91,6 +113,29 @@ MyPySenicHeatPlot <- function(expr, meta_data, cell_type='cellType', groups='ori
           raster_quality = 15,
           width = 10, height = 14) ->  p
   
+  print(dim(expr[marker,]))
+  
+  
+  
+  Heatmap(expr[marker,], 
+          row_names_gp = gpar(fontsize = 1),
+          col = col_fun, 
+          border = TRUE,
+          row_gap = unit(0, "mm"), 
+          column_gap = unit(0, "mm"),
+          column_title = NULL,
+          column_split  = meta_df[cell_type],
+          column_title_gp  = gpar(fontsize = 8), 
+          top_annotation = top_anno_ref, 
+          right_annotation = row_anno2,
+          show_column_names = F,
+          show_row_names = F,
+          show_row_dend = F,
+          show_column_dend = F,
+          show_heatmap_legend = FALSE,
+          raster_quality = 15,
+          width = 10, height = 14) ->  p1
+  
   # 图例处理
   legend_expr <- Legend(col_fun = col_fun, direction = 'horizontal')
   legend_cells <-  Legend(labels = names(cells),
@@ -113,6 +158,16 @@ MyPySenicHeatPlot <- function(expr, meta_data, cell_type='cellType', groups='ori
   png(file.path(output, 'SCENIC_analysis.png'), height = 1200, width = 1100, res = 200)
   draw(p, annotation_legend_list = pd, column_title = 'SCENIC analysis')
   dev.off()
+  
+  
+  pdf(file.path(output, 'SCENIC_analysis_top5.pdf'))
+  draw(p1, annotation_legend_list = pd, column_title = 'SCENIC analysis')
+  dev.off()
+  
+  png(file.path(output, 'SCENIC_analysis_top5.png'), height = 1200, width = 1100, res = 200)
+  draw(p1, annotation_legend_list = pd, column_title = 'SCENIC analysis')
+  dev.off()
+  
 }
 
 
@@ -126,7 +181,7 @@ if(T){
   regulons_incidMat <- get_regulons(loom, column.attr.name="Regulons")
   regulons <- regulonsToGeneLists(regulons_incidMat)
   regulonAUC <- get_regulons_AUC(loom, column.attr.name="RegulonsAUC")
-  raw_matrix <- t(scale(t(regulonAUC[,])))
+  raw_matrix <- t(scale(t(getAUC(regulonAUC[,]))))
   
   print('plotting heatmap ...')
   MyPySenicHeatPlot(expr = raw_matrix,

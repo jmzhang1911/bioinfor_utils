@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 
 from collections import defaultdict
-from pathlib import Path
 from myrunner import *
 import argparse
 import math
-
-
 
 FORMAT = '%(asctime)s %(threadName)s=> %(message)s'
 logging.basicConfig(level=logging.INFO, format=FORMAT, datefmt='%Y-%m-%d %H:%M:%S')

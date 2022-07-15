@@ -1,5 +1,5 @@
+.libPaths('/share/nas1/zhangjm/software/miniconda3/envs/RNA_velocyto/lib/R/library')
 library(optparse)
-
 option_list <- list(
   make_option(c('--total'), type = 'character'),
   make_option(c('--proportions'), type = 'character'),

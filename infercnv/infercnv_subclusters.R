@@ -1,3 +1,4 @@
+.libPaths('/share/nas1/zhangjm/software/miniconda3/envs/RNA_velocyto/lib/R/library')
 library(optparse)
 library(tidyverse)
 
@@ -340,7 +341,9 @@ MyCnvScore <- function(myinfercnv_obj, output){
       mutate(barcodes = str_replace_all(barcodes, '\\.', '-')) %>%
       group_by(barcodes) %>%
       summarise(total = sum(expr ^ 2)) %>% 
-      left_join(meta, by = 'barcodes') %>%
+      left_join(meta, by = 'barcodes') -> cnv_score
+    
+    cnv_score %>%
       ggplot(aes(x = infercnv_reference, y = total)) +
       geom_violin(aes(fill = infercnv_reference)) +
       labs(y = 'CNV scores', x = '') +
@@ -349,6 +352,8 @@ MyCnvScore <- function(myinfercnv_obj, output){
       theme(text = element_text(size = 18), 
             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), 
             legend.position = 'top') -> p
+    
+    save(cnv_score, file = 'step3_infercnv_subclusters/cnv_score.RData')
     
   }else{
     print('running k-means')
@@ -364,7 +369,9 @@ MyCnvScore <- function(myinfercnv_obj, output){
       group_by(barcodes) %>%
       summarise(total = sum(expr ^ 2)) %>% 
       left_join(results, by = 'barcodes') %>%
-      mutate(cluster = str_c('cluster_', as.character(cluster))) %>%
+      mutate(cluster = str_c('cluster_', as.character(cluster))) -> cnv_score
+    
+    cnv_score %>%
       ggplot(aes(x = cluster, y = total)) +
       geom_violin(aes(fill = cluster)) +
       labs(y = 'CNV scores', x = '') +
@@ -373,6 +380,8 @@ MyCnvScore <- function(myinfercnv_obj, output){
       theme(text = element_text(size = 18), 
             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), 
             legend.position = 'top') -> p
+    
+    save(cnv_score, file = 'step3_infercnv_subclusters/cnv_score.RData')
   }
   
   ggsave(p, filename = 'step3_infercnv_subclusters/score_volin.png')

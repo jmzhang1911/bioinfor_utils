@@ -1,3 +1,4 @@
+.libPaths('/share/nas1/zhangjm/software/miniconda3/envs/RNA_velocyto/lib/R/library')
 library(optparse)
 
 option_list <- list(
@@ -7,12 +8,14 @@ option_list <- list(
 )
 
 opt <- parse_args(OptionParser(option_list = option_list))
-library(tidyverse)
-library(ComplexHeatmap)
-library(patchwork)
-library(Seurat)
-library(monocle)
 
+suppressMessages({
+  library(tidyverse)
+  library(ComplexHeatmap)
+  library(patchwork)
+  library(Seurat)
+  library(monocle)
+})
 
 MyMkdir <- function(x){if(!dir.exists(x)){dir.create(x,recursive = T)}else(cat('existed dir\n'))}
 SavePlot <- function(od, filename, data, width = 6, height = 4, scale = 1.3){
@@ -41,9 +44,13 @@ monocle_trace <- function(seob, dir, cell_type){
   single.seurat@meta.data %>% filter(!is.na(cell_type)) %>% rownames() -> bar
   single.seurat <- single.seurat[, bar]
   
+  # 判断类型
+  assay <- ifelse('RNA' %in% names(single.seurat@assays), 'RNA', 'Spatial')
+  
   # 生成用于报告的配置文件
   config <- data.frame(cell_number = dim(single.seurat)[2],
-                       cell_type_number = table(single.seurat@meta.data[cell_type]) %>% length())
+                       cell_type_number = table(single.seurat@meta.data[cell_type]) %>% length(),
+                       assay = ifelse(assay == 'RNA', '细胞', 'Spatials'))
   write.table(t(config), file = 'config.txt', row.names = T, quote = F, sep = '\t', col.names = F)
 
   
@@ -51,9 +58,13 @@ monocle_trace <- function(seob, dir, cell_type){
     stop('wrong celltype colname')
   }
   
-  VariableFeatures <- VariableFeatures(single.seurat)
+  single.seurat <- FindVariableFeatures(single.seurat,
+                                        selection.method = 'vst',
+                                        nfeatures = 2000,
+                                        assay = assay)
+  VariableFeatures <- VariableFeatures(single.seurat, assay=assay)
   # export seurat to monocle object
-  data <- as(as.matrix(single.seurat@assays$RNA@counts), "sparseMatrix")
+  data <- as(as.matrix(single.seurat@assays[[assay]]@counts), "sparseMatrix")
   pd <- new("AnnotatedDataFrame", data = single.seurat@meta.data)
   
   
@@ -97,28 +108,43 @@ monocle_trace <- function(seob, dir, cell_type){
   SavePlot(od = dir, filename = "cell_trajectory_cluster", data = p.trace.cluster)
   p.trace.state <- plot_cell_trajectory(monocle_cds, color_by = "State")
   SavePlot(od = dir, filename = "cell_trajectory_state", data = p.trace.state)
+  p.trace.state.pseudotime <- plot_cell_trajectory(monocle_cds, color_by = "Pseudotime")
+  SavePlot(od = dir, filename = "cell_trajectory_pseudotime", data = p.trace.state.pseudotime)
   
+  save(monocle_cds, varibalegene, file = file.path(dir, 'tmp_monocle_cds.RData'))
   
   BEAM_res <- BEAM(monocle_cds, branch_point = 1, cores = 4)
   BEAM_res <- BEAM_res[order(BEAM_res$qval),]
-  BEAM_res <- BEAM_res[,c("gene_short_name", "pval", "qval")]
+  BEAM_res_plot <- BEAM_res[,c("gene_short_name", "pval", "qval")]
   
   pdf(file = file.path(dir, 'plot_genes_branched_heatmap.pdf'))
-  plot_genes_branched_heatmap(monocle_cds[row.names(subset(BEAM_res, qval < 1e-4)),],
-                              cores = 4,
+  plot_genes_branched_heatmap(monocle_cds[row.names(subset(BEAM_res_plot, qval < 1e-4)),],
+                              cores = 8,
                               use_gene_short_name = T,
                               show_rownames = F)
   dev.off()
   
   png(filename = file.path(dir, 'plot_genes_branched_heatmap.png'), res = 200, width = 1200, height = 1200)
-  plot_genes_branched_heatmap(monocle_cds[row.names(subset(BEAM_res, qval < 1e-4)),],
-                              cores = 4,
+  plot_genes_branched_heatmap(monocle_cds[row.names(subset(BEAM_res_plot, qval < 1e-4)),],
+                              cores = 8,
                               use_gene_short_name = T,
                               show_rownames = F)
   dev.off()
   
+  BEAM_res %>% slice_min(qval, n = 10) %>% pull(gene_short_name) -> gene_vector
+  for(i in 1:length(monocle_cds@auxOrderingData[["DDRTree"]][["branch_points"]])){
+    print(str_c('doing points ', i))
+    plot_genes_branched_pseudotime(monocle_cds[gene_vector,],
+                                   branch_point = i,
+                                   color_by = cell_type,
+                                   ncol = 5) -> p
+    pic_name <- str_c('TOP10_BEAM_genes_branch_point_', i)
+    SavePlot(data = p, filename = pic_name, od = dir, width = 12, height = 5)
+  }
+
+  
   print('done monocle cell trajectory')
-  save(monocle_cds, varibalegene, file = file.path(dir, 'monocle_cds.RData'))
+  save(monocle_cds, varibalegene, BEAM_res, file = file.path(dir, 'monocle_cds.RData'))
   write.table(file = file.path(dir, "Pseudotime_summary.xls"), monocle.data, quote = FALSE, sep = "\t", row.names = FALSE)
   
   return(monocle_cds)
@@ -128,18 +154,19 @@ monocle_trace <- function(seob, dir, cell_type){
 plot_marker <- function(seob, monocle_cds, dir, cell_type){
   print('doing plotting')
   seob <- readRDS(seob)
-  seob <-  SetIdent(seob, value = cell_type)
+  assay <- ifelse('RNA' %in% names(seob@assays), 'RNA', 'Spatial')
   
+  seob <- seob[rownames(monocle_cds), ]
+  seob <-  SetIdent(seob, value = cell_type)
+  seob <- ScaleData(object = seob, assay = assay)
   seob@meta.data %>% filter(!is.na(cell_type)) %>% rownames() -> bar
   seob <- seob[, bar]
   
+  
   if(!file.exists(file.path(dir, 'diff.exp.all_origin.RData'))){
     print('doing FindAllMarkers')
-    library(future)
-    
-    plan("multiprocess", workers = 10)
-    options(future.globals.maxSize = 1572864000) 
     diff.exp.all_origin <- FindAllMarkers(object = seob, 
+                                          assay = assay,
                                           min.pct = 0.25, 
                                           logfc.threshold = 0)
     save(diff.exp.all_origin, file = file.path(dir, 'diff.exp.all_origin.RData'))
@@ -150,31 +177,42 @@ plot_marker <- function(seob, monocle_cds, dir, cell_type){
   
   diff.exp.all_origin %>% as_tibble() %>%
     filter(p_val_adj <= 0.1) %>%
-    group_by(cluster) %>% slice_max(avg_log2FC, n = 5) -> markers
+    group_by(cluster) %>% slice_max(avg_log2FC, n = 6) -> markers
   
   for(cluster_tmp in unique(markers$cluster)){
     name <- str_replace_all(cluster_tmp, ';| |,|-', '_')
     markers %>% filter(cluster == cluster_tmp) %>%
       pull(gene) %>% unique() -> select.marker
     
-    sub_cds <- monocle_cds[select.marker, ]
-    p.trace.cluster.marker <- plot_genes_in_pseudotime(sub_cds, color_by = cell_type)
+    print(str_c('plotting ... ', cluster_tmp))
+    
+    sub_cds <- monocle_cds[unique(intersect(select.marker, rownames(monocle_cds))), ]
+    p.trace.cluster.marker <- plot_genes_in_pseudotime(sub_cds, color_by = cell_type, ncol = 2)
     SavePlot(od = dir, filename = paste(name, "cell_trajectory_top5_marker_cluster", sep = "."), data = p.trace.cluster.marker)
-    p.trace.state.marker <- plot_genes_in_pseudotime(sub_cds, color_by = "State")
+    p.trace.state.marker <- plot_genes_in_pseudotime(sub_cds, color_by = "State", ncol = 2)
     SavePlot(od = dir, filename = paste(name, "cell_trajectory_top5_marker_state", sep = "."), data = p.trace.state.marker)
   }
   
-  p.trace.heatmap <- plot_pseudotime_heatmap(
-    monocle_cds[unique(unique(markers$gene)),], 
-    show_rownames = TRUE, 
-    return_heatmap = TRUE, 
-    num_clusters = length(levels(monocle_cds$State)))
-  SavePlot(od = dir, filename = "cell_trajectory_heatmap", data = p.trace.heatmap)
-  
+  gene_vector <- unique(intersect(markers$gene, rownames(monocle_cds)))
+  if(length(gene_vector) >= 2){
+    p.trace.heatmap <- plot_pseudotime_heatmap(
+      monocle_cds[gene_vector,], 
+      show_rownames = TRUE, 
+      return_heatmap = TRUE, 
+      num_clusters = length(levels(monocle_cds$State)))
+    SavePlot(od = dir, filename = "cell_trajectory_heatmap", data = p.trace.heatmap)
+  }
   save(markers, file = file.path(dir, 'markers.RData'))
 }
 
 monocle_cds <- monocle_trace(seob = opt$seurat_obj, dir = opt$output, cell_type = opt$cell_type)
+
+if(T){
+  library(future)
+  plan("multiprocess", workers = 10)
+  options(future.globals.maxSize = 2572864000) 
+}
+
 plot_marker(seob = opt$seurat_obj,
             monocle_cds = monocle_cds,
             dir = opt$output,

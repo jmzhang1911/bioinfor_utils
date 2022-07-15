@@ -3,9 +3,10 @@ import sys
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
-from myrunner import MyRunner
+from myrunner import MyRunner, MyPath, make_summary
 import argparse
 import logging
+import shutil
 
 FORMAT = '%(asctime)s %(threadName)s=> %(message)s'
 logging.basicConfig(level=logging.INFO, format=FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
@@ -17,16 +18,19 @@ class MyInferCnv:
     infercnv_pre_processing_runner = script_path / 'infercnv_pre_processing.R'
     run_infercnv_runner = script_path / 'run_infercnv.R'
     infercnv_subclusters_runner = script_path / 'infercnv_subclusters.R'
+    read_me = script_path / 'infercvn_readme.zip'
 
     debug_cmd = 'ulimit -s unlimited'
 
-    def __init__(self, seob, group_config, cell_config, modes, gene_order, thresholds='auto'):
+    def __init__(self, seob, group_config, cell_config, modes, gene_order, thresholds='auto',
+                 output='InferCNV_results'):
         self.seob = seob
         self.group_config = group_config
         self.cell_config = cell_config
         self.modes = modes
         self.gene_order = gene_order
         self.thresholds = thresholds
+        self.output = output
 
     @MyRunner.count_running_time
     @MyRunner.cmd_wrapper()
@@ -71,8 +75,31 @@ class MyInferCnv:
                    self.thresholds)
         return [cmd]
 
-    def end(self):
-        pass
+    @MyRunner.cmd_wrapper()
+    def make_results(self):
+        backup = 'BackUp'
+        MyPath.mkdir(self.output, backup)
+
+        # 备份完整结果文件
+        for _ in ['step1_infercnv_pp', 'step2_infercnv_temp', 'step3_infercnv_subclusters']:
+            shutil.copy(_, backup)
+
+        # 展示文件
+        step2_file_list = ['infercnv.observations.txt ', 'infercnv.references.txt',
+                           'HMM_CNV_predictions.HMMi6.rand_trees.hmm_mode-subclusters.Pnorm_0.5.pred_cnv_genes.dat ',
+                           'HMM_CNV_predictions.HMMi6.rand_trees.hmm_mode-subclusters.Pnorm_0.5.pred_cnv_regions.dat']
+        shutil.copy('step1_infercnv_pp/anno_file.txt', self.output)
+        for _ in step2_file_list:
+            shutil.copy('step2_infercnv_temp/{}'.format(_), self.output)
+
+        for _ in Path('step3_infercnv_subclusters').glob('**/*'):
+            shutil.copy(_, self.output)
+        shutil.copy(self.read_me, self.output)
+
+        cmd_list = ['tar -zcvf BackUp.tar.gz Backup',
+                    'tar -zcvf {}.tar.gz {}'.format(self.output, self.output)]
+
+        return cmd_list
 
 
 if __name__ == '__main__':
@@ -100,7 +127,7 @@ if __name__ == '__main__':
                         help='modes [subclusters|cells] default: subclusters', default='subclusters')
     parser.add_argument('-r', '--gene_order', type=str,
                         help='gene_order reference:\nhuman:{}\nmouse:{}'.format(doc_path_gene_order_human,
-                                                                     doc_path_gene_order_mouse))
+                                                                                doc_path_gene_order_mouse))
     parser.add_argument('-t', '--thresholds', type=str,
                         help='thresholds for color if auto is not perfect, ps 0.8,1,1.2 [default auto]',
                         default='auto')
@@ -112,6 +139,9 @@ if __name__ == '__main__':
                            modes=input_args.modes,
                            gene_order=input_args.gene_order,
                            thresholds=input_args.thresholds)
+
+    make_summary(Path(__file__), status='doing')
     infer_cnv.pp()
     infer_cnv.run_infercnv()
     infer_cnv.infercnv_subclusters()
+    make_summary(Path(__file__), status='done')

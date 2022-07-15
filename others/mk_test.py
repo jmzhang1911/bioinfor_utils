@@ -2,6 +2,8 @@
 #
 # from myrunner import MyPath, MyRunner
 from pathlib import Path
+import scanpy as sc
+sc.read_visium()
 #
 #
 # @MyRunner.count_running_time
