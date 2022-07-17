@@ -1,9 +1,10 @@
 #!/usr/bin/env python
+from pathlib import Path
 import sys
 
-sys.path.append('/share/nas1/zhangjm/workspace/MyUtils')
-from myrunner import MyPath, MyRunner, make_summary
-from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
+from bioinfor_tools.utils import MyPath, make_summary
+from bioinfor_tools.cmd_runner import CmdRunner
 import argparse
 import logging
 
@@ -32,8 +33,7 @@ class Cpdb:
         self.threads = threads
         self.group_config = group_config
 
-    @MyRunner.count_running_time
-    @MyRunner.cmd_wrapper(threads_num=1)
+    @CmdRunner.cmd_wrapper(use_qsub=True)
     def run_get_matrix(self):
         """获取meta_data以及gene_count"""
 
@@ -47,8 +47,7 @@ class Cpdb:
 
         return [cmd]
 
-    @MyRunner.count_running_time
-    @MyRunner.cmd_wrapper(threads_num=2)
+    @CmdRunner.cmd_wrapper(use_qsub=True)
     def run_cellphone_db(self):
         """运行cellphonedb，计算，点图，及热图"""
         logging.info('running cellphonedb')
@@ -88,8 +87,7 @@ class Cpdb:
 
         return cmd_list
 
-    @MyRunner.count_running_time
-    @MyRunner.cmd_wrapper()
+    @CmdRunner.cmd_wrapper(use_qsub=True)
     def run_plot(self):
         """使用igraph绘制网络图"""
         logging.info('running plotting')
@@ -104,7 +102,7 @@ class Cpdb:
 
         return cmd_list
 
-    @MyRunner.cmd_wrapper()
+    @CmdRunner.cmd_wrapper(use_qsub=True)
     def run_output(self):
         """打包结果文件，添加readme文件"""
         cmd = 'cp {} {} && tar -zcvf {}.tar.gz {} --exclude gene_count.txt --exclude meta_data.txt'. \
