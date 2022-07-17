@@ -3,8 +3,9 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
 
+from bioinfor_tools.utils import MyPath, make_summary
 from make_web_report.web_report import WebReport
-from myrunner import MyPath, MyRunner, make_summary
+from bioinfor_tools.cmd_runner import CmdRunner
 import argparse
 import logging
 import shutil
@@ -32,8 +33,7 @@ class CellTrace:
         self.report_title = report_title
         self.config = None
 
-    @MyRunner.count_running_time
-    @MyRunner.cmd_wrapper()
+    @CmdRunner.cmd_wrapper(use_qsub=True)
     def run_cell_trace_monocle2(self):
         if Path(self.output, 'cell_trajectory_heatmap.png').exists():
             cmd = 'echo cell trace done, skipping ...'

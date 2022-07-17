@@ -1,4 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from bioinfor_tools.utils import MyPath
 from pathlib import Path
 import subprocess
 import functools
@@ -9,15 +10,6 @@ import time
 
 FORMAT = '%(asctime)s %(threadName)s %(message)s'
 logging.basicConfig(level=logging.INFO, format=FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
-
-
-class MyPath:
-    @staticmethod
-    def mkdir(*path: str):
-        """mkdir recursive-dir"""
-        for p in list(path):
-            if not Path(p).exists():
-                Path(p).mkdir(parents=True, exist_ok=True)
 
 
 class CmdRunner:
