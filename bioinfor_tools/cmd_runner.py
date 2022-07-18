@@ -8,7 +8,7 @@ import getpass
 import logging
 import time
 
-FORMAT = '%(asctime)s %(threadName)s %(message)s'
+FORMAT = '%(asctime)s %(message)s'
 logging.basicConfig(level=logging.INFO, format=FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
 
 
@@ -115,7 +115,7 @@ class CmdRunner:
     def cmd(cls, cmd_container, n_jobs: int = '', fn_name='', module_name='', use_qsub=False):
 
         logging.info(
-            '>>>>-- Dear {}, {}.{} is ready to go. Godspeed!!! --<<<<'.format(cls.user_name, module_name, fn_name))
+            '>-- Dear {}, {}.{} is ready to go. Godspeed!!! --<'.format(cls.user_name, module_name, fn_name))
         # 解析出cmd_list，函数的返回值等
         cmd_list, return_value = cls._resolve_cmd(cmd_container)
 
@@ -194,7 +194,7 @@ class CmdRunner:
                                        module_name=fn.__module__)
 
                 delta = (datetime.datetime.now() - start).total_seconds()
-                logging.info('%%%%-- {}.{} took {:.1} min --%%%%'.format(fn.__module__, fn.__name__, delta / 60))
+                logging.info('%%%%-- {}.{} took {:.2f} min --%%%%'.format(fn.__module__, fn.__name__, delta / 60))
 
                 return return_value
 
