@@ -345,19 +345,18 @@ MyCnvScore <- function(myinfercnv_obj, output){
     
     cnv_score %>%
       ggplot(aes(x = infercnv_reference, y = total)) +
-      geom_violin(aes(fill = infercnv_reference)) +
+      geom_violin(fill = '#5F9EA0') +
       labs(y = 'CNV scores', x = '') +
-      scale_fill_nejm() +
       theme_bw() +
       theme(text = element_text(size = 18), 
             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), 
-            legend.position = 'top') -> p
+            legend.position = '') -> p
     
     save(cnv_score, file = 'step3_infercnv_subclusters/cnv_score.RData')
     
   }else{
     print('running k-means')
-    kmeans_res <- kmeans(t(as.matrix(df %>% drop_na())), centers = 6)
+    kmeans_res <- kmeans(t(as.matrix(df %>% drop_na())), centers = 18)
     results <- as.data.frame(kmeans_res$cluster) %>% 
       rename(cluster = `kmeans_res$cluster`) %>%
       rownames_to_column('barcodes') %>%
@@ -373,15 +372,15 @@ MyCnvScore <- function(myinfercnv_obj, output){
     
     cnv_score %>%
       ggplot(aes(x = cluster, y = total)) +
-      geom_violin(aes(fill = cluster)) +
+      geom_violin(fill = '#5F9EA0') +
       labs(y = 'CNV scores', x = '') +
-      scale_fill_nejm() + 
       theme_bw() +
       theme(text = element_text(size = 18), 
             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), 
-            legend.position = 'top') -> p
+            legend.position = '') -> p
     
     save(cnv_score, file = 'step3_infercnv_subclusters/cnv_score.RData')
+    write.table(cnv_score, file = 'step3_infercnv_subclusters/cnv_score.xls', sep = '\t', quote = F)
   }
   
   ggsave(p, filename = 'step3_infercnv_subclusters/score_volin.png')

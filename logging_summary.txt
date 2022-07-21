@@ -1,0 +1,6 @@
+datetime:2022-07-20 22:41:55	pwd:/Users/jmzhang/workspace/mygithub/bioinfor_utils/others	script_id:mk_test.py	status:doing
+datetime:2022-07-20 22:42:16	pwd:/Users/jmzhang/workspace/mygithub/bioinfor_utils/others	script_id:mk_test.py	status:doing
+datetime:2022-07-21 10:24:53	pwd:/Users/jmzhang/workspace/mygithub/bioinfor_utils/others	script_id:mk_test.py	status:doing
+datetime:2022-07-21 10:25:10	pwd:/Users/jmzhang/workspace/mygithub/bioinfor_utils/others	script_id:mk_test.py	status:doing
+datetime:2022-07-21 10:25:21	pwd:/Users/jmzhang/workspace/mygithub/bioinfor_utils/others	script_id:mk_test.py	status:doing
+datetime:2022-07-21 10:25:51	pwd:/Users/jmzhang/workspace/mygithub/bioinfor_utils/others	script_id:mk_test.py	status:doing

@@ -3,7 +3,9 @@ import sys
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
-from myrunner import MyRunner, MyPath, make_summary
+
+from bioinfor_tools.utils import MyPath, make_summary
+from bioinfor_tools.cmd_runner import CmdRunner
 import argparse
 import logging
 import shutil
@@ -32,8 +34,7 @@ class MyInferCnv:
         self.thresholds = thresholds
         self.output = output
 
-    @MyRunner.count_running_time
-    @MyRunner.cmd_wrapper()
+    @CmdRunner.cmd_wrapper(use_qsub=True)
     def pp(self):
         if Path('step1_infercnv_pp/myinfer_obj.RData').exists():
             cmd = 'echo step1_infercnv_pp done!'
@@ -47,10 +48,9 @@ class MyInferCnv:
                    self.cell_config)
         return [cmd]
 
-    @MyRunner.count_running_time
-    @MyRunner.cmd_wrapper()
+    @CmdRunner.cmd_wrapper(use_qsub=False, nodes=1, ppn=30)
     def run_infercnv(self):
-        if Path('step2_infercnv_temp').exists():
+        if Path('step2_infercnv_temp/myinfer_obj.RData').exists():
             cmd = 'echo step2_infercnv_temp done!'
             return [cmd]
 
@@ -62,8 +62,7 @@ class MyInferCnv:
                    self.gene_order)
         return [cmd]
 
-    @MyRunner.count_running_time
-    @MyRunner.cmd_wrapper()
+    @CmdRunner.cmd_wrapper(use_qsub=True)
     def infercnv_subclusters(self):
         if Path('step3_infercnv_subclusters').exists():
             cmd = 'echo step3_infercnv_subclusters done!'
@@ -75,7 +74,7 @@ class MyInferCnv:
                    self.thresholds)
         return [cmd]
 
-    @MyRunner.cmd_wrapper()
+    @CmdRunner.cmd_wrapper(use_qsub=True)
     def make_results(self):
         backup = 'BackUp'
         MyPath.mkdir(self.output, backup)

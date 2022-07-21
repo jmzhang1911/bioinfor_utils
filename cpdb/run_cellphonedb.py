@@ -3,29 +3,24 @@ from pathlib import Path
 import sys
 
 sys.path.append(str(Path(__file__).parent.parent))
-from bioinfor_tools.utils import MyPath, make_summary
+
 from bioinfor_tools.cmd_runner import CmdRunner
+from bioinfor_tools.utils import BioUtils
 import argparse
 import logging
 
-FORMAT = '%(asctime)s %(threadName)s=> %(message)s'
-logging.basicConfig(level=logging.INFO, format=FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
 
-
-class Cpdb:
+class Cpdb(BioUtils):
     PYTHON = '/share/nas1/zhangjm/software/miniconda3/envs/cpdb/bin/python3'
     RSCRIPT = '/share/nas1/zhangjm/software/miniconda3/envs/RNA_velocyto/bin/Rscript'
     cpdb = '/share/nas1/zhangjm/software/miniconda3/envs/cpdb/bin/cellphonedb'
-    cellphonedb_pre = '/share/nas1/zhangjm/workspace/MyUtils/cpdb/cellphonedb_pre.R'
-    read_me = Path(__file__).parent / 'readme.pdf'
 
-    def __init__(self,
-                 seurat_obj,
-                 species='human',
-                 result_dir='cpdb_results',
-                 cell_type_col='cellType',
-                 threads=15,
+    def __init__(self, seurat_obj, species='human', result_dir='cpdb_results', cell_type_col='cellType', threads=15,
                  group_config='None'):
+
+        super().__init__(module=__file__)
+        self.cellphonedb_pre = self._module_dir / 'cellphonedb_pre.R'
+
         self.seurat_obj = seurat_obj
         self.species = species
         self.cell_type_col = cell_type_col
@@ -37,7 +32,7 @@ class Cpdb:
     def run_get_matrix(self):
         """获取meta_data以及gene_count"""
 
-        MyPath.mkdir(self.result_dir)
+        self.mkdir(self.result_dir)
         logging.info('running get matrix')
         cmd = '{} {} --MyMakeMatrix --seurat_Obj {} --species {} --cell_type {} --results {} --group_config {}'. \
             format(self.RSCRIPT, self.cellphonedb_pre,
@@ -105,11 +100,12 @@ class Cpdb:
     @CmdRunner.cmd_wrapper(use_qsub=True)
     def run_output(self):
         """打包结果文件，添加readme文件"""
-        cmd = 'cp {} {} && tar -zcvf {}.tar.gz {} --exclude gene_count.txt --exclude meta_data.txt'. \
-            format(self.read_me,
-                   self.result_dir,
+        self.copy_readme(self.result_dir)
+        cmd = 'tar -zcvf {}.tar.gz {} --exclude gene_count.txt --exclude meta_data.txt'. \
+            format(self.result_dir,
                    Path(self.result_dir).name,
                    Path(self.result_dir).name)
+
         return [cmd]
 
 
@@ -138,15 +134,13 @@ if __name__ == '__main__':
                             doc_path_group_config))
     input_args = parser.parse_args()
 
-    make_summary(Path(__file__), status='doing')
-
     runner = Cpdb(seurat_obj=input_args.seurat_obj, species=input_args.species,
                   result_dir=input_args.result_dir, cell_type_col=input_args.cell_type_col,
                   threads=input_args.threads, group_config=input_args.group_config)
 
+    runner.make_summary()
     runner.run_get_matrix()
     runner.run_cellphone_db()
     runner.run_plot()
     runner.run_output()
-
-    make_summary(Path(__file__), status='done')
+    runner.make_summary()

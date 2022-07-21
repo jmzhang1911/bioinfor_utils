@@ -1,9 +1,9 @@
-import shutil
 import sys
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).absolute().parent.parent))
-from myrunner import MyRunner, MyPath
+from bioinfor_tools.cmd_runner import CmdRunner
+from bioinfor_tools.utils import MyPath
 from collections import defaultdict
 import pandas as pd
 import argparse
@@ -108,7 +108,6 @@ class EnrichAnalysis:
 
             self.GO_info = go_info
 
-    @MyRunner.count_running_time
     def run_enrichment(self):
         if not self.split_by:
             logging.info('doing enrich analysis')
@@ -124,7 +123,7 @@ class EnrichAnalysis:
             if self.KEGG_info:
                 cmd += ' --KEGG.info {}'.format(self.KEGG_info)
 
-            MyRunner.runner([cmd])
+            CmdRunner.cmd([cmd], use_qsub=True)
 
         else:
             data = pd.read_csv(self.table, sep='\t')
@@ -150,7 +149,7 @@ class EnrichAnalysis:
                     cmd += ' --KEGG.info {}'.format(self.KEGG_info)
                 cmd_list.append(cmd)
 
-            MyRunner.runner(cmd_list, threads_num=7)
+            CmdRunner.cmd(cmd_list, use_qsub=True, n_jobs=10)
 
             # 满足sb逻辑
             # for file in Path(self.output).glob('**/*'):

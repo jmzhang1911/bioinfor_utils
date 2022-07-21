@@ -1,5 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from bioinfor_tools.utils import MyPath
+from bioinfor_tools.bio_basic import BioBasic
 from pathlib import Path
 import subprocess
 import functools
@@ -8,11 +8,8 @@ import getpass
 import logging
 import time
 
-FORMAT = '%(asctime)s %(message)s'
-logging.basicConfig(level=logging.INFO, format=FORMAT, datefmt='%Y-%m-%d %H:%M:%S')
 
-
-class CmdRunner:
+class CmdRunner(BioBasic):
     """
     1) basic
     Note: cmd_container: ([cmd1, cmd2, *], *) or [cmd1, cmd2, *]
@@ -112,7 +109,7 @@ class CmdRunner:
                                 raise Exception('cmd={} failed!!!tried {} times ...'.format(cmd_shell, num))
 
     @classmethod
-    def cmd(cls, cmd_container, n_jobs: int = '', fn_name='', module_name='', use_qsub=False):
+    def cmd(cls, cmd_container, n_jobs: int = '', fn_name='', module_name='', use_qsub=False, nodes=1, ppn=1):
 
         logging.info(
             '>-- Dear {}, {}.{} is ready to go. Godspeed!!! --<'.format(cls.user_name, module_name, fn_name))
@@ -124,7 +121,7 @@ class CmdRunner:
 
         if not use_qsub:
             if fn_name:
-                MyPath.mkdir('cmds_sh')
+                cls.mkdir('cmds_sh')
                 cmd_file = 'cmds_sh/{}_{}.sh'.format(fn_name, now)
 
                 with open(cmd_file, 'w') as f:
@@ -133,7 +130,7 @@ class CmdRunner:
         else:
             fn_name = fn_name if fn_name else 'tmp_qsub_cmd'
             fn_path = 'cmds_qsub/{}_{}'.format(fn_name, now)
-            MyPath.mkdir(fn_path)
+            cls.mkdir(fn_path)
             cmd_qsub_list = []
 
             for num, cmd in enumerate(cmd_list, start=1):
@@ -144,12 +141,15 @@ class CmdRunner:
                 with open(cmd_shell, 'w') as f:
                     touch_done = '&& touch {}.done'.format(cmd_shell)
                     cmd += touch_done
-                    f.write(cmd + '\n')
+                    f.write('#PBS -l nodes={}:ppn={}\n{}\n'.format(nodes, ppn, cmd))
 
                 # 解决在计算节点投递任务的情况
 
-                cmd_qsub = '{} qsub -V -cwd -o {} -e {} {}"'.format(cls._qsub_host, cmd_shell_o, cmd_shell_e,
-                                                                    cmd_shell)
+                cmd_qsub = '{} qsub -V -cwd -o {} -e {} {} "'. \
+                    format(cls._qsub_host,
+                           cmd_shell_o,
+                           cmd_shell_e,
+                           cmd_shell)
                 cmd_qsub_list.append((cmd_qsub, touch_done, cmd_shell))
 
             cmd_list = cmd_qsub_list
@@ -180,7 +180,7 @@ class CmdRunner:
     #     return return_value
 
     @classmethod
-    def cmd_wrapper(cls, n_jobs: int = '', use_qsub=False):
+    def cmd_wrapper(cls, n_jobs: int = '', use_qsub=False, nodes=1, ppn=1):
 
         def wrapper(fn):
             @functools.wraps(fn)
@@ -191,7 +191,8 @@ class CmdRunner:
                                        n_jobs=n_jobs,
                                        use_qsub=use_qsub,
                                        fn_name=fn.__name__,
-                                       module_name=fn.__module__)
+                                       module_name=fn.__module__,
+                                       nodes=nodes, ppn=ppn)
 
                 delta = (datetime.datetime.now() - start).total_seconds()
                 logging.info('%%%%-- {}.{} took {:.2f} min --%%%%'.format(fn.__module__, fn.__name__, delta / 60))
